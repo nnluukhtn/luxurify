@@ -12,8 +12,12 @@ class BrandUser < ApplicationRecord
     state :active
     state :inactive
 
-    event :activate do
+    event :approve do
       transitions from: :pending, to: :active
+    end
+
+    event :reject do
+      transitions from: :pending, to: :inactive
     end
 
     event :deactivate do

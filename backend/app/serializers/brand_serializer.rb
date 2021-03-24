@@ -1,5 +1,5 @@
 class BrandSerializer < ActiveModel::Serializer
-  attributes :name, :category, :status, :created_at
+  attributes :id, :name, :category, :status, :created_at
   attributes :bir_2303_certification_url, :certificate_of_registration_url
 
   def bir_2303_certification_url
