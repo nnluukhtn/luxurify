@@ -17,6 +17,8 @@ gem 'rack-cors'
 gem 'devise-jwt'
 gem 'sentry-ruby'
 gem 'sentry-rails'
+gem 'aasm'
+gem 'aws-sdk-s3', require: false
 
 
 # Use Active Storage variant
