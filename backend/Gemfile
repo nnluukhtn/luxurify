@@ -19,6 +19,7 @@ gem 'sentry-ruby'
 gem 'sentry-rails'
 gem 'aasm'
 gem 'aws-sdk-s3', require: false
+gem 'active_model_serializers'
 
 
 # Use Active Storage variant

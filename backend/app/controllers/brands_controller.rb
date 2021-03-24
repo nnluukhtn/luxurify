@@ -5,7 +5,7 @@ class BrandsController < ApplicationController
     brand = Brand.find_by(name: register_params[:name])
 
     if brand
-      brand.pending_users << current_user unless brand.pending_users.exists?(current_user)
+      brand.pending_users << current_user unless brand.pending_users.exists?(id: current_user.id)
     else
       ActiveRecord::Base.transaction do
         brand = Brand.create!(register_params)
@@ -13,7 +13,21 @@ class BrandsController < ApplicationController
       end
     end
 
-    head :ok
+    render json: brand
+  end
+
+  def index
+    render json: {
+      active_brands: ActiveModelSerializers::SerializableResource.new(
+        current_user.active_brands, each_serializer: ::BrandSerializer
+      ).as_json,
+      pending_brands: ActiveModelSerializers::SerializableResource.new(
+        current_user.pending_brands, each_serializer: ::BrandSerializer
+      ).as_json,
+      inactive_brands: ActiveModelSerializers::SerializableResource.new(
+        current_user.inactive_brands, each_serializer: ::BrandSerializer
+      ).as_json
+    }
   end
 
   private
