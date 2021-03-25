@@ -121,6 +121,8 @@ GEM
       multipart-post (>= 1.2, < 3)
       ruby2_keywords
     faraday-net_http (1.0.1)
+    faraday_middleware (1.0.0)
+      faraday (~> 1.0)
     ffi (1.15.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -151,6 +153,7 @@ GEM
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     orm_adapter (0.5.0)
+    patron (0.13.3)
     pg (1.2.3)
     puma (5.2.2)
       nio4r (~> 2.0)
@@ -239,7 +242,10 @@ DEPENDENCIES
   byebug
   devise-jwt
   dotenv-rails
+  faraday
+  faraday_middleware
   listen (~> 3.3)
+  patron
   pg (~> 1.1)
   puma (~> 5.0)
   rack-cors

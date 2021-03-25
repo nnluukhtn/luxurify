@@ -20,7 +20,9 @@ gem 'sentry-rails'
 gem 'aasm'
 gem 'aws-sdk-s3', require: false
 gem 'active_model_serializers'
-
+gem 'faraday'
+gem 'faraday_middleware'
+gem 'patron'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'

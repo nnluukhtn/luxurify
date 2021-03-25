@@ -7,7 +7,13 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :watch_signals, only: [] do
+    collection do
+      get :brands
+    end
+  end
 
+  ### Admin
   devise_for :admins
 
   namespace :admins do
