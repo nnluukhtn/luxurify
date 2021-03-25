@@ -48,11 +48,9 @@ export function App() {
           />
         )}
         {isAuthenticated && (
-          <>
-            <Route exact path="/register-brand" component={RegisterBrand} />
-            <Route path="/" component={HomePage} />
-          </>
+          <Route exact path="/register-brand" component={RegisterBrand} />
         )}
+        {isAuthenticated && <Route path="/" component={HomePage} />}
         <Route component={NotFoundPage} />
       </Switch>
       <GlobalStyle />
