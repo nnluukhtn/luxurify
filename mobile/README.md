@@ -1,16 +1,34 @@
-# awesome_application
+# [TypeScript Example](https://www.typescriptlang.org/)
 
-A new Flutter project.
+<p>
+  <!-- iOS -->
+  <img alt="Supports Expo iOS" longdesc="Supports Expo iOS" src="https://img.shields.io/badge/iOS-4630EB.svg?style=flat-square&logo=APPLE&labelColor=999999&logoColor=fff" />
+  <!-- Android -->
+  <img alt="Supports Expo Android" longdesc="Supports Expo Android" src="https://img.shields.io/badge/Android-4630EB.svg?style=flat-square&logo=ANDROID&labelColor=A4C639&logoColor=fff" />
+  <!-- Web -->
+  <img alt="Supports Expo Web" longdesc="Supports Expo Web" src="https://img.shields.io/badge/web-4630EB.svg?style=flat-square&logo=GOOGLE-CHROME&labelColor=4285F4&logoColor=fff" />
+</p>
 
-## Getting Started
+```sh
+npx create-react-native-app -t with-typescript
+```
 
-This project is a starting point for a Flutter application.
+TypeScript is a superset of JavaScript which gives you static types and powerful tooling in Visual Studio Code including autocompletion and useful inline warnings for type errors.
 
-A few resources to get you started if this is your first Flutter project:
+## 🚀 How to use
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+#### Creating a new project
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Install the CLI: `npm i -g expo-cli`
+- Create a project: `expo init --template expo-template-blank-typescript`
+- `cd` into the project
+
+### Adding TypeScript to existing projects
+
+- Create a blank TypeScript config: `touch tsconfig.json`
+- Run `expo start` to automatically configure TypeScript
+- Rename files to TypeScript, `.tsx` for React components and `.ts` for plain typescript files
+
+## 📝 Notes
+
+- [Expo TypeScript guide](https://docs.expo.io/versions/latest/guides/typescript/)
