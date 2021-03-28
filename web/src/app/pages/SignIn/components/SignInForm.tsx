@@ -51,8 +51,8 @@ const SignInForm = ({ email, isAdmin, action = signIn }: Props) => {
   const onSuccess = (response: ApiResponse) => {
     if (response.success) {
       callSuccess('Successfully signed in.');
-      if (location?.query?.redirect) history.push(location.query.redirect);
       formik.resetForm();
+      if (location?.query?.redirect) history.push(location.query.redirect);
     }
     formik.setSubmitting(false);
     return null;
@@ -69,9 +69,9 @@ const SignInForm = ({ email, isAdmin, action = signIn }: Props) => {
     formik.validateForm().then(errors => {
       if (_.size(errors) === 0) {
         dispatch(action(formik.values, onSuccess, onFailed));
-        formik.setSubmitting(false);
       } else {
         callError('Please check your info again.');
+        formik.setSubmitting(false);
       }
     });
   };

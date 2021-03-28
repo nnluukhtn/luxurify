@@ -1,8 +1,9 @@
+import history from 'utils/history';
 import { configureAppStore } from '../configureStore';
 
 describe('configureStore', () => {
   it('should return a store with injected enhancers', () => {
-    const store = configureAppStore();
+    const store = configureAppStore({}, history);
     expect(store).toEqual(
       expect.objectContaining({
         runSaga: expect.any(Function),
@@ -13,7 +14,7 @@ describe('configureStore', () => {
   });
 
   it('should return an empty store', () => {
-    const store = configureAppStore();
+    const store = configureAppStore({}, history);
     expect(store.getState()).toBeUndefined();
   });
 });

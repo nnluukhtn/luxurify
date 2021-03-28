@@ -11,6 +11,7 @@ import 'react-app-polyfill/stable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import history from './utils/history';
 
 // Use consistent styling
 import 'sanitize.css/sanitize.css';
@@ -31,7 +32,8 @@ import { InjectedConnector } from '@web3-react/injected-connector';
 import { Web3Provider } from '@ethersproject/providers';
 import { Networks } from './constants';
 
-const store = configureAppStore();
+const initialState = {};
+const store = configureAppStore(initialState, history);
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;
 
 export const injectedConnector = new InjectedConnector({

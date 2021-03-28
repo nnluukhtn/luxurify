@@ -5,11 +5,12 @@ import { Spacer, StyledButton, StyledCheckbox } from 'app/common/styles';
 import { useFormik } from 'formik';
 import _ from 'lodash';
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { useInjectSaga } from 'redux-injectors';
 import styled from 'styled-components';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
+import { selectIsAuthenticated } from 'utils/SessionActions/SessionSelector';
 import * as Yup from 'yup';
 import { createUserAccount } from '../actions';
 import createUserSaga from '../saga';
@@ -25,6 +26,7 @@ const RegistrationForm = () => {
   const dispatch = useDispatch();
   const [checked, setChecked] = useState(false);
   const [callSuccess, callError] = useNotification();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -54,15 +56,21 @@ const RegistrationForm = () => {
 
   const onSuccess = (response: CreateUserResponse) => {
     if (response.success) {
-      if (!!response.response.email && !response.response.tokens) {
+      if (!!response.response.email) {
+        callSuccess('Created account successfully.');
         history.push(`/sign-in/?email=${response.response.email}`);
       }
-      callSuccess('Created account successfully.');
+      if (isAuthenticated) {
+        callSuccess('Created account successfully.');
+        history.push('/');
+      }
       formik.resetForm();
+      formik.setSubmitting(false);
     }
     return null;
   };
   const onFailed = (errors?: string[]) => {
+    formik.setSubmitting(false);
     return !!errors && callError(errors[0]);
   };
 
@@ -74,8 +82,8 @@ const RegistrationForm = () => {
         dispatch(createUserAccount(formik.values, onSuccess, onFailed));
       } else {
         console.log('Error', { errors });
+        formik.setSubmitting(false);
       }
-      formik.setSubmitting(false);
     });
   };
 
@@ -86,7 +94,7 @@ const RegistrationForm = () => {
       <SubHeader>Fill in the form to create an account</SubHeader>
 
       <Spacer height="2rem" />
-      <InputForm name="firstName" placeholder="First Name" disabled />
+      {/* <InputForm name="firstName" placeholder="First Name" disabled />
 
       <Spacer height="0.7rem" />
       <InputForm name="lastName" placeholder="Last Name" disabled />
@@ -97,7 +105,7 @@ const RegistrationForm = () => {
       <Spacer height="2rem" />
       <InputForm name="username" placeholder="Usermame" disabled />
 
-      <Spacer height="0.7rem" />
+      <Spacer height="0.7rem" /> */}
       <InputForm
         id="email"
         name="email"
