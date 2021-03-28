@@ -19,14 +19,40 @@ import { useTranslation } from 'react-i18next';
 import { SignUp } from './pages/SignUp/Loadable';
 import { SignIn } from './pages/SignIn/Loadable';
 import { RegisterBrand } from './pages/RegisterBrand/Loadable';
-import { useSelector } from 'react-redux';
-import { selectIsAuthenticated } from 'utils/SessionActions/SessionSelector';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectIsAuthenticated,
+  selectUser,
+} from 'utils/SessionActions/SessionSelector';
+import { Admin } from './pages/Admin/Loadable';
+import styled from 'styled-components';
+import { updateSession } from 'utils/SessionActions/SessionActions';
+import Cookies from 'js-cookie';
 
 export function App() {
+  const dispatch = useDispatch();
   const { i18n } = useTranslation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
+  const [isChecked, setChecked] = React.useState(false);
 
-  console.log({ isAuthenticated });
+  React.useEffect(() => {
+    const checkCookies = () => {
+      const accessToken = Cookies.get('accessToken');
+      const refreshToken = Cookies.get('refreshToken');
+      if (accessToken && refreshToken) {
+        const id = Cookies.get('id');
+        const email = Cookies.get('email');
+        dispatch(updateSession({ user: { id, email } }));
+      }
+      setChecked(true);
+    };
+    checkCookies();
+  }, [dispatch]);
+
+  if (isAuthenticated === undefined || !isChecked) {
+    return <>...Loading...</>;
+  }
 
   return (
     <BrowserRouter>
@@ -38,9 +64,12 @@ export function App() {
         <meta name="description" content="Luxurify Dapp" />
       </Helmet>
 
+      {isAuthenticated ? <SignedInInfo>User: {user.email}</SignedInInfo> : null}
+
       <Switch>
         {!isAuthenticated && <Route exact path="/sign-up" component={SignUp} />}
         {!isAuthenticated && <Route exact path="/sign-in" component={SignIn} />}
+        <Route path="/admin" component={Admin} />
         {!isAuthenticated && (
           <Redirect
             from="/"
@@ -57,3 +86,10 @@ export function App() {
     </BrowserRouter>
   );
 }
+
+export const SignedInInfo = styled.div`
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  padding: 8px 32px;
+`;

@@ -1,3 +1,4 @@
+import { Button } from 'antd';
 import Colors from 'app/common/Colors';
 import InputForm from 'app/common/components/InputForm';
 import { Spacer, StyledButton, StyledCheckbox } from 'app/common/styles';
@@ -141,6 +142,22 @@ const RegistrationForm = () => {
       >
         Sign Up
       </StyledButton>
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          marginTop: 32,
+        }}
+      >
+        <Button
+          type="link"
+          onClick={() => history.push('/sign-in')}
+          style={{ fontSize: 12 }}
+        >
+          Sign In
+        </Button>
+      </div>
     </RegistrationContainer>
   );
 };

@@ -34,8 +34,6 @@ const Wallet = () => {
     deactivate();
   };
 
-  console.log({ chainId });
-
   useEffect(() => {
     return () => {
       if (active) deactivate();
@@ -46,14 +44,21 @@ const Wallet = () => {
     <div style={{ margin: '16px 32px' }}>
       {active ? (
         <div style={{ marginBottom: '2rem' }}>
-          ✅{' '}
+          ✅
           <ConnectedLabel>
-            Connected<Button onClick={handleDeactivate}>Disconnect</Button>
+            Connected with Metamax
+            <Button type="primary" danger onClick={handleDeactivate}>
+              Disconnect
+            </Button>
           </ConnectedLabel>
         </div>
       ) : (
-        <Button onClick={handleActivate} style={{ marginBottom: '2rem' }}>
-          Connect
+        <Button
+          type="primary"
+          onClick={handleActivate}
+          style={{ marginBottom: '2rem' }}
+        >
+          Connect with Metamax
         </Button>
       )}
 
@@ -83,7 +88,9 @@ const Wallet = () => {
 export default Wallet;
 
 const ConnectedLabel = styled.em`
+  display: inline-block;
   cursor: pointer;
+  margin-left: 1rem;
   button {
     opacity: 0;
     margin-left: 0.5rem;

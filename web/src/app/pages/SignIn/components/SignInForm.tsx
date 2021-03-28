@@ -1,28 +1,30 @@
+import { Col, Row } from 'antd';
 import Colors from 'app/common/Colors';
 import InputForm from 'app/common/components/InputForm';
 import { Spacer, StyledButton } from 'app/common/styles';
+import { makeSelectLocation } from 'app/selectors';
 import { useFormik } from 'formik';
 import { ApiResponse } from 'global/services/api/types';
 import _ from 'lodash';
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import styled from 'styled-components';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
-import { useInjectSaga } from 'utils/redux-injectors';
 // import { useNavigation } from 'utils/hooks/RouterHook';
 import * as Yup from 'yup';
 import { signIn } from '../actions';
-import signInSaga from '../saga';
+import { Button } from 'antd';
 
 interface Props {
   email?: string;
+  isAdmin?: boolean;
+  action?: (...args: any) => void;
 }
-const SignInForm = ({ email }: Props) => {
-  useInjectSaga({
-    key: 'sign-in',
-    saga: signInSaga,
-  });
+const SignInForm = ({ email, isAdmin, action = signIn }: Props) => {
   const dispatch = useDispatch();
+  const history = useHistory();
+  const location = useSelector(makeSelectLocation());
   const [callSuccess, callError] = useNotification();
   // const navigate = useNavigation();
   const formik = useFormik({
@@ -49,12 +51,15 @@ const SignInForm = ({ email }: Props) => {
   const onSuccess = (response: ApiResponse) => {
     if (response.success) {
       callSuccess('Successfully signed in.');
+      if (location?.query?.redirect) history.push(location.query.redirect);
       formik.resetForm();
     }
+    formik.setSubmitting(false);
     return null;
   };
 
   const onFailed = (errors?: string[]) => {
+    formik.setSubmitting(false);
     return !!errors && callError(errors[0]);
   };
 
@@ -63,19 +68,21 @@ const SignInForm = ({ email }: Props) => {
     formik.setSubmitting(true);
     formik.validateForm().then(errors => {
       if (_.size(errors) === 0) {
-        dispatch(signIn(formik.values, onSuccess, onFailed));
+        dispatch(action(formik.values, onSuccess, onFailed));
+        formik.setSubmitting(false);
       } else {
-        console.log('Error', { errors });
+        callError('Please check your info again.');
       }
-      formik.setSubmitting(false);
     });
   };
 
   return (
     <SignInContainer>
-      <Header>Sign In</Header>
+      <Header>{isAdmin ? 'Admin ' : ''}Sign In</Header>
       <Spacer height="0.1rem" />
-      <SubHeader>Sign in to use Luxurify's service</SubHeader>
+      <SubHeader>
+        Sign in to {isAdmin ? 'manage' : 'use'} Luxurify's service
+      </SubHeader>
 
       <Spacer height="2rem" />
       <InputForm
@@ -98,15 +105,46 @@ const SignInForm = ({ email }: Props) => {
       />
 
       <Spacer height="2rem" />
-      <StyledButton
-        onClick={onClickSubmit}
-        disabled={!!_.size(formik.errors)}
-        type="primary"
-        loading={formik.isSubmitting}
-        style={{ marginLeft: 'auto' }}
+      <Row style={{ width: '100%' }}>
+        <Col span={6}></Col>
+        <Col span={9} style={{ textAlign: 'right' }}>
+          {!isAdmin && (
+            <StyledButton
+              onClick={() => history.push('/sign-up')}
+              type="default"
+              style={{ marginLeft: 'auto' }}
+            >
+              Sign Up
+            </StyledButton>
+          )}
+        </Col>
+        <Col span={9} style={{ textAlign: 'right' }}>
+          <StyledButton
+            onClick={onClickSubmit}
+            disabled={!!_.size(formik.errors)}
+            type="primary"
+            loading={formik.isSubmitting}
+          >
+            Sign In
+          </StyledButton>
+        </Col>
+      </Row>
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          marginTop: 64,
+        }}
       >
-        Sign In
-      </StyledButton>
+        <Button
+          type="link"
+          onClick={() => history.push(isAdmin ? '/sign-in' : '/admin/sign-in')}
+          style={{ fontSize: 12 }}
+        >
+          Sign in as {isAdmin ? 'User' : 'Admin'}
+        </Button>
+      </div>
     </SignInContainer>
   );
 };
