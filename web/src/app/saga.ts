@@ -8,7 +8,7 @@ import callApi from 'global/services/api';
 function* callSignOut({ payload }: ReturnType<typeof actions.signOut>) {
   const response: ApiResponse = yield callApi({
     method: 'delete',
-    route: '/users/sign_out',
+    route: payload.isAdmin ? 'admins/sign_out' : '/users/sign_out',
   });
 
   if (response.success) {

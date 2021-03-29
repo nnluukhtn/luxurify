@@ -87,11 +87,11 @@ export function App() {
       {isAuthenticated ? (
         <>
           <SignedInInfo>
-            User: {user.email}
+            {user.isAdmin ? 'Admin' : 'User'}: {user.email}
             <Button
               danger
               size="small"
-              onClick={() => dispatch(signOut(onSuccessSignOut))}
+              onClick={() => dispatch(signOut(user.isAdmin, onSuccessSignOut))}
             >
               Sign Out
             </Button>
