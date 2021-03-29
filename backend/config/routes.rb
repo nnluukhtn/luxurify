@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   end
 
   ### Admin
-  devise_for :admins
+  devise_for :admins, defaults: { format: :json }
 
   namespace :admins do
     resources :brands, only: [] do
