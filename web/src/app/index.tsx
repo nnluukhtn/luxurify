@@ -8,7 +8,13 @@
 
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Switch, Route, BrowserRouter, Redirect } from 'react-router-dom';
+import {
+  Switch,
+  Route,
+  BrowserRouter,
+  Redirect,
+  useHistory,
+} from 'react-router-dom';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 
 import { GlobalStyle } from 'styles/global-styles';
@@ -32,7 +38,6 @@ import { signOut } from './actions';
 import { Button } from 'antd';
 import { useInjectSaga } from 'utils/redux-injectors';
 import saga from './saga';
-import { useNavigation } from 'utils/hooks/RouterHook';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import { ApiResponse } from 'global/services/api/types';
 
@@ -43,7 +48,8 @@ export function App() {
   });
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
-  const navigate = useNavigation();
+  const history = useHistory();
+  // const navigate = useNavigation();
   const [callSuccess, callError] = useNotification();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
@@ -52,7 +58,7 @@ export function App() {
   const onSuccessSignOut = (response: ApiResponse) => {
     if (response.success) {
       callSuccess('Successfully sign out.');
-      navigate('/sign-in');
+      history.push('/sign-in');
     } else callError('There is an error while trying to sign out.');
   };
 

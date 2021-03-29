@@ -11,6 +11,9 @@ function* callRegisterBrand({
   const response: RegisterBrandResponse = yield callApi({
     method: 'post',
     route: '/brands/register',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
     data: payload.params,
   });
 
