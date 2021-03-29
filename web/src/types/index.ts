@@ -18,6 +18,7 @@ export interface InjectReducerParams {
 
 type ApplicationSaga =
   | 'sign-in'
+  | 'sign-out'
   | 'sign-up'
   | 'verifyEmail'
   | 'approveCompany'

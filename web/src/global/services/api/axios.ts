@@ -74,7 +74,6 @@ const callAxios = ({
   // Main return
   return axios(config)
     .then((response: AxiosResponse) => {
-      console.log({ AxiosHeader: response });
       return responseAdapter(response);
     })
     .catch((error: AxiosError) => {

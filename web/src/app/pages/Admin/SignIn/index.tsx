@@ -1,17 +1,17 @@
 import { PageContainer } from 'app/common/components';
 import { Container } from 'app/common/styles';
+import SignInForm from 'app/pages/SignIn/components/SignInForm';
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import { useInjectSaga } from 'utils/redux-injectors';
-import { signIn } from './actions';
-import SignInForm from './components/SignInForm';
-import signInSaga from './saga';
+import { adminSignIn } from './actions';
+import adminSignInSaga from './saga';
 
-export function SignIn() {
+export function AdminSignIn() {
   useInjectSaga({
     key: 'sign-in',
-    saga: signInSaga,
+    saga: adminSignInSaga,
   });
   const { search } = useLocation();
   const email = new URLSearchParams(search).get('email');
@@ -19,8 +19,8 @@ export function SignIn() {
   return (
     <>
       <Helmet>
-        <title>Sign In</title>
-        <meta name="description" content="Luxurify - Sign In" />
+        <title>Admin Sign In</title>
+        <meta name="description" content="Luxurify - Admin Sign In" />
       </Helmet>
       <Container>
         <PageContainer
@@ -31,7 +31,7 @@ export function SignIn() {
             justifyContent: 'center',
           }}
         >
-          <SignInForm email={email || ''} action={signIn} />
+          <SignInForm email={email || ''} action={adminSignIn} isAdmin />
         </PageContainer>
       </Container>
     </>

@@ -1,11 +1,11 @@
 import { createUserAdapter } from './adapters';
 import * as actions from './actions';
 import ActionTypes from './actionTypes';
-import Cookies from 'js-cookie';
 import { CreateUserResponse } from './types';
 import callApi from 'global/services/api';
 import { all, put, takeLatest } from 'redux-saga/effects';
 import { updateSession } from 'utils/SessionActions/SessionActions';
+import { saveSessionAsCookies } from 'utils/saveSessionAsCookies';
 
 function* createUser({
   payload,
@@ -22,7 +22,7 @@ function* createUser({
     const token = response.header.authorization;
 
     if (token !== undefined) {
-      saveSessionAsCookies(user.id.toString(), token);
+      saveSessionAsCookies(user.id.toString(), token, user.email);
       yield put(
         updateSession({
           user,
@@ -37,12 +37,6 @@ function* createUser({
     yield payload.onFailed(errorMsgs);
   }
 }
-
-const saveSessionAsCookies = (userId: string, accessToken: string) => {
-  Cookies.set('id', userId);
-  Cookies.set('accessToken', accessToken);
-  Cookies.set('refreshToken', accessToken);
-};
 
 export default function* createUserSaga() {
   yield all([takeLatest(ActionTypes.CREATE_USER_ACCOUNT, createUser)]);
