@@ -14,6 +14,7 @@ export interface User {
   avatarThumb?: string;
   avatarMedium?: string;
   email?: string;
+  isAdmin?: boolean;
 }
 
 // UserResponse is the user object from the server response

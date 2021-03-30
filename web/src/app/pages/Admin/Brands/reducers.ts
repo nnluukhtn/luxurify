@@ -11,6 +11,7 @@ const adminBrandReducer: Reducer<AdminBrandsState, AdminBrandsActions> = (
   state: AdminBrandsState = initialBrandState,
   action: AdminBrandsActions,
 ) => {
+  console.log('INSIDE REDUCER', action);
   switch (action.type) {
     case ActionTypes.FETCH_PENDING_BRANDS:
       return {

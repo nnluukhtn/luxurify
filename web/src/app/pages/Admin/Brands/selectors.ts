@@ -3,7 +3,7 @@ import { initialBrandState } from './reducers';
 import { RootState } from 'types';
 
 const selectBrandsState = (state: RootState) => {
-  return state.admin?.brand || initialBrandState;
+  return state.brands || initialBrandState;
 };
 
 export const makeSelectBrandsById = createSelector(

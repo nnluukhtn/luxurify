@@ -52,6 +52,7 @@ export const Spacer = styled.div<{
 
 export const StyledButton = styled(AntBtn)`
   &.ant-btn {
+    width: fit-content;
     border-radius: 5px;
   }
 `;

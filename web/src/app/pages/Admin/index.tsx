@@ -42,7 +42,6 @@ export const useRegisterBrandSlice = () => {
  */
 
 export function Admin() {
-  console.log('ADMIN REDUCER: ', slice.reducer);
   const isAuthenticated = useSelector(selectIsAuthenticated);
   return (
     <Switch>

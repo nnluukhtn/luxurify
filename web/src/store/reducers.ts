@@ -9,6 +9,7 @@ import { InjectedReducersType } from 'utils/types/injector-typings';
 import history from '../utils/history';
 import registerBrandReducer from 'app/pages/RegisterBrand/reducers';
 import adminReducer from 'app/pages/Admin/reducer';
+import brandReducer from 'app/pages/Admin/Brands/slice';
 
 /**
  * Merges the main reducer with the router state and dynamically injected reducers
@@ -22,6 +23,7 @@ export function createReducer(injectedReducers: InjectedReducersType = {}) {
     router: connectRouter(history),
     session: sessionReducer,
     registerBrand: registerBrandReducer,
+    brands: brandReducer,
     admin: adminReducer,
     ...injectedReducers,
   });

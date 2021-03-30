@@ -1,8 +1,14 @@
 import callApi from 'global/services/api';
 import { ApiResponse } from 'global/services/api/types';
 import { all, put, takeLatest } from 'redux-saga/effects';
-import ActionTypes from './actionTypes';
 import * as actions from './actions';
+import {
+  approveBrand,
+  rejectBrand,
+  fetchPendingBrands,
+  fetchPendingBrandsFailed,
+  fetchPendingBrandsSuccess,
+} from './slice';
 
 function* callFetchPendingBrands() {
   const response: ApiResponse = yield callApi({
@@ -11,16 +17,15 @@ function* callFetchPendingBrands() {
   });
 
   if (response.success) {
-    yield put(actions.fetchPendingBrandsSuccess(response));
+    const brands = response.response.data;
+    yield put(fetchPendingBrandsSuccess({ brands }));
   } else {
-    yield put(actions.fetchPendingBrandsFailed());
+    yield put(fetchPendingBrandsFailed({}));
   }
 }
 
-function* callApproveBrand({
-  payload,
-}: ReturnType<typeof actions.approveBrand>) {
-  const { brandId } = payload;
+function* callApproveBrand({ payload }: any) {
+  const { brandId, callback } = payload;
   const response: ApiResponse = yield callApi({
     method: 'post',
     route: `/admins/brands/${brandId}/approve`,
@@ -29,10 +34,14 @@ function* callApproveBrand({
   if (response.success) {
     yield put(actions.fetchPendingBrands());
   }
+
+  if (response && callback) {
+    callback(response, 'approve');
+  }
 }
 
-function* callRejectBrand({ payload }: ReturnType<typeof actions.rejectBrand>) {
-  const { brandId } = payload;
+function* callRejectBrand({ payload }: any) {
+  const { brandId, callback } = payload;
   const response: ApiResponse = yield callApi({
     method: 'post',
     route: `/admins/brands/${brandId}/reject`,
@@ -41,12 +50,16 @@ function* callRejectBrand({ payload }: ReturnType<typeof actions.rejectBrand>) {
   if (response.success) {
     yield put(actions.fetchPendingBrands());
   }
+
+  if (response && callback) {
+    callback(response, 'reject');
+  }
 }
 
 export default function* brandSaga() {
   yield all([
-    takeLatest(ActionTypes.FETCH_PENDING_BRANDS, callFetchPendingBrands),
-    takeLatest(ActionTypes.APPROVE_BRAND_REQUEST, callApproveBrand),
-    takeLatest(ActionTypes.REJECT_BRAND_REQUEST, callRejectBrand),
+    takeLatest(fetchPendingBrands.type, callFetchPendingBrands),
+    takeLatest(approveBrand.type, callApproveBrand),
+    takeLatest(rejectBrand.type, callRejectBrand),
   ]);
 }
