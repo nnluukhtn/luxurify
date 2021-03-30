@@ -19,6 +19,7 @@ import _ from 'lodash';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import { registerBrand } from '../actions';
 import { useDispatch } from 'react-redux';
+import ErrorContainer from 'app/common/components/ErrorContainer';
 
 const RegisterBrandForms = () => {
   const dispatch = useDispatch();
@@ -28,8 +29,8 @@ const RegisterBrandForms = () => {
     initialValues: {
       name: '',
       category: '',
-      bir2303Cert: null,
-      registrationCert: null,
+      bir2303Cert: [],
+      registrationCert: [],
     },
     validateOnBlur: true,
     validateOnChange: false,
@@ -37,6 +38,20 @@ const RegisterBrandForms = () => {
     validationSchema: Yup.object().shape({
       name: Yup.string().required('Required'),
       category: Yup.string().required('Required'),
+      bir2303Cert: Yup.array()
+        .of(
+          Yup.mixed().test('Required', value => {
+            return !!value.type && !!value.uid;
+          }),
+        )
+        .min(1, 'Required'),
+      registrationCert: Yup.array()
+        .of(
+          Yup.mixed().test('Required', value => {
+            return !!value.type && !!value.uid;
+          }),
+        )
+        .min(1, 'Required'),
     }),
     onSubmit: values => {
       console.log({
@@ -70,6 +85,7 @@ const RegisterBrandForms = () => {
       } else {
         callError('Please check your info again.');
         formik.setSubmitting(false);
+        console.log({ errors });
       }
     });
   };
@@ -99,6 +115,9 @@ const RegisterBrandForms = () => {
         onChange={formik.handleChange}
         value={formik.values.name}
       />
+      {!!formik.errors.name && (
+        <ErrorContainer>{formik.errors.name}</ErrorContainer>
+      )}
       <Spacer height="0.7rem" />
       <InputForm
         id="category"
@@ -107,6 +126,9 @@ const RegisterBrandForms = () => {
         onChange={formik.handleChange}
         value={formik.values.category}
       />
+      {!!formik.errors.category && (
+        <ErrorContainer>{formik.errors.category}</ErrorContainer>
+      )}
       <Spacer height="2rem" />
       <FormContainer>
         <AttachmentUpload
@@ -117,6 +139,9 @@ const RegisterBrandForms = () => {
           accept={'image/*,.pdf'}
           placeholder="Add pdf or image file"
         />
+        {!!formik.errors.bir2303Cert && (
+          <ErrorContainer>{formik.errors.bir2303Cert}</ErrorContainer>
+        )}
       </FormContainer>
       <Spacer height="1.5rem" />
       <FormContainer>
@@ -128,6 +153,9 @@ const RegisterBrandForms = () => {
           accept={'image/*,.pdf'}
           placeholder="Add pdf or image file"
         />
+        {!!formik.errors.registrationCert && (
+          <ErrorContainer>{formik.errors.registrationCert}</ErrorContainer>
+        )}
       </FormContainer>
       <Row style={{ width: '100%', marginTop: '2rem' }} justify="end">
         <Col>
@@ -142,7 +170,7 @@ const RegisterBrandForms = () => {
         >
           <StyledButton
             onClick={onClickSubmit}
-            disabled={!!_.size(formik.errors)}
+            // disabled={!!_.size(formik.errors)}
             type="primary"
             loading={formik.isSubmitting}
           >

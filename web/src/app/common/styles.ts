@@ -21,6 +21,7 @@ export const FormLabel = styled.div`
 
 export const FormContainer = styled.div`
   width: 250px;
+  margin-bottom: 0.3rem;
 `;
 
 export const StyledInput = styled(AntInput)`
