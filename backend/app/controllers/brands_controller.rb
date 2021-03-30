@@ -5,18 +5,10 @@ class BrandsController < ApplicationController
     brand = Brand.find_by(name: register_params[:name])
 
     if brand
-      unless brand.pending_users.exists?(id: current_user.id)
-        ActiveRecord::Base.transaction do
-          brand.bir_2303_certification.attach(params[:bir_2303_certification]) if params[:bir_2303_certification]
-          brand.certificate_of_registration.attach(params[:certificate_of_registration]) if params[:certificate_of_registration]
-          brand.pending_users << current_user
-        end
-      end
+      brand.pending_users << current_user unless brand.pending_users.exists?(id: current_user.id)
     else
       ActiveRecord::Base.transaction do
         brand = Brand.create!(register_params)
-        brand.bir_2303_certification.attach(params[:bir_2303_certification]) if params[:bir_2303_certification]
-        brand.certificate_of_registration.attach(params[:certificate_of_registration]) if params[:certificate_of_registration]
         brand.pending_users << current_user
       end
     end
