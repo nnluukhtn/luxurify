@@ -23,6 +23,7 @@ gem 'active_model_serializers'
 gem 'faraday'
 gem 'faraday_middleware'
 gem 'patron'
+gem 'annotate', '~> 3.0.3'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
