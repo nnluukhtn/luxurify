@@ -7,6 +7,8 @@ import { connectRouter } from 'connected-react-router';
 import sessionReducer from 'utils/SessionActions/SessionReducer';
 import { InjectedReducersType } from 'utils/types/injector-typings';
 import history from '../utils/history';
+import registerBrandReducer from 'app/pages/RegisterBrand/reducers';
+import adminReducer from 'app/pages/Admin/reducer';
 
 /**
  * Merges the main reducer with the router state and dynamically injected reducers
@@ -19,6 +21,8 @@ export function createReducer(injectedReducers: InjectedReducersType = {}) {
   return combineReducers({
     router: connectRouter(history),
     session: sessionReducer,
+    registerBrand: registerBrandReducer,
+    admin: adminReducer,
     ...injectedReducers,
   });
 }

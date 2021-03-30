@@ -54,12 +54,19 @@ export function App() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
   const [isChecked, setChecked] = React.useState(false);
+  const [isLoading, setLoading] = React.useState(false);
+
+  const onSignOut = (event: any) => {
+    setLoading(true);
+    dispatch(signOut(user.isAdmin, onSuccessSignOut));
+  };
 
   const onSuccessSignOut = (response: ApiResponse) => {
     if (response.success) {
       callSuccess('Successfully sign out.');
-      history.push('/sign-in');
+      history?.push('/sign-in');
     } else callError('There is an error while trying to sign out.');
+    setLoading(false);
   };
 
   React.useEffect(() => {
@@ -94,11 +101,7 @@ export function App() {
         <>
           <SignedInInfo>
             {user.isAdmin ? 'Admin' : 'User'}: {user.email}
-            <Button
-              danger
-              size="small"
-              onClick={() => dispatch(signOut(user.isAdmin, onSuccessSignOut))}
-            >
+            <Button danger size="small" onClick={onSignOut} loading={isLoading}>
               Sign Out
             </Button>
           </SignedInInfo>
@@ -126,7 +129,7 @@ export function App() {
   );
 }
 
-export const SignedInInfo = styled.div`
+export const SignedInInfo = styled.div<{ isLoading?: boolean }>`
   width: fit-content;
   font-size: 14px;
   font-weight: 500;
@@ -141,6 +144,8 @@ export const SignedInInfo = styled.div`
     transform: translateY(-8px);
     margin: 4px auto;
     border-radius: 5px;
+    ${({ isLoading }) =>
+      isLoading ? 'opacity: 1;transform: translateY(0);' : ''}
   }
   :hover {
     button {

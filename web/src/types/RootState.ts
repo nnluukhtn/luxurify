@@ -1,6 +1,8 @@
+import { History } from 'history';
 import { SessionState } from './../utils/SessionActions/types.d';
 import { RegisterBrandState } from 'app/pages/RegisterBrand/types';
 import { RouterState } from 'connected-react-router';
+import { AdminState } from 'app/pages/Admin/types';
 // [IMPORT NEW CONTAINERSTATE ABOVE] < Needed for generating containers seamlessly
 
 /* 
@@ -8,8 +10,10 @@ import { RouterState } from 'connected-react-router';
   You have to declare them here manually
 */
 export interface RootState {
-  router: RouterState;
+  router: RouterState<History>;
   session: SessionState;
   registerBrand?: RegisterBrandState;
+  admin?: AdminState;
+
   // [INSERT NEW REDUCER KEY ABOVE] < Needed for generating containers seamlessly
 }

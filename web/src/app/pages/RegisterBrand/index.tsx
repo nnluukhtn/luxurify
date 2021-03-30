@@ -40,6 +40,10 @@ export const useRegisterBrandSlice = () => {
  */
 
 export function RegisterBrand() {
+  useInjectSaga({
+    key: slice.name,
+    saga: registerBrandSaga,
+  });
   return (
     <>
       <Helmet>

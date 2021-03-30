@@ -52,7 +52,7 @@ const SignInForm = ({ email, isAdmin, action = signIn }: Props) => {
     if (response.success) {
       callSuccess('Successfully signed in.');
       formik.resetForm();
-      if (location?.query?.redirect) history.push(location.query.redirect);
+      if (location?.pathname) history.push(location.pathname);
     }
     formik.setSubmitting(false);
     return null;
@@ -105,20 +105,18 @@ const SignInForm = ({ email, isAdmin, action = signIn }: Props) => {
       />
 
       <Spacer height="2rem" />
-      <Row style={{ width: '100%' }}>
-        <Col span={6}></Col>
-        <Col span={9} style={{ textAlign: 'right' }}>
+      <Row style={{ width: '100%' }} justify="end">
+        <Col>
           {!isAdmin && (
             <StyledButton
               onClick={() => history.push('/sign-up')}
               type="default"
-              style={{ marginLeft: 'auto' }}
             >
               Sign Up
             </StyledButton>
           )}
         </Col>
-        <Col span={9} style={{ textAlign: 'right' }}>
+        <Col style={{ marginLeft: '1rem' }}>
           <StyledButton
             onClick={onClickSubmit}
             disabled={!!_.size(formik.errors)}

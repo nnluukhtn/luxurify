@@ -74,13 +74,15 @@ const Wallet = () => {
         <strong>Account: </strong> {account || '-'}
       </p>
 
-      <SWRConfig value={{ fetcher: fetcher(library, ERC20ABI) }}>
-        {/* <EtherView /> */}
-        <Balance>
-          <EthBalance />
-          {chainId !== undefined && <TokenList chainId={chainId} />}
-        </Balance>
-      </SWRConfig>
+      <div style={{ width: 'min-content', margin: '0 auto' }}>
+        <SWRConfig value={{ fetcher: fetcher(library, ERC20ABI) }}>
+          {/* <EtherView /> */}
+          <Balance>
+            <EthBalance />
+            {chainId !== undefined && <TokenList chainId={chainId} />}
+          </Balance>
+        </SWRConfig>
+      </div>
     </div>
   );
 };

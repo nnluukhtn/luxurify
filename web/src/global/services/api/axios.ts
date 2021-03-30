@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import { APIParams } from './types';
 import { defaultHeaders } from './constants';
 import { errorResponseAdapter, responseAdapter } from './adapters';
-import refreshToken from './refresh';
+// import refreshToken from './refresh';
 
 const insertFormData = (formData: FormData, key: string, value: any) => {
   if (_.isPlainObject(value)) {
@@ -45,9 +45,9 @@ const callAxios = ({
   data,
 }: APIParams): any => {
   // Values needed
-  const authenticationHeaders = Cookies.get('access_token')
+  const authenticationHeaders = Cookies.get('accessToken')
     ? {
-        Authorization: Cookies.get('access_token'),
+        Authorization: Cookies.get('accessToken'),
       }
     : {};
   // Initial Config
@@ -83,17 +83,17 @@ const callAxios = ({
       // If have response
       switch (response.status) {
         case 401:
-          const tokenPromise = refreshToken();
-          if (tokenPromise !== null)
-            tokenPromise
-              .then(response => {
-                Cookies.set('access_token', response.data.access_token);
-                return callAxios({ route, method, headers, data });
-              })
-              .catch(() => {
-                Cookies.remove('access_token');
-                Cookies.remove('refresh_token');
-              });
+          // const tokenPromise = refreshToken();
+          // if (tokenPromise !== null)
+          //   tokenPromise
+          //     .then(response => {
+          //       Cookies.set('access_token', response.data.access_token);
+          //       return callAxios({ route, method, headers, data });
+          //     })
+          //     .catch(() => {
+          //       Cookies.remove('access_token');
+          //       Cookies.remove('refresh_token');
+          //     });
           break;
       }
 
