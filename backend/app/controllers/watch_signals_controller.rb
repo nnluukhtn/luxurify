@@ -7,6 +7,12 @@ class WatchSignalsController < ApplicationController
     render json: resp.body, status: resp.status
   end
 
+  def watch_by_reference_number
+    resp = watch_signals_connection.get("watch/referencenumber/#{params[:reference_number]}")
+
+    render json: resp.body, status: resp.status
+  end
+
   private
 
   def watch_signals_connection
