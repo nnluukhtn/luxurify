@@ -1,6 +1,12 @@
 import { InputProps } from 'antd';
-import { FormContainer, FormLabel, StyledInput } from 'app/common/styles';
+import {
+  FormContainer,
+  FormLabel,
+  Spacer,
+  StyledInput,
+} from 'app/common/styles';
 import React from 'react';
+import ErrorContainer from '../ErrorContainer';
 import InputPassword from '../InputPassword';
 import AutoComplete, { Option, Options } from './AutoComplete';
 
@@ -9,6 +15,7 @@ interface ComponentProps {
   onChange: (...args: any) => void;
   id?: string;
   label?: string;
+  error?: any;
   placeholder?: string;
   type?: 'default' | 'password' | 'email' | 'autocomplete';
   options?: Options;
@@ -21,6 +28,7 @@ function InputForm({
   name,
   id,
   label: inputLabel,
+  error,
   placeholder,
   type = 'default',
   options,
@@ -69,6 +77,12 @@ function InputForm({
       <FormContainer>
         {inputLabel && <FormLabel>{inputLabel}</FormLabel>}
         {renderInput()}
+        {!!error && (
+          <>
+            <Spacer height=".3rem" />
+            <ErrorContainer>{error}</ErrorContainer>
+          </>
+        )}
       </FormContainer>
     </>
   );

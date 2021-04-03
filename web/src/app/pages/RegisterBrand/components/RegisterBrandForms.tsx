@@ -127,10 +127,8 @@ const RegisterBrandForms = () => {
         searchCondition={(keyword, option) =>
           option.value.toLowerCase().indexOf(keyword.toLowerCase()) >= 0
         }
+        error={formik.errors.name}
       />
-      {!!formik.errors.name && (
-        <ErrorContainer>{formik.errors.name}</ErrorContainer>
-      )}
       <Spacer height="0.7rem" />
       <InputForm
         id="category"
@@ -143,10 +141,9 @@ const RegisterBrandForms = () => {
           )
         }
         value={formik.values.category}
+        error={formik.errors.name}
       />
-      {!!formik.errors.category && (
-        <ErrorContainer>{formik.errors.category}</ErrorContainer>
-      )}
+
       <Spacer height="2rem" />
       <FormContainer>
         <AttachmentUpload
@@ -192,7 +189,6 @@ const RegisterBrandForms = () => {
         >
           <StyledButton
             onClick={onClickSubmit}
-            // disabled={!!_.size(formik.errors)}
             type="primary"
             loading={formik.isSubmitting}
           >
