@@ -7,7 +7,7 @@ import {
   SubHeader,
 } from 'app/common/styles';
 import { useFormik } from 'formik';
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { BrandPayload, RegisterBrandResponse } from '../types';
 import * as Yup from 'yup';
@@ -17,15 +17,18 @@ import { Col, Row } from 'antd';
 import { useHistory } from 'react-router';
 import _ from 'lodash';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ErrorContainer from 'app/common/components/ErrorContainer';
 import { useRegisterBrandSlice } from '../slice';
+import { makeSelectWSBrandOptions } from '../selectors';
 
 const RegisterBrandForms = () => {
   const { actions } = useRegisterBrandSlice();
   const dispatch = useDispatch();
   const [callSuccess, callError] = useNotification();
   const history = useHistory();
+  const brandOptions = useSelector(makeSelectWSBrandOptions);
+
   const formik = useFormik<BrandPayload>({
     initialValues: {
       name: '',
@@ -63,8 +66,8 @@ const RegisterBrandForms = () => {
     },
   });
 
-  const handleUpdateValue = (event: React.ChangeEvent<HTMLInputElement>) =>
-    formik.handleChange('category')(event?.target?.value?.toLowerCase() || '');
+  const handleUpdateValue = (name: string, value: string) =>
+    formik.setFieldValue(name, value);
 
   const onClickSubmit = () => {
     formik.setErrors({});
@@ -107,17 +110,23 @@ const RegisterBrandForms = () => {
     }
   };
 
+  useEffect(() => {
+    dispatch(actions.fetchWSBrands({}));
+  }, [actions, dispatch]);
+
   return (
     <RegisterBrandFormContainer>
       <Header>Register A Brand</Header>
       <SubHeader>Fill in the form to register your brand</SubHeader>
       <Spacer height="2.5rem" />
       <InputForm
-        id="name"
-        name="name"
+        type="autocomplete"
+        options={brandOptions}
+        onChange={value => handleUpdateValue('name', value)}
         placeholder="Brand Name"
-        onChange={formik.handleChange}
-        value={formik.values.name}
+        searchCondition={(keyword, option) =>
+          option.value.toLowerCase().indexOf(keyword.toLowerCase()) >= 0
+        }
       />
       {!!formik.errors.name && (
         <ErrorContainer>{formik.errors.name}</ErrorContainer>
@@ -127,7 +136,12 @@ const RegisterBrandForms = () => {
         id="category"
         name="category"
         placeholder="Brand Category"
-        onChange={handleUpdateValue}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+          handleUpdateValue(
+            'category',
+            event?.target?.value?.toLowerCase() || '',
+          )
+        }
         value={formik.values.category}
       />
       {!!formik.errors.category && (
@@ -143,6 +157,7 @@ const RegisterBrandForms = () => {
           accept={'image/*,.pdf'}
           placeholder="Add pdf or image file"
           allowMultiple={false}
+          limitAmount={1}
         />
         {!!formik.errors.bir2303Cert && (
           <ErrorContainer>{formik.errors.bir2303Cert}</ErrorContainer>
@@ -158,6 +173,7 @@ const RegisterBrandForms = () => {
           accept={'image/*,.pdf'}
           placeholder="Add pdf or image file"
           allowMultiple={false}
+          limitAmount={1}
         />
         {!!formik.errors.registrationCert && (
           <ErrorContainer>{formik.errors.registrationCert}</ErrorContainer>

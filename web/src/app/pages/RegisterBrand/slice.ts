@@ -21,7 +21,7 @@ const registerBrandSlice = createSlice({
     },
 
     fetchWSBrandsSuccess(state, action) {
-      const brands = action.payload.data;
+      const brands = action.payload.brands;
       return {
         ...state,
         brands,

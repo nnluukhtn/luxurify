@@ -30,6 +30,7 @@ interface ComponentProps {
   videoLimit?: number;
   onFileChange: (type: string, files: AttachmentFile[]) => void;
   onFileUpload: (isUploading: boolean) => void;
+  limitAmount?: number;
 }
 
 const AttachmentUpload = (props: ComponentProps) => {
@@ -44,9 +45,10 @@ const AttachmentUpload = (props: ComponentProps) => {
     videoLimit = 100000000,
     onFileChange,
     onFileUpload,
+    limitAmount,
   } = props;
   const [, callError] = useNotification();
-
+  const isDisabled = !!limitAmount && (fileList || []).length >= limitAmount;
   const getBase64 = (file, cb) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -59,6 +61,7 @@ const AttachmentUpload = (props: ComponentProps) => {
   };
 
   const onBeforeUpload = (file: AttachmentFile) => {
+    if (!!limitAmount && (fileList || []).length >= limitAmount) return false;
     if (file.type.includes('image')) {
       getBase64(file, result => {
         file['thumbUrl'] = result;
@@ -117,9 +120,10 @@ const AttachmentUpload = (props: ComponentProps) => {
         beforeUpload={onBeforeUpload}
         accept={accept}
         className="upload-list-inline"
+        disabled={isDisabled}
       >
         <FormLabel>{label}</FormLabel>
-        <Button type="link" style={{ padding: 0 }}>
+        <Button type="link" style={{ padding: 0 }} disabled={isDisabled}>
           {btntitle ? (
             btntitle
           ) : (

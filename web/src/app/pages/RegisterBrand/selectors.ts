@@ -5,7 +5,16 @@ import { initialState } from './slice';
 
 const selectSlice = (state: RootState) => state.registerBrand || initialState;
 
-export const selectRegisterBrand = createSelector(
+export const makeSelectWSBrands = createSelector(
   [selectSlice],
-  state => state,
+  state => state.brands || [],
+);
+
+export const makeSelectWSBrandOptions = createSelector(
+  makeSelectWSBrands,
+  brands =>
+    brands.map(brand => ({
+      label: brand.name,
+      value: brand.name,
+    })),
 );

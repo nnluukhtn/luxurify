@@ -32,13 +32,24 @@ export interface RegisterBrandParams {
   };
 }
 
-export interface WSBrand {
+export interface WSBrandRemote {
   id: string;
   name: string;
   total: string;
 }
 
+export interface WSBrand extends Pick<WSBrandRemote, 'name'> {
+  id: number;
+  total: number;
+}
 export interface RegisterBrandPayload {
   params: BrandPayload;
   callback?: (response: RegisterBrandResponse) => void;
+}
+
+export interface WSBrandResponse extends ApiResponse {
+  response: {
+    success: boolean;
+    data: WSBrandRemote[];
+  };
 }
