@@ -1,13 +1,10 @@
 import { RegisterBrandResponse } from './types';
 // import { take, call, put, select, takeLatest } from 'redux-saga/effects';
 import { takeLatest } from 'redux-saga/effects';
-import * as actions from './actions';
-import ActionTypes from './actionTypes';
 import callApi from 'global/services/api';
+import { registerBrand } from './slice';
 
-function* callRegisterBrand({
-  payload,
-}: ReturnType<typeof actions.registerBrand>) {
+function* callRegisterBrand(payload: any) {
   const response: RegisterBrandResponse = yield callApi({
     method: 'post',
     route: '/brands/register',
@@ -23,5 +20,5 @@ function* callRegisterBrand({
 }
 
 export function* registerBrandSaga() {
-  yield takeLatest(ActionTypes.REGISTER_BRAND, callRegisterBrand);
+  yield takeLatest(registerBrand.type, callRegisterBrand);
 }

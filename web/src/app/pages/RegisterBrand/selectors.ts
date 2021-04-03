@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 
 import { RootState } from 'types';
-import { initialState } from '.';
+import { initialState } from './slice';
 
 const selectSlice = (state: RootState) => state.registerBrand || initialState;
 

@@ -8,13 +8,7 @@
 
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
-import {
-  Switch,
-  Route,
-  BrowserRouter,
-  Redirect,
-  useHistory,
-} from 'react-router-dom';
+import { Switch, Route, BrowserRouter, Redirect } from 'react-router-dom';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 
 import { GlobalStyle } from 'styles/global-styles';
@@ -26,20 +20,14 @@ import { SignUp } from './pages/SignUp/Loadable';
 import { SignIn } from './pages/SignIn/Loadable';
 import { RegisterBrand } from './pages/RegisterBrand/Loadable';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectIsAuthenticated,
-  selectUser,
-} from 'utils/SessionActions/SessionSelector';
+import { selectIsAuthenticated } from 'utils/SessionActions/SessionSelector';
 import { Admin } from './pages/Admin/Loadable';
 import styled from 'styled-components';
 import { updateSession } from 'utils/SessionActions/SessionActions';
 import Cookies from 'js-cookie';
-import { signOut } from './actions';
-import { Button } from 'antd';
 import { useInjectSaga } from 'utils/redux-injectors';
 import saga from './saga';
-import useNotification from 'utils/hooks/NotificationHook/useNotification';
-import { ApiResponse } from 'global/services/api/types';
+import NavigationBar from './common/components/NavigationBar';
 
 export function App() {
   useInjectSaga({
@@ -48,26 +36,9 @@ export function App() {
   });
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
-  const history = useHistory();
   // const navigate = useNavigation();
-  const [callSuccess, callError] = useNotification();
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const user = useSelector(selectUser);
   const [isChecked, setChecked] = React.useState(false);
-  const [isLoading, setLoading] = React.useState(false);
-
-  const onSignOut = (event: any) => {
-    setLoading(true);
-    dispatch(signOut(user.isAdmin, onSuccessSignOut));
-  };
-
-  const onSuccessSignOut = (response: ApiResponse) => {
-    if (response.success) {
-      callSuccess('Successfully sign out.');
-      history?.push('/sign-in');
-    } else callError('There is an error while trying to sign out.');
-    setLoading(false);
-  };
 
   React.useEffect(() => {
     const checkCookies = () => {
@@ -97,16 +68,7 @@ export function App() {
         <meta name="description" content="Luxurify Dapp" />
       </Helmet>
 
-      {isAuthenticated ? (
-        <>
-          <SignedInInfo>
-            {user.isAdmin ? 'Admin' : 'User'}: {user.email}
-            <Button danger size="small" onClick={onSignOut} loading={isLoading}>
-              Sign Out
-            </Button>
-          </SignedInInfo>
-        </>
-      ) : null}
+      <NavigationBar />
 
       <Switch>
         {!isAuthenticated && <Route exact path="/sign-up" component={SignUp} />}

@@ -5,7 +5,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import { selectIsAuthenticated } from 'utils/SessionActions/SessionSelector';
 import { Brands } from './Brands';
 import { AdminSignIn } from './SignIn/Loadable';
-import { AdminActions, AdminState } from './types';
+import { AdminState } from './types';
 import { useInjectReducer } from 'utils/redux-injectors';
 import { createSlice } from 'utils/@reduxjs/toolkit';
 import { PayloadAction } from '@reduxjs/toolkit';
@@ -17,11 +17,12 @@ const slice = createSlice({
   name: 'admin',
   initialState,
   reducers: {
-    adminReducer(AdminState, action: PayloadAction<AdminActions>) {},
+    adminReducer(AdminState, action: PayloadAction<any>) {},
   },
 });
 
 export const { actions: adminActions } = slice;
+export const adminReducer = slice.reducer;
 
 export const useRegisterBrandSlice = () => {
   useInjectReducer({ key: slice.name, reducer: slice.reducer });

@@ -1,8 +1,4 @@
 import { ApiResponse } from './../../../../global/services/api/types';
-import { ActionType } from 'typesafe-actions';
-import * as actions from './actions';
-
-export type AdminBrandsActions = ActionType<typeof actions>;
 
 export interface AdminBrandsState {
   readonly byId?: BrandByIds;

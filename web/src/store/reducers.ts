@@ -7,9 +7,9 @@ import { connectRouter } from 'connected-react-router';
 import sessionReducer from 'utils/SessionActions/SessionReducer';
 import { InjectedReducersType } from 'utils/types/injector-typings';
 import history from '../utils/history';
-import registerBrandReducer from 'app/pages/RegisterBrand/reducers';
-import adminReducer from 'app/pages/Admin/reducer';
+import registerBrandReducer from 'app/pages/RegisterBrand/slice';
 import brandReducer from 'app/pages/Admin/Brands/slice';
+import { adminReducer } from 'app/pages/Admin';
 
 /**
  * Merges the main reducer with the router state and dynamically injected reducers

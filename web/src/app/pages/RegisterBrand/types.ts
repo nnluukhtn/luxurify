@@ -2,7 +2,10 @@ import { ApiResponse } from 'global/services/api/types';
 import { ActionType } from 'typesafe-actions';
 import * as actions from './actions';
 /* --- STATE --- */
-export interface RegisterBrandState {}
+export interface RegisterBrandState {
+  readonly brands?: WSBrand[];
+  readonly isLoading: boolean;
+}
 export type RegisterBrandActions = ActionType<typeof actions>;
 export interface RegisterBrandResponse extends ApiResponse {
   response: {
@@ -27,4 +30,15 @@ export interface RegisterBrandParams {
     bir_2303_certification: FileType[];
     certification_of_registration: FileType[];
   };
+}
+
+export interface WSBrand {
+  id: string;
+  name: string;
+  total: string;
+}
+
+export interface RegisterBrandPayload {
+  params: BrandPayload;
+  callback?: (response: RegisterBrandResponse) => void;
 }

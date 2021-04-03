@@ -1,7 +1,6 @@
 import callApi from 'global/services/api';
 import { ApiResponse } from 'global/services/api/types';
 import { all, put, takeLatest } from 'redux-saga/effects';
-import * as actions from './actions';
 import {
   approveBrand,
   rejectBrand,
@@ -32,7 +31,7 @@ function* callApproveBrand({ payload }: any) {
   });
 
   if (response.success) {
-    yield put(actions.fetchPendingBrands());
+    yield put(fetchPendingBrands({}));
   }
 
   if (response && callback) {
@@ -48,7 +47,7 @@ function* callRejectBrand({ payload }: any) {
   });
 
   if (response.success) {
-    yield put(actions.fetchPendingBrands());
+    yield put(fetchPendingBrands({}));
   }
 
   if (response && callback) {

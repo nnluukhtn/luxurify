@@ -17,11 +17,12 @@ import { Col, Row } from 'antd';
 import { useHistory } from 'react-router';
 import _ from 'lodash';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
-import { registerBrand } from '../actions';
 import { useDispatch } from 'react-redux';
 import ErrorContainer from 'app/common/components/ErrorContainer';
+import { useRegisterBrandSlice } from '../slice';
 
 const RegisterBrandForms = () => {
+  const { actions } = useRegisterBrandSlice();
   const dispatch = useDispatch();
   const [callSuccess, callError] = useNotification();
   const history = useHistory();
@@ -62,6 +63,9 @@ const RegisterBrandForms = () => {
     },
   });
 
+  const handleUpdateValue = (event: React.ChangeEvent<HTMLInputElement>) =>
+    formik.handleChange('category')(event?.target?.value?.toLowerCase() || '');
+
   const onClickSubmit = () => {
     formik.setErrors({});
     formik.setSubmitting(true);
@@ -81,7 +85,7 @@ const RegisterBrandForms = () => {
           formik.setSubmitting(false);
         };
         const brandPayload: BrandPayload = formik.values;
-        dispatch(registerBrand(brandPayload, callback));
+        dispatch(actions.registerBrand({ params: brandPayload, callback }));
       } else {
         callError('Please check your info again.');
         formik.setSubmitting(false);
@@ -123,7 +127,7 @@ const RegisterBrandForms = () => {
         id="category"
         name="category"
         placeholder="Brand Category"
-        onChange={formik.handleChange}
+        onChange={handleUpdateValue}
         value={formik.values.category}
       />
       {!!formik.errors.category && (
@@ -138,6 +142,7 @@ const RegisterBrandForms = () => {
           label="Bir 2303 Certification"
           accept={'image/*,.pdf'}
           placeholder="Add pdf or image file"
+          allowMultiple={false}
         />
         {!!formik.errors.bir2303Cert && (
           <ErrorContainer>{formik.errors.bir2303Cert}</ErrorContainer>
@@ -152,6 +157,7 @@ const RegisterBrandForms = () => {
           label="Certification of Registration"
           accept={'image/*,.pdf'}
           placeholder="Add pdf or image file"
+          allowMultiple={false}
         />
         {!!formik.errors.registrationCert && (
           <ErrorContainer>{formik.errors.registrationCert}</ErrorContainer>
