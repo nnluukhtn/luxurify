@@ -7,7 +7,7 @@ import _ from 'lodash';
 export const initialState: AdminBrandsState = { isLoading: false };
 
 const brandSlice = createSlice({
-  name: 'brands',
+  name: 'adminBrands',
   initialState,
   reducers: {
     fetchPendingBrands: (state, _action) => {

@@ -1,4 +1,4 @@
-import { ApiResponse } from './../../../../global/services/api/types';
+import { ApiResponse } from '../../../../../global/services/api/types';
 
 export interface AdminBrandsState {
   readonly byId?: BrandByIds;

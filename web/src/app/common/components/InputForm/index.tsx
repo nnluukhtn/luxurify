@@ -17,7 +17,7 @@ interface ComponentProps {
   label?: string;
   error?: any;
   placeholder?: string;
-  type?: 'default' | 'password' | 'email' | 'autocomplete';
+  type?: 'default' | 'password' | 'email' | 'autocomplete' | 'number';
   options?: Options;
   searchCondition?: (keyword: string, option: Option) => boolean;
 }

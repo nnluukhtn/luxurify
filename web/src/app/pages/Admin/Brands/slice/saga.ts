@@ -7,7 +7,7 @@ import {
   fetchPendingBrands,
   fetchPendingBrandsFailed,
   fetchPendingBrandsSuccess,
-} from './slice';
+} from '.';
 
 function* callFetchPendingBrands() {
   const response: ApiResponse = yield callApi({

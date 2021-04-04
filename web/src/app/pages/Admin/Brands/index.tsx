@@ -10,13 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
+import { useBrandSlice } from './slice';
 import {
   makeSelectBrandsById,
   makeSelectBrandsIds,
   makeSelectBrandsLoading,
-} from './selectors';
-import { useBrandSlice } from './slice';
-import { AdminBrandsState } from './types';
+} from './slice/selectors';
+import { AdminBrandsState } from './slice/types';
 
 export function Brands() {
   const { actions } = useBrandSlice();

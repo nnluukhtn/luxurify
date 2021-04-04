@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { initialState } from './slice';
+import { initialState } from '.';
 import { RootState } from 'types';
 
 const selectBrandsState = (state: RootState) => {
-  return state.brands || initialState;
+  return state.adminBrands || initialState;
 };
 
 export const makeSelectBrandsById = createSelector(

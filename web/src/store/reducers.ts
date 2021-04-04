@@ -8,6 +8,7 @@ import sessionReducer from 'utils/SessionActions/SessionReducer';
 import { InjectedReducersType } from 'utils/types/injector-typings';
 import history from '../utils/history';
 import registerBrandReducer from 'app/pages/RegisterBrand/slice';
+import registerWatchReducer from 'app/pages/RegisterWatch/slice';
 import brandReducer from 'app/pages/Admin/Brands/slice';
 import { adminReducer } from 'app/pages/Admin';
 
@@ -23,7 +24,8 @@ export function createReducer(injectedReducers: InjectedReducersType = {}) {
     router: connectRouter(history),
     session: sessionReducer,
     registerBrand: registerBrandReducer,
-    brands: brandReducer,
+    registerWatch: registerWatchReducer,
+    adminBrands: brandReducer,
     admin: adminReducer,
     ...injectedReducers,
   });

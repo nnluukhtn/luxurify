@@ -1,12 +1,11 @@
 import { ApiResponse } from 'global/services/api/types';
-import { ActionType } from 'typesafe-actions';
-import * as actions from './actions';
+
 /* --- STATE --- */
 export interface RegisterBrandState {
   readonly brands?: WSBrand[];
   readonly isLoading: boolean;
 }
-export type RegisterBrandActions = ActionType<typeof actions>;
+
 export interface RegisterBrandResponse extends ApiResponse {
   response: {
     id: number;

@@ -12,21 +12,23 @@ export const Container = styled.div`
 `;
 
 export const FormLabel = styled.div`
-  font-weight: 400;
+  font-weight: 500;
   white-space: nowrap;
   word-wrap: normal;
   margin-bottom: 0.3rem;
-  text-transform: capitalize;
 `;
 
 export const FormContainer = styled.div`
-  width: 250px;
+  width: 280px;
   margin-bottom: 0.3rem;
 `;
 
 export const StyledInput = styled(AntInput)`
   &.ant-input {
     border-radius: 5px !important;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 2;
   }
 `;
 

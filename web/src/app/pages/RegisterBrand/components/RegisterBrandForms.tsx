@@ -9,7 +9,7 @@ import {
 import { useFormik } from 'formik';
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { BrandPayload, RegisterBrandResponse } from '../types';
+import { BrandPayload, RegisterBrandResponse } from '../slice/types';
 import * as Yup from 'yup';
 import AttachmentUpload from 'app/common/components/AttachmentUpload';
 import { AttachmentFile } from 'app/common/components/AttachmentUpload/types';
@@ -20,7 +20,7 @@ import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import { useDispatch, useSelector } from 'react-redux';
 import ErrorContainer from 'app/common/components/ErrorContainer';
 import { useRegisterBrandSlice } from '../slice';
-import { makeSelectWSBrandOptions } from '../selectors';
+import { makeSelectWSBrandOptions } from '../slice/selectors';
 
 const RegisterBrandForms = () => {
   const { actions } = useRegisterBrandSlice();

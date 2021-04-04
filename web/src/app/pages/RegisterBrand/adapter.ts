@@ -3,7 +3,7 @@ import {
   RegisterBrandParams,
   WSBrand,
   WSBrandResponse,
-} from './types';
+} from './slice/types';
 
 export const registerBrandAdapter = (
   brandPayload: BrandPayload,

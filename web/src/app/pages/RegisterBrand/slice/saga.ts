@@ -7,8 +7,8 @@ import {
   fetchWSBrandsFailed,
   fetchWSBrandsSuccess,
   registerBrand,
-} from './slice';
-import { wSBrandAdapter } from './adapter';
+} from '.';
+import { wSBrandAdapter } from '../adapter';
 
 function* callRegisterBrand(payload: any) {
   const response: RegisterBrandResponse = yield callApi({
