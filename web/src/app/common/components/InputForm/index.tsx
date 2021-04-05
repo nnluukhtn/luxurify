@@ -28,6 +28,7 @@ interface ComponentProps {
     | 'select';
   options?: Options;
   searchCondition?: (keyword: string, option: Option) => boolean;
+  defaultOptions?: Options;
   children?: React.ReactNode;
 }
 
@@ -44,6 +45,7 @@ function InputForm({
   onChange = () => {},
   handleOnSelect = () => {},
   searchCondition = () => false,
+  defaultOptions,
   children,
   ...props
 }: Props) {
@@ -66,6 +68,7 @@ function InputForm({
             {...props}
             placeholder={placeholder || 'Please enter'}
             options={options || []}
+            defaultOptions={defaultOptions}
             onChange={handleOnSelect}
             searchCondition={searchCondition}
           />

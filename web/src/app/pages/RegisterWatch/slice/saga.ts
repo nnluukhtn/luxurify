@@ -22,17 +22,21 @@ function* callRegisterWatch(payload: any) {
 }
 
 function* callFetchWSWatchData({ payload }: any) {
-  const { referenceNumber } = payload;
+  const { referenceNumber, callback } = payload;
   const response: FetchWSWatchDataResponse = yield call(callApi, {
     method: 'get',
     route: `/watch_signals/watch/reference_number/${referenceNumber}`,
   });
 
-  if (response.success) {
+  if (response.success && response.response.data?.[0]) {
     const data = wsWatchDataAdapter(response.response.data[0]);
     yield put(fetchWSWatchDataSuccess({ refNum: referenceNumber, data }));
   } else {
     yield put(fetchWSWatchDataFailed({}));
+  }
+
+  if (callback) {
+    callback(response);
   }
 }
 

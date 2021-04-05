@@ -7,13 +7,13 @@ const selectSlice = (state: RootState) => state.registerBrand || initialState;
 
 export const makeSelectWSBrands = createSelector(
   [selectSlice],
-  state => state.brands || [],
+  state => state.brands,
 );
 
 export const makeSelectWSBrandOptions = createSelector(
   makeSelectWSBrands,
   brands =>
-    brands.map(brand => ({
+    brands?.map(brand => ({
       label: brand.name,
       value: brand.name,
     })),

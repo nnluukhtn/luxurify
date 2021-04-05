@@ -21,9 +21,12 @@ import {
   makeSelectWSWatch,
   makeSelectWSWatchLoading,
 } from '../slice/selectors';
+import { useRegisterBrandSlice } from 'app/pages/RegisterBrand/slice';
+import { makeSelectWSBrandOptions } from 'app/pages/RegisterBrand/slice/selectors';
 
 const RegisterWatchForms = () => {
   const { actions } = useRegisterWatchSlice();
+  const { actions: registerBrandActions } = useRegisterBrandSlice();
   const dispatch = useDispatch();
   const [callSuccess, callError] = useNotification();
   const history = useHistory();
@@ -70,12 +73,13 @@ const RegisterWatchForms = () => {
   ]);
   const watchData = useSelector(makeSelectWSWatch(memoRefNum));
   const isLoading = useSelector(makeSelectWSWatchLoading);
+  const brandOptions = useSelector(makeSelectWSBrandOptions);
 
   // functions
   const getWSWatchData = useCallback(() => {
     if (!!memoRefNum && !watchData) {
       const callback = response => {
-        if (response.success) {
+        if (response.success && response.response.data?.[0]) {
           callSuccess(
             'Successfully get watch data for reference number: ' + memoRefNum,
           );
@@ -88,7 +92,7 @@ const RegisterWatchForms = () => {
 
       debounceFn(
         dispatch,
-        2000,
+        1000,
         actions.fetchWSWatchData({
           referenceNumber: memoRefNum,
           callback,
@@ -144,10 +148,10 @@ const RegisterWatchForms = () => {
     });
   };
 
-  // useEffect(() => {
-  //   getWSWatchData();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [memoRefNum]);
+  useEffect(() => {
+    if (!brandOptions) dispatch(registerBrandActions.fetchWSBrands({}));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, registerBrandActions]);
 
   useEffect(() => {
     if (watchData) formik.setValues({ ...formik.values, ...watchData });
@@ -163,8 +167,9 @@ const RegisterWatchForms = () => {
         id="referenceNumber"
         name="referenceNumber"
         placeholder="Reference Number"
+        label="Reference Number"
         disabled={isLoading}
-        handleOnSelect={(event: React.ChangeEvent<HTMLInputElement>) =>
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
           handleUpdateValue(
             'referenceNumber',
             event?.target?.value?.toUpperCase() || '',
@@ -174,7 +179,8 @@ const RegisterWatchForms = () => {
       <Spacer height=".3rem" />
       <Row style={{ width: '100%' }}>
         <StyledButton
-          disabled={!memoRefNum || isLoading}
+          disabled={!memoRefNum}
+          loading={isLoading}
           onClick={() => getWSWatchData()}
           style={{ marginLeft: 'auto' }}
         >
@@ -183,12 +189,14 @@ const RegisterWatchForms = () => {
       </Row>
       <Spacer height="2.5rem" />
       <InputForm
-        id="brandName"
-        name="brandName"
+        type="autocomplete"
+        options={brandOptions}
+        defaultOptions={brandOptions}
+        onChange={value => handleUpdateValue('brandName', value)}
         placeholder="Brand Name"
-        label="Brand Name"
-        onChange={formik.handleChange}
-        value={formik.values.brandName}
+        searchCondition={(keyword, option) =>
+          option.value.toLowerCase().indexOf(keyword.toLowerCase()) >= 0
+        }
         error={formik.errors.brandName}
       />
       <Spacer height="0.7rem" />

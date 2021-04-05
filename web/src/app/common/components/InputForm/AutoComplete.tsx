@@ -14,6 +14,7 @@ interface Props {
   placeholder: string;
   onChange: (value: string) => void;
   searchCondition: (keywords, options: Option) => boolean;
+  defaultOptions?: Options;
 }
 
 const AutoCompleteInput = ({
@@ -21,13 +22,16 @@ const AutoCompleteInput = ({
   placeholder,
   onChange,
   searchCondition,
+  defaultOptions = [],
   ...props
 }: Props) => {
   const [renderOptions, setRenderOptions] = useState(options);
 
   const onSearch = (keyword: string) => {
     setRenderOptions(
-      !keyword ? [] : options?.filter(value => searchCondition(keyword, value)),
+      !keyword
+        ? defaultOptions
+        : options?.filter(value => searchCondition(keyword, value)),
     );
     onChange(keyword);
   };
