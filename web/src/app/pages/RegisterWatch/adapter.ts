@@ -42,7 +42,4 @@ export const wsWatchDataAdapter = (data: WSWatchRemote): WSWatch => ({
   brandName: data.brandname,
   caseMaterialName: data.casematerialname,
   braceletMaterialName: data.braceletmaterialname,
-  priceUnit: data.currency,
-  priceFixed: Number(data.avg_price),
-  priceType: '',
 });

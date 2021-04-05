@@ -69,9 +69,6 @@ export interface WSWatch {
   brandName: string;
   caseMaterialName: string;
   braceletMaterialName: string;
-  priceUnit: string;
-  priceFixed: number;
-  priceType: string;
 }
 
 export interface RegisterWatchParams

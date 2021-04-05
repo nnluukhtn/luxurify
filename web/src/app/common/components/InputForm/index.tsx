@@ -1,4 +1,4 @@
-import { InputProps } from 'antd';
+import { InputProps, Select, SelectProps } from 'antd';
 import {
   FormContainer,
   FormLabel,
@@ -6,23 +6,32 @@ import {
   StyledInput,
 } from 'app/common/styles';
 import React from 'react';
+import styled from 'styled-components';
 import ErrorContainer from '../ErrorContainer';
 import InputPassword from '../InputPassword';
 import AutoComplete, { Option, Options } from './AutoComplete';
 
 interface ComponentProps {
   name?: string;
-  onChange: (...args: any) => void;
+  onChange?: (...args: any) => void;
+  handleOnSelect?: (...args: any) => void;
   id?: string;
   label?: string;
   error?: any;
   placeholder?: string;
-  type?: 'default' | 'password' | 'email' | 'autocomplete' | 'number';
+  type?:
+    | 'default'
+    | 'password'
+    | 'email'
+    | 'autocomplete'
+    | 'number'
+    | 'select';
   options?: Options;
   searchCondition?: (keyword: string, option: Option) => boolean;
+  children?: React.ReactNode;
 }
 
-type Props = ComponentProps & InputProps;
+type Props = ComponentProps & InputProps & SelectProps<any>;
 
 function InputForm({
   name,
@@ -32,8 +41,10 @@ function InputForm({
   placeholder,
   type = 'default',
   options,
-  onChange,
+  onChange = () => {},
+  handleOnSelect = () => {},
   searchCondition = () => false,
+  children,
   ...props
 }: Props) {
   const renderInput = () => {
@@ -55,9 +66,23 @@ function InputForm({
             {...props}
             placeholder={placeholder || 'Please enter'}
             options={options || []}
-            onChange={onChange}
+            onChange={handleOnSelect}
             searchCondition={searchCondition}
           />
+        );
+      //
+      case 'select':
+        return (
+          <StyledSelect
+            {...props}
+            showSearch
+            placeholder={placeholder || 'Please select'}
+            options={options || undefined}
+            onChange={handleOnSelect}
+            onSelect={handleOnSelect}
+          >
+            {children}
+          </StyledSelect>
         );
       //
       default:
@@ -89,3 +114,10 @@ function InputForm({
 }
 
 export default InputForm;
+
+export const StyledSelect = styled(Select)`
+  width: 280px;
+  .ant-select-selector {
+    border-radius: 5px !important;
+  }
+`;

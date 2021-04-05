@@ -4,7 +4,7 @@ import { Header, Spacer, StyledButton, SubHeader } from 'app/common/styles';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import styled from 'styled-components';
-import { Col, Row } from 'antd';
+import { Col, Row, Select } from 'antd';
 import { useRegisterWatchSlice } from '../slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -96,7 +96,7 @@ const RegisterWatchForms = () => {
       );
     } else {
       if (watchData?.referenceNumber === memoRefNum) {
-        formik.setValues(watchData);
+        formik.setValues({ ...formik.values, ...watchData });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -110,8 +110,9 @@ const RegisterWatchForms = () => {
     callError,
   ]);
 
-  const handleUpdateValue = (name: string, value: string) =>
+  const handleUpdateValue = (name: string, value: string) => {
     formik.setFieldValue(name, value);
+  };
 
   const onClickSubmit = () => {
     formik.setErrors({});
@@ -149,7 +150,7 @@ const RegisterWatchForms = () => {
   // }, [memoRefNum]);
 
   useEffect(() => {
-    if (watchData) formik.setValues(watchData);
+    if (watchData) formik.setValues({ ...formik.values, ...watchData });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchData]);
 
@@ -163,7 +164,7 @@ const RegisterWatchForms = () => {
         name="referenceNumber"
         placeholder="Reference Number"
         disabled={isLoading}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+        handleOnSelect={(event: React.ChangeEvent<HTMLInputElement>) =>
           handleUpdateValue(
             'referenceNumber',
             event?.target?.value?.toUpperCase() || '',
@@ -317,20 +318,33 @@ const RegisterWatchForms = () => {
         name="priceType"
         placeholder="Price Type"
         label="Price Type"
-        onChange={formik.handleChange}
+        handleOnSelect={(value, _option) =>
+          handleUpdateValue('priceType', value)
+        }
         value={formik.values.priceType}
         error={formik.errors.priceType}
-      />
+        type="select"
+      >
+        <Select.Option value="fixed">fixed</Select.Option>
+        <Select.Option value="dynamic">dynamic</Select.Option>
+      </InputForm>
       <Spacer height="0.7rem" />
       <InputForm
         id="priceUnit"
         name="priceUnit"
         placeholder="Price Unit"
         label="Price Unit"
-        onChange={formik.handleChange}
+        handleOnSelect={(value, _option) =>
+          handleUpdateValue('priceType', value)
+        }
         value={formik.values.priceUnit}
         error={formik.errors.priceUnit}
-      />
+        type="select"
+      >
+        <Select.Option value="BTC">BTC</Select.Option>
+        <Select.Option value="ETH">ETH</Select.Option>
+        <Select.Option value="BNB">BNB</Select.Option>
+      </InputForm>
       <Spacer height="0.7rem" />
       <InputForm
         id="priceFixed"
