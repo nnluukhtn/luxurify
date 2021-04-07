@@ -23,9 +23,14 @@ import {
 } from '../slice/selectors';
 import { useRegisterBrandSlice } from 'app/pages/RegisterBrand/slice';
 import { makeSelectWSBrandOptions } from 'app/pages/RegisterBrand/slice/selectors';
+import { Contract } from 'ethers';
+import { Web3Provider } from '@ethersproject/providers';
+import { useWeb3React } from '@web3-react/core';
+import ERC667ABI from '../../../../abi/ERC667.abi.json';
 
 const RegisterWatchForms = () => {
   const { actions } = useRegisterWatchSlice();
+  const { library } = useWeb3React<Web3Provider>();
   const { actions: registerBrandActions } = useRegisterBrandSlice();
   const dispatch = useDispatch();
   const [callSuccess, callError] = useNotification();
@@ -35,6 +40,7 @@ const RegisterWatchForms = () => {
     initialValues: {
       referenceNumber: '',
       brandName: '',
+      watchName: '',
       model: '',
       powerReserve: '',
       caseDiameter: 0,
@@ -47,9 +53,12 @@ const RegisterWatchForms = () => {
       glassName: '',
       caseMaterialName: '',
       braceletMaterialName: '',
+      bucketMaterialName: '',
       priceType: '',
       priceUnit: '',
       priceFixed: 0,
+      image: '',
+      innerImage: '',
     },
     validateOnBlur: true,
     validateOnChange: false,
@@ -118,28 +127,55 @@ const RegisterWatchForms = () => {
     formik.setFieldValue(name, value);
   };
 
+  const claimWatch = () => {
+    const contract = new Contract(
+      '0xA7A5107A0252154F5280EAa5AA19357dcb0350B5',
+      ERC667ABI,
+      library?.getSigner(),
+    );
+    // setLoading('claiming');
+    contract.functions
+      .claimNewWatch(33, formik.values.watchName, formik.values.referenceNumber)
+      .then(
+        value => {
+          console.log(value, value);
+          submitWatch();
+        },
+        // error => {
+        //   // console.log(error);
+        //   callError('ERROR');
+        //   formik.setSubmitting(false);
+        // },
+      );
+  };
+
+  const submitWatch = () => {
+    const callback = (response: RegisterWatchResponse) => {
+      if (response.success) {
+        callSuccess('Successfully registered a watch');
+        formik.resetForm();
+        history.goBack();
+      } else {
+        callError(
+          'There is an error while trying to register watch, ' +
+            response?.error?.message,
+        );
+      }
+      formik.setSubmitting(false);
+    };
+    const watchPayload: RegisterWatchPayload = registerWatchAdapter(
+      formik.values,
+    );
+    dispatch(actions.registerWatch({ params: watchPayload, callback }));
+  };
+
   const onClickSubmit = () => {
     formik.setErrors({});
     formik.setSubmitting(true);
     formik.validateForm().then(errors => {
       if (_.size(errors) === 0) {
-        const callback = (response: RegisterWatchResponse) => {
-          if (response.success) {
-            callSuccess('Successfully registered a watch');
-            formik.resetForm();
-            history.goBack();
-          } else {
-            callError(
-              'There is an error while trying to register watch, ' +
-                response?.error?.message,
-            );
-          }
-          formik.setSubmitting(false);
-        };
-        const watchPayload: RegisterWatchPayload = registerWatchAdapter(
-          formik.values,
-        );
-        dispatch(actions.registerWatch({ params: watchPayload, callback }));
+        claimWatch();
+        // submitWatch();
       } else {
         callError('Please check your info again.');
         formik.setSubmitting(false);
@@ -192,8 +228,10 @@ const RegisterWatchForms = () => {
         type="autocomplete"
         options={brandOptions}
         defaultOptions={brandOptions}
+        value={formik.values.brandName}
         onChange={value => handleUpdateValue('brandName', value)}
         placeholder="Brand Name"
+        label="Brand Name"
         searchCondition={(keyword, option) =>
           option.value.toLowerCase().indexOf(keyword.toLowerCase()) >= 0
         }
@@ -239,6 +277,7 @@ const RegisterWatchForms = () => {
         onChange={formik.handleChange}
         value={formik.values.powerReserve}
         error={formik.errors.powerReserve}
+        type="number"
       />
       <Spacer height="0.7rem" />
       <InputForm
@@ -322,6 +361,16 @@ const RegisterWatchForms = () => {
       />
       <Spacer height="0.7rem" />
       <InputForm
+        id="bucketMaterialName"
+        name="bucketMaterialName"
+        placeholder="Bucket Material Name"
+        label="Bucket Material Name"
+        onChange={formik.handleChange}
+        value={formik.values.bucketMaterialName}
+        error={formik.errors.bucketMaterialName}
+      />
+      <Spacer height="0.7rem" />
+      <InputForm
         id="priceType"
         name="priceType"
         placeholder="Price Type"
@@ -343,7 +392,7 @@ const RegisterWatchForms = () => {
         placeholder="Price Unit"
         label="Price Unit"
         handleOnSelect={(value, _option) =>
-          handleUpdateValue('priceType', value)
+          handleUpdateValue('priceUnit', value)
         }
         value={formik.values.priceUnit}
         error={formik.errors.priceUnit}
@@ -363,6 +412,26 @@ const RegisterWatchForms = () => {
         value={formik.values.priceFixed}
         error={formik.errors.priceFixed}
         type="number"
+      />
+      <Spacer height="0.7rem" />
+      <InputForm
+        id="image"
+        name="image"
+        placeholder="Image"
+        label="Image"
+        onChange={formik.handleChange}
+        value={formik.values.image}
+        error={formik.errors.image}
+      />
+      <Spacer height="0.7rem" />
+      <InputForm
+        id="innerImage"
+        name="innerImage"
+        placeholder="Inner Image"
+        label="Inner Image"
+        onChange={formik.handleChange}
+        value={formik.values.innerImage}
+        error={formik.errors.innerImage}
       />
 
       <Spacer height="2rem" />

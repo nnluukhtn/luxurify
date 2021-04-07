@@ -56,6 +56,7 @@ export interface WSWatchRemote {
 
 export interface WSWatch {
   model: string;
+  watchName: string;
   referenceNumber: string;
   powerReserve: string;
   caseDiameter: number;
@@ -69,12 +70,16 @@ export interface WSWatch {
   brandName: string;
   caseMaterialName: string;
   braceletMaterialName: string;
+  bucketMaterialName: string;
+  image: string;
+  innerImage: string;
 }
 
 export interface RegisterWatchParams
   extends Pick<RegisterWatchPayload, 'model'> {
   referenceNumber: string;
   brandName: string;
+  watchName: string;
   powerReserve: string;
   caseDiameter: number;
   waterResistanceAtm: string;
@@ -86,13 +91,17 @@ export interface RegisterWatchParams
   glassName: string;
   caseMaterialName: string;
   braceletMaterialName: string;
+  bucketMaterialName: string;
   priceType: string;
   priceUnit: string;
   priceFixed: number;
+  image: string;
+  innerImage: string;
 }
 
 export interface RegisterWatchPayload {
   reference_number: string;
+  name: string;
   model: string;
   power_reserve: string;
   case_diameter: string;
@@ -106,9 +115,12 @@ export interface RegisterWatchPayload {
   brand_name: string;
   case_material_name: string;
   bracelet_material_name: string;
+  bucket_material_name: string;
   price_type: string;
   price_unit: string;
   price_fixed: number;
+  image: string;
+  inner_image: string;
 }
 
 export interface RegisterWatchResponse extends ApiResponse {}

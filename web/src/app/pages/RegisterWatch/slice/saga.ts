@@ -12,7 +12,7 @@ import { wsWatchDataAdapter } from '../adapter';
 function* callRegisterWatch(payload: any) {
   const response: RegisterWatchResponse = yield callApi({
     method: 'post',
-    route: '/watches/register',
+    route: '/watches',
     data: payload.params,
   });
 
