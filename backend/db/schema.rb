@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_30_090526) do
+ActiveRecord::Schema.define(version: 2021_04_07_153403) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -109,11 +109,23 @@ ActiveRecord::Schema.define(version: 2021_03_30_090526) do
     t.string "price_type"
     t.string "price_unit"
     t.decimal "price_fixed"
-    t.jsonb "ipfs_data"
     t.bigint "brand_id"
     t.bigint "creator_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "power_reserve"
+    t.integer "case_diameter"
+    t.integer "water_resistance_atm"
+    t.string "movement_name"
+    t.string "bracelet_color_name"
+    t.string "dial_color_name"
+    t.string "gender_name"
+    t.string "buckle_name"
+    t.string "glass_name"
+    t.string "case_material_name"
+    t.string "bracelet_material_name"
+    t.string "bucket_material_name"
+    t.string "ipfs_hash"
     t.index ["brand_id"], name: "index_watches_on_brand_id"
     t.index ["brand_name"], name: "index_watches_on_brand_name"
     t.index ["creator_id"], name: "index_watches_on_creator_id"
