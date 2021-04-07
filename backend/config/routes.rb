@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :watches, only: [:index, :create]
+
   ### Admin
   devise_for :admins, defaults: { format: :json }
 

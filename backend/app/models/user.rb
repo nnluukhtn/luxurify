@@ -34,4 +34,5 @@ class User < ApplicationRecord
   has_many :pending_brands, through: :pending_brand_users, source: :brand
   has_many :inactive_brand_users, -> { inactive }, class_name: 'BrandUser'
   has_many :inactive_brands, through: :inactive_brand_users, source: :brand
+  has_many :watches, foreign_key: 'creator_id'
 end

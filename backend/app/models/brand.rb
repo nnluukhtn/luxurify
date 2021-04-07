@@ -55,6 +55,7 @@ class Brand < ApplicationRecord
   has_many :inactive_users, through: :inactive_brand_users, source: :user
   has_one_attached :bir_2303_certification
   has_one_attached :certificate_of_registration
+  has_many :watches
 
   validates :name, uniqueness: true, presence: true
   validates :status, presence: true
