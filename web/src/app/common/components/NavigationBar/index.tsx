@@ -29,13 +29,18 @@ const NavigationBar = (props: Props) => {
       }
       subTitle={<Subtitle user={user} isAuthenticated={isAuthenticated} />}
       extra={[
-        <Button key="3" onClick={() => history.push('/register-brand')}>
-          Register Brand
-        </Button>,
-        <Button key="2" onClick={() => history.push('/register-watch')}>
-          Register Watch
-        </Button>,
+        isAuthenticated ? (
+          <Button key="3" onClick={() => history.push('/register-brand')}>
+            Register Brand
+          </Button>
+        ) : null,
+        isAuthenticated ? (
+          <Button key="2" onClick={() => history.push('/register-watch')}>
+            Register Watch
+          </Button>
+        ) : null,
         <SignInOutButton
+          key="1"
           isAuthenticated={isAuthenticated}
           isAdmin={user?.isAdmin}
         />,

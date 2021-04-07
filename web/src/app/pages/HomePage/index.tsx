@@ -23,6 +23,7 @@ export function HomePage() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            paddingBottom: '5rem',
           }}
         >
           <Header style={{ margin: '0.5rem 1rem' }}>HomePage: Wallet</Header>
@@ -36,13 +37,6 @@ export function HomePage() {
               Pending Request Brands
             </StyledButton>
           ) : null}
-          <StyledButton
-            type="link"
-            onClick={() => history.push('/register-brand')}
-            style={{ marginBottom: '1rem' }}
-          >
-            Register a Brand
-          </StyledButton>
           <Wallet />
         </PageContainer>
       </Container>

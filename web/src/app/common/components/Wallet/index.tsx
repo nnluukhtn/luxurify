@@ -12,6 +12,8 @@ import Balance from '../Balance';
 import styled from 'styled-components';
 import { Networks } from '../../../../constants';
 import { Button } from 'antd.macro';
+import { TOKENS_BY_NETWORK } from '../TokenBalance/constants';
+import Actions from '../Actions';
 
 // import { EtherView } from '../EtherView';
 
@@ -42,7 +44,6 @@ const Wallet = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log({ active });
 
   return (
     <div style={{ margin: '16px 32px' }}>
@@ -78,15 +79,19 @@ const Wallet = () => {
         <strong>Account: </strong> {account || '-'}
       </p>
 
-      <div style={{ width: 'min-content', margin: '0 auto' }}>
-        <SWRConfig value={{ fetcher: fetcher(library, ERC667ABI) }}>
-          {/* <EtherView /> */}
+      <SWRConfig value={{ fetcher: fetcher(library, ERC667ABI) }}>
+        {/* <EtherView /> */}
+        <div style={{ width: 'min-content', margin: '0 auto' }}>
           <Balance>
             <EthBalance />
             {chainId !== undefined && <TokenList chainId={chainId} />}
           </Balance>
-        </SWRConfig>
-      </div>
+        </div>
+        {chainId !== undefined &&
+          TOKENS_BY_NETWORK[chainId]?.map(token => (
+            <Actions key={token.address} {...token} />
+          ))}
+      </SWRConfig>
     </div>
   );
 };

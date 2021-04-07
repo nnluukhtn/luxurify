@@ -1,7 +1,6 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { formatUnits } from '@ethersproject/units';
 import { useWeb3React } from '@web3-react/core';
-import { Button } from 'antd';
 import { Contract } from 'ethers';
 import React, { useEffect } from 'react';
 import useSWR from 'swr';
@@ -11,13 +10,6 @@ import ERC667ABI from '../../../../abi/ERC667.abi.json';
 const TokenBalance = ({ symbol, address, decimals }) => {
   const { account, library } = useWeb3React<Web3Provider>();
   const { data: balance, mutate } = useSWR([address, 'balanceOf', account]);
-
-  const claimWatch = () => {
-    const contract = new Contract(address, ERC667ABI, library?.getSigner());
-    contract.functions
-      .claimNewWatch(33, 'Rolex Datejust 116189PAVEL', '116189PAVEL')
-      .then(console.log);
-  };
 
   useEffect(() => {
     // listen for changes on an Ethereum address
@@ -34,7 +26,15 @@ const TokenBalance = ({ symbol, address, decimals }) => {
     const toMe = contract.filters.Transfer(null, account);
 
     library?.on(toMe, (from, to, amount, event) => {
-      console.log('Transfer|received', { from, to, amount, event });
+      console.log(
+        `Transfer|received, from: ${JSON.stringify(
+          from,
+          null,
+          2,
+        )} to: ${JSON.stringify(to, null, 2)} amount: ${JSON.stringify(
+          amount,
+        )} event: ${JSON.stringify(event)}`,
+      );
       mutate(undefined, true);
     });
 
@@ -53,10 +53,6 @@ const TokenBalance = ({ symbol, address, decimals }) => {
   return (
     <div>
       {parseFloat(formatUnits(balance, decimals)).toPrecision(4)} {symbol}
-      <br />
-      balance {JSON.stringify(balance, null, 2)}
-      <br />
-      <Button onClick={claimWatch}>Claim</Button>
     </div>
   );
 };
