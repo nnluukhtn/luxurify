@@ -1,12 +1,11 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.7.0;
+pragma solidity ^0.6.6;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-
 
 contract Luxurify is ERC721, VRFConsumerBase, Ownable {
   using SafeMath for uint256;
@@ -16,43 +15,22 @@ contract Luxurify is ERC721, VRFConsumerBase, Ownable {
   uint256 internal fee;
   uint256 public randomResult;
   address public VRFCoordinator;
-  // rinkeby: 0xb3dCcb4Cf7a26f6cf6B120Cf5A73875B7BBc655B
   address public LinkToken;
-  // rinkeby: 0x01BE23585060835E02B77ef475b0Cc51aA1e0709a
 
   struct Watch {
-    uint256 id;
+    uint256 randomId; // Use for QR Code generation
     string name;
-    string watchname;
-    string watchimage;
-    string referencenumber;
-    string watchmodel;
-    uint256 powerreserve;
-    uint256 casediameter;
-    uint256 waterresistanceatm;
-    string inner_image;
-    string movementname;
-    string braceletcolorname;
-    string dialcolorname;
-    string gendername;
-    string bucklename;
-    string glassname;
-    string brandname;
-    string casematerialname;
-    string braceletmaterialname;
-    string bucketmaterialname;
+    string referenceNumber;
   }
 
   Watch[] public watches;
 
-  /**
-    * Constructor inherits VRFConsumerBase
-    *
-    * Network: Rinkeby
-    * Chainlink VRF Coordinator address: 0xb3dCcb4Cf7a26f6cf6B120Cf5A73875B7BBc655B
-    * LINK token address:                0x01BE23585060835E02B77ef475b0Cc51aA1e0709
-    * Key Hash: 0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311
-    */
+  mapping(bytes32 => address) private tokenOwners;
+  mapping(bytes32 => string) private watchNames;
+  mapping(bytes32 => string) private watchReferenceNumbers;
+
+  event newWatchClaimed(uint256 indexed _watchId, address indexed _owner, uint256 _randomId, string _name, string _referenceNumber);
+
   constructor(address _VRFCoordinator, address _LinkToken, bytes32 _keyhash)
     public
     VRFConsumerBase(_VRFCoordinator, _LinkToken)
@@ -62,5 +40,50 @@ contract Luxurify is ERC721, VRFConsumerBase, Ownable {
     LinkToken = _LinkToken;
     keyHash = _keyhash;
     fee = 0.1 * 10**18; // 0.1 LINK
+  }
+
+  function claimNewWatch(
+    uint256 userProvidedSeed,
+    string memory name,
+    string memory referenceNumber
+  ) public returns (bytes32) {
+    require(
+      LINK.balanceOf(address(this)) >= fee,
+      "Not enough LINK - fill contract with faucet"
+    );
+    bytes32 requestId = requestRandomness(keyHash, fee, userProvidedSeed);
+    watchNames[requestId] = name;
+    watchReferenceNumbers[requestId] = referenceNumber;
+    tokenOwners[requestId] = msg.sender;
+    return requestId;
+  }
+
+  function fulfillRandomness(bytes32 requestId, uint256 randomNumber)
+    internal
+    override
+  {
+    uint256 newId = watches.length;
+
+    watches.push(
+      Watch(
+        randomNumber,
+        watchNames[requestId],
+        watchReferenceNumbers[requestId]
+      )
+    );
+    _safeMint(tokenOwners[requestId], newId);
+    newWatchClaimed(newId, tokenOwners[requestId], randomNumber, watchNames[requestId], watchReferenceNumbers[requestId]);
+  }
+
+  function getTokenURI(uint256 tokenId) public view returns (string memory) {
+    return tokenURI(tokenId);
+  }
+
+  function setTokenURI(uint256 tokenId, string memory _tokenURI) public {
+    require(
+      _isApprovedOrOwner(_msgSender(), tokenId),
+      "ERC721: transfer caller is not owner nor approved"
+    );
+    _setTokenURI(tokenId, _tokenURI);
   }
 }
