@@ -6,7 +6,8 @@ import EthBalance from '../EthBalance';
 import TokenList from '../TokenList';
 import { SWRConfig } from 'swr';
 import fetcher from 'utils/fetcher';
-import ERC20ABI from '../../../../abi/ERC20.abi.json';
+// import ERC20ABI from '../../../../abi/ERC20.abi.json';
+import ERC667ABI from '../../../../abi/ERC667.abi.json';
 import Balance from '../Balance';
 import styled from 'styled-components';
 import { Networks } from '../../../../constants';
@@ -35,10 +36,13 @@ const Wallet = () => {
   };
 
   useEffect(() => {
+    if (!active) activate(injectedConnector);
     return () => {
       if (active) deactivate();
     };
-  }, [active, deactivate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  console.log({ active });
 
   return (
     <div style={{ margin: '16px 32px' }}>
@@ -75,7 +79,7 @@ const Wallet = () => {
       </p>
 
       <div style={{ width: 'min-content', margin: '0 auto' }}>
-        <SWRConfig value={{ fetcher: fetcher(library, ERC20ABI) }}>
+        <SWRConfig value={{ fetcher: fetcher(library, ERC667ABI) }}>
           {/* <EtherView /> */}
           <Balance>
             <EthBalance />
