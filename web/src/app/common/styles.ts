@@ -9,6 +9,7 @@ import Colors from './Colors';
 export const Container = styled.div`
   height: 100vh;
   width: 100vw;
+  padding-bottom: 5rem;
 `;
 
 export const FormLabel = styled.div`

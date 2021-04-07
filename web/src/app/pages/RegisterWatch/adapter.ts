@@ -22,9 +22,13 @@ export const registerWatchAdapter = (
   brand_name: watchParams.brandName,
   case_material_name: watchParams.caseMaterialName,
   bracelet_material_name: watchParams.braceletMaterialName,
+  bucket_material_name: watchParams.bucketMaterialName,
   price_type: watchParams.priceType,
   price_unit: watchParams.priceUnit,
   price_fixed: watchParams.priceFixed,
+  image: watchParams.image,
+  inner_image: watchParams.innerImage,
+  name: watchParams.watchName,
 });
 
 export const wsWatchDataAdapter = (data: WSWatchRemote): WSWatch => ({
@@ -42,4 +46,8 @@ export const wsWatchDataAdapter = (data: WSWatchRemote): WSWatch => ({
   brandName: data.brandname,
   caseMaterialName: data.casematerialname,
   braceletMaterialName: data.braceletmaterialname,
+  bucketMaterialName: data.bucketmaterialname,
+  image: data.watchimage,
+  innerImage: data.inner_image,
+  watchName: data.watchname,
 });
