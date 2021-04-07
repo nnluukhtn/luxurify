@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_24_141927) do
+ActiveRecord::Schema.define(version: 2021_03_30_090526) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -99,6 +99,26 @@ ActiveRecord::Schema.define(version: 2021_03_24_141927) do
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "watches", force: :cascade do |t|
+    t.string "name"
+    t.string "reference_number"
+    t.string "model"
+    t.string "brand_name"
+    t.string "price_type"
+    t.string "price_unit"
+    t.decimal "price_fixed"
+    t.jsonb "ipfs_data"
+    t.bigint "brand_id"
+    t.bigint "creator_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["brand_id"], name: "index_watches_on_brand_id"
+    t.index ["brand_name"], name: "index_watches_on_brand_name"
+    t.index ["creator_id"], name: "index_watches_on_creator_id"
+    t.index ["name"], name: "index_watches_on_name"
+    t.index ["reference_number"], name: "index_watches_on_reference_number"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

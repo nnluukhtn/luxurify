@@ -1,4 +1,9 @@
-import { BrandPayload, RegisterBrandParams } from './types';
+import {
+  BrandPayload,
+  RegisterBrandParams,
+  WSBrand,
+  WSBrandResponse,
+} from './slice/types';
 
 export const registerBrandAdapter = (
   brandPayload: BrandPayload,
@@ -11,4 +16,14 @@ export const registerBrandAdapter = (
       certification_of_registration: brandPayload.registrationCert,
     },
   };
+};
+
+export const wSBrandAdapter = (
+  data: WSBrandResponse['response']['data'],
+): WSBrand[] => {
+  return data?.map(({ id, name, total }) => ({
+    id: +id,
+    name: name,
+    total: +total,
+  }));
 };

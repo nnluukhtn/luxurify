@@ -45,7 +45,7 @@ const StyledInputPassword = styled(
       }
     }
     &::placeholder {
-      color: ${Colors.N400_GREY};
+      color: ${Colors.N300_GREY};
     }
     ${(props: ComponentProps) =>
       props.noBorder &&

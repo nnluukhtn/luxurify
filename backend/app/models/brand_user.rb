@@ -1,3 +1,21 @@
+# == Schema Information
+#
+# Table name: brand_users
+#
+#  id         :bigint           not null, primary key
+#  status     :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  brand_id   :bigint
+#  user_id    :bigint
+#
+# Indexes
+#
+#  index_brand_users_on_brand_id  (brand_id)
+#  index_brand_users_on_status    (status)
+#  index_brand_users_on_user_id   (user_id)
+#
+
 class BrandUser < ApplicationRecord
   include AASM
 

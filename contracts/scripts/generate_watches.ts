@@ -4,6 +4,7 @@
 // When running the script with `hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 import { run, ethers } from "hardhat";
+const hre = require("hardhat");
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -11,15 +12,19 @@ async function main() {
   //
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
-  await run('compile');
+  await run("compile");
 
-  // We get the contract to deploy
-  const Greeter = await ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const address = process.env.CONTRACT_ADDRESS
+  const Luxurify = await ethers.getContractFactory("Luxurify");
+  const luxurify = await Luxurify.attach(address);
 
-  await greeter.deployed();
-
-  console.log("Greeter deployed to:", greeter.address);
+  console.log("Creating requests on contract: ", luxurify.address);
+  const txn = await luxurify.claimNewWatch(
+    33,
+    "Rolex Datejust 116189PAVEL",
+    "116189PAVEL"
+  );
+  console.log("Txn: ", txn);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

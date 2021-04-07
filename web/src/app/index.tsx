@@ -20,21 +20,15 @@ import { SignUp } from './pages/SignUp/Loadable';
 import { SignIn } from './pages/SignIn/Loadable';
 import { RegisterBrand } from './pages/RegisterBrand/Loadable';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectIsAuthenticated,
-  selectUser,
-} from 'utils/SessionActions/SessionSelector';
+import { selectIsAuthenticated } from 'utils/SessionActions/SessionSelector';
 import { Admin } from './pages/Admin/Loadable';
 import styled from 'styled-components';
 import { updateSession } from 'utils/SessionActions/SessionActions';
 import Cookies from 'js-cookie';
-import { signOut } from './actions';
-import { Button } from 'antd';
 import { useInjectSaga } from 'utils/redux-injectors';
 import saga from './saga';
-import { useNavigation } from 'utils/hooks/RouterHook';
-import useNotification from 'utils/hooks/NotificationHook/useNotification';
-import { ApiResponse } from 'global/services/api/types';
+import NavigationBar from './common/components/NavigationBar';
+import { RegisterWatch } from './pages/RegisterWatch/Loadable';
 
 export function App() {
   useInjectSaga({
@@ -43,18 +37,9 @@ export function App() {
   });
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
-  const navigate = useNavigation();
-  const [callSuccess, callError] = useNotification();
+  // const navigate = useNavigation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const user = useSelector(selectUser);
   const [isChecked, setChecked] = React.useState(false);
-
-  const onSuccessSignOut = (response: ApiResponse) => {
-    if (response.success) {
-      callSuccess('Successfully sign out.');
-      navigate('/sign-in');
-    } else callError('There is an error while trying to sign out.');
-  };
 
   React.useEffect(() => {
     const checkCookies = () => {
@@ -84,20 +69,7 @@ export function App() {
         <meta name="description" content="Luxurify Dapp" />
       </Helmet>
 
-      {isAuthenticated ? (
-        <>
-          <SignedInInfo>
-            {user.isAdmin ? 'Admin' : 'User'}: {user.email}
-            <Button
-              danger
-              size="small"
-              onClick={() => dispatch(signOut(user.isAdmin, onSuccessSignOut))}
-            >
-              Sign Out
-            </Button>
-          </SignedInInfo>
-        </>
-      ) : null}
+      <NavigationBar />
 
       <Switch>
         {!isAuthenticated && <Route exact path="/sign-up" component={SignUp} />}
@@ -112,6 +84,9 @@ export function App() {
         {isAuthenticated && (
           <Route exact path="/register-brand" component={RegisterBrand} />
         )}
+        {isAuthenticated && (
+          <Route exact path="/register-watch" component={RegisterWatch} />
+        )}
         {isAuthenticated && <Route path="/" component={HomePage} />}
         <Route component={NotFoundPage} />
       </Switch>
@@ -120,7 +95,7 @@ export function App() {
   );
 }
 
-export const SignedInInfo = styled.div`
+export const SignedInInfo = styled.div<{ isLoading?: boolean }>`
   width: fit-content;
   font-size: 14px;
   font-weight: 500;
@@ -135,6 +110,8 @@ export const SignedInInfo = styled.div`
     transform: translateY(-8px);
     margin: 4px auto;
     border-radius: 5px;
+    ${({ isLoading }) =>
+      isLoading ? 'opacity: 1;transform: translateY(0);' : ''}
   }
   :hover {
     button {
