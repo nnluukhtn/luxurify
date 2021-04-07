@@ -5,7 +5,6 @@
 // Runtime Environment's members available in the global scope.
 import { run, ethers } from "hardhat";
 const hre = require("hardhat");
-
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
   // line interface.
@@ -18,17 +17,15 @@ async function main() {
   const Luxurify = await ethers.getContractFactory("Luxurify");
   const luxurify = await Luxurify.attach(address);
 
-  console.log("Creating requests on contract: ", luxurify.address);
-  const txn1 = await luxurify.claimNewWatch(
-    33,
-    "Rolex Datejust 116189PAVEL",
-    "116189PAVEL"
+  console.log("Set token URI for contract: ", luxurify.address);
+  const txn1 = await luxurify.setTokenURI(
+    1,
+    "https://gateway.pinata.cloud/ipfs/Qmba4ZiQcXPQuvZmi5VRoiVQpaLtQ3F9BmwWdBcprrSwvS"
   );
   console.log("Txn: ", txn1);
-  const txn2 = await luxurify.claimNewWatch(
-    44,
-    "Omega Speedmaster 3510.50",
-    "351050"
+  const txn2 = await luxurify.setTokenURI(
+    3,
+    "https://gateway.pinata.cloud/ipfs/Qmba4ZiQcXPQuvZmi5VRoiVQpaLtQ3F9BmwWdBcprrSwvS"
   );
   console.log("Txn: ", txn2);
 }
