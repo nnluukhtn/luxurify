@@ -5,6 +5,7 @@ import { SimpleLineIcons, AntDesign, Feather } from "@expo/vector-icons";
 // Import Internal
 import Logout from "../Logout";
 import HomeScreen from "../HomeScreen";
+import Inventory from "../Inventory";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -28,7 +29,7 @@ const Component: React.FC = ({}) => {
       />
       <Tab.Screen
         name="Inventory"
-        component={HomeScreen}
+        component={Inventory}
         options={{
           tabBarLabel: "Inventory",
           tabBarIcon: ({ color }) => (

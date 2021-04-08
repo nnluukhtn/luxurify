@@ -4,33 +4,16 @@ import { Text, SafeAreaView } from "react-native";
 import { ConnectorContext } from "../../ConnectorContext";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import Luxurify from "../../../contracts/Luxurify.json";
+import { contractState, initializeContract } from "../../atoms/contract";
+import { useRecoilState } from "recoil";
 
 const HomeScreen: React.FC = ({}) => {
   const connector = useWalletConnect();
   const web3 = useContext(ConnectorContext);
   const [smth, setSmth] = useState(null as any);
-  const [contract, setContract] = useState<any>(null);
+  const [contract, setContract] = useRecoilState(contractState);
 
   // Event handler
-  const connectContract = () => {
-    return new web3.eth.Contract(
-      Luxurify.abi as any,
-      Luxurify.contract_address,
-      {
-        from: connector.accounts[0],
-      }
-    );
-  };
-
-  useEffect(() => {
-    setContract(connectContract());
-  }, [connector.accounts]);
-
-  const callSmth = async () => {
-    const response = contract.methods.name().send();
-
-    setSmth(response);
-  };
 
   const call = async () => {
     const nonce = await web3.eth.getTransactionCount(
@@ -44,7 +27,7 @@ const HomeScreen: React.FC = ({}) => {
       .encodeABI();
 
     const response = await connector
-      .signTransaction({
+      .sendTransaction({
         from: connector.accounts[0],
         to: Luxurify.contract_address,
         nonce: web3.utils.toHex(nonce),
@@ -66,6 +49,14 @@ const HomeScreen: React.FC = ({}) => {
       }
     });
   };
+
+  // Side Effects
+  useEffect(() => {
+    if (!contract) {
+      const newContract = initializeContract(web3, connector.accounts[0]);
+      setContract(newContract);
+    }
+  }, [contract]);
 
   // Main return
   return (
