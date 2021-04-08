@@ -1,6 +1,6 @@
 import React from "react";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
+import { SimpleLineIcons, AntDesign, Feather } from "@expo/vector-icons";
 
 // Import Internal
 import Logout from "../Logout";
@@ -13,7 +13,7 @@ const Component: React.FC = ({}) => {
   return (
     <Tab.Navigator
       activeColor="#f0edf6"
-      inactiveColor="#3e2465"
+      inactiveColor="#656369"
       barStyle={{ backgroundColor: "#111" }}
     >
       <Tab.Screen
@@ -22,17 +22,28 @@ const Component: React.FC = ({}) => {
         options={{
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home" color={color} size={26} />
+            <Feather name="home" color={color} size={23} />
           ),
         }}
       />
+      <Tab.Screen
+        name="Inventory"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: "Inventory",
+          tabBarIcon: ({ color }) => (
+            <AntDesign name="appstore-o" color={color} size={23} />
+          ),
+        }}
+      />
+
       <Tab.Screen
         name="Logout"
         component={Logout}
         options={{
           tabBarLabel: "Logout",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home" color={color} size={26} />
+            <SimpleLineIcons name="logout" color={color} size={23} />
           ),
         }}
       />

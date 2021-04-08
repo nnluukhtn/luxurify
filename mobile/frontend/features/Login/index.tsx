@@ -60,11 +60,11 @@ const ButtonContainer = styled.TouchableOpacity`
   height: 50px;
   padding: 12px;
   border-radius: 5px;
-  margin-vertical: 40px;
   background-color: black;
   border-radius: 5px;
-  alignSelf: center;
+  align-self: center;
 `;
+
 const ButtonText = styled.Text`
   font-size: 20px;
   font-weight: 500;

@@ -1,6 +1,9 @@
+import Web3 from "web3";
 import React from "react";
 import { Asset } from "expo-asset";
+import { RecoilRoot } from "recoil";
 import AppLoading from "expo-app-loading";
+import { StatusBar } from "expo-status-bar";
 import { Platform, StyleSheet, View, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -32,6 +35,7 @@ function cacheImages(images) {
 }
 
 function App(): JSX.Element {
+  // Values
   const [isReady, setReady] = React.useState(false);
   let [fontsLoaded] = useFonts({
     Inter_300Light,
@@ -39,16 +43,26 @@ function App(): JSX.Element {
     Inter_500Medium,
     Inter_900Black,
   });
+  const connector = useWalletConnect();
 
+  // Event Handlers
   const loadAssests = async () => {
     const imageAssets = cacheImages([require("../assets/image/app-icon.png")]);
 
     await Promise.all([...imageAssets]);
   };
 
-  const connector = useWalletConnect();
+  const web3 = React.useMemo(
+    () =>
+      new Web3(
+        new Web3.providers.HttpProvider(
+          `https://rinkeby.infura.io/v3/d7e93337406949719fe07bb309aeefea`
+        )
+      ),
+    []
+  );
 
-  const connectWallet = React.useCallback(() => {
+  const connectWallet = React.useCallback(async () => {
     try {
       const response = connector.connect();
       return response;
@@ -74,12 +88,15 @@ function App(): JSX.Element {
   }
 
   return (
-    <ConnectorContext.Provider value={connector}>
+    <ConnectorContext.Provider value={web3}>
       <NavigationContainer>
-        <View style={[StyleSheet.absoluteFill]}>
-          {!connector.connected && <Login onPress={connectWallet} />}
-          {connector.connected && <Main />}
-        </View>
+        <RecoilRoot>
+          <View style={[StyleSheet.absoluteFill]}>
+            {!connector.connected && <Login onPress={connectWallet} />}
+            {connector.connected && <Main />}
+            <StatusBar />
+          </View>
+        </RecoilRoot>
       </NavigationContainer>
     </ConnectorContext.Provider>
   );
@@ -88,10 +105,22 @@ function App(): JSX.Element {
 const { scheme } = expo;
 
 export default withWalletConnect(App, {
+  qrcodeModalOptions: {
+    mobileLinks: ["metamask"],
+  },
+  bridge: "https://bridge.walletconnect.org",
   redirectUrl: Platform.OS === "web" ? window.location.origin : `${scheme}://`,
   storageOptions: {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     asyncStorage: AsyncStorage,
+  },
+  clientMeta: {
+    description: "Luxurify verification system for supply chains",
+    url: "https://luxurify.io",
+    icons: [
+      "https://storage.googleapis.com/opensea-static/opensea-profile/15.png",
+    ],
+    name: "Luxurify",
   },
 });
