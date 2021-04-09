@@ -8,7 +8,7 @@ class BrandsController < ApplicationController
       brand.pending_users << current_user unless brand.pending_users.exists?(id: current_user.id)
     else
       ActiveRecord::Base.transaction do
-        brand = Brand.create!(register_params)
+        brand = Brand.create!(register_params.except(:bir_2303_file, :certificate_file))
         brand.pending_users << current_user
         brand.bir_2303_certification.attach(register_params[:bir_2303_file]) if register_params[:bir_2303_file]
         brand.certificate_of_registration.attach(register_params[:certificate_file]) if register_params[:certificate_file]

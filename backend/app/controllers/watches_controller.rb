@@ -6,7 +6,7 @@ class WatchesController < ApplicationController
   end
 
   def create
-    watch = current_user.watches.create!(watch_params)
+    watch = current_user.watches.create!(watch_params.except(:image, :inner_image))
     watch.image.attach(watch_params[:image]) if watch_params[:image]
     watch.inner_image.attach(watch_params[:inner_image]) if watch_params[:inner_image]
 
