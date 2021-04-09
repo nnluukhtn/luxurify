@@ -8,7 +8,7 @@ class WatchesController < ApplicationController
   def create
     watch = current_user.watches.create!(watch_params)
 
-    pin_response = pin_file_to_ipfs(watch)
+    pin_file_to_ipfs(watch)
 
     render json: watch
   end
