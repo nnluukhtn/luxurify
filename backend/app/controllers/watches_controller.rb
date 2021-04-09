@@ -127,7 +127,7 @@ class WatchesController < ApplicationController
     @pinata_connection ||= Faraday.new(
       url: ENV['PINATA_API']
       ) do |conn|
-      conn.options.timeout = 10
+      conn.options.timeout = 15
       conn.response :logger, nil, { headers: true, bodies: true, log_level: :info }
       conn.request :multipart
       conn.request :json

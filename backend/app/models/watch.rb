@@ -44,7 +44,7 @@ class Watch < ApplicationRecord
   has_one_attached :inner_image
 
   enum price_type: {
-    'fixed': 'fixed',
-    'dynamic': 'dynamic'
+    'DYNAMIC': 'DYNAMIC',
+    'FIXED': 'FIXED'
   }
 end
