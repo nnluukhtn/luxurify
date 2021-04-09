@@ -10,8 +10,8 @@ class BrandsController < ApplicationController
       ActiveRecord::Base.transaction do
         brand = Brand.create!(register_params)
         brand.pending_users << current_user
-        brand.bir_2303_certification.attach(register_params[:bir_2303_certification]) if register_params[:bir_2303_certification]
-        brand.certificate_of_registration.attach(register_params[:certificate_of_registration]) if register_params[:certificate_of_registration]
+        brand.bir_2303_certification.attach(register_params[:bir_2303_file]) if register_params[:bir_2303_file]
+        brand.certificate_of_registration.attach(register_params[:certificate_file]) if register_params[:certificate_file]
       end
     end
 
@@ -36,7 +36,7 @@ class BrandsController < ApplicationController
 
   def register_params
     params.require(:brand).permit(
-      :name, :category, :bir_2303_certification, :certificate_of_registration
+      :name, :category, :bir_2303_file, :certificate_file
     )
   end
 end
