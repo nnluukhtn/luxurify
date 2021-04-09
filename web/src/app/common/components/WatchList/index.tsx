@@ -10,7 +10,6 @@ import ERC667ABI from '../../../../abi/ERC667.abi.json';
 const WatchList = ({ address }) => {
   const { account, library } = useWeb3React<Web3Provider>();
   const [watches, setWatches] = useState<any>([]);
-  const history = useHistory();
   const { data: balance } = useSWR([address, 'balanceOf', account]);
   const contract = new Contract(address, ERC667ABI, library?.getSigner());
   const [isLoading, setIsLoading] = useState(false);

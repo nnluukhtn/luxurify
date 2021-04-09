@@ -8,15 +8,11 @@ import { useWeb3React } from '@web3-react/core';
 import { Button, Col, Image, Row, Typography } from 'antd';
 import Colors from 'app/common/Colors';
 import { PageContainer } from 'app/common/components';
-import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
 import { Container } from 'app/common/styles';
-import { Contract } from 'ethers';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components/macro';
-import ERC667ABI from '../../../../abi/ERC667.abi.json';
-import { detailAdapter } from './adapter';
 import { WatchDetailData } from './slice/types';
 
 interface Props {}
@@ -25,6 +21,7 @@ export function WatchDetail(props: Props) {
   const { account, library } = useWeb3React<Web3Provider>();
   const { watchId } = useParams<{ watchId: string }>();
   const [detail, setDetail] = useState<WatchDetailData | null>(null);
+
   const fetchDetail = async (apiURL: string) => {
     const response = await fetch(`https://gateway.pinata.cloud/ipfs/${apiURL}`);
     const json = await response.json();
@@ -72,6 +69,7 @@ export function WatchDetail(props: Props) {
   useEffect(() => {
     console.log(account);
     console.log(library, library?.getSigner());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [library]);
 
   if (!detail) {
