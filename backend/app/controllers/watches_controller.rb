@@ -7,6 +7,8 @@ class WatchesController < ApplicationController
 
   def create
     watch = current_user.watches.create!(watch_params)
+    watch.image.attach(watch_params[:image]) if watch_params[:image]
+    watch.inner_image.attach(watch_params[:inner_image]) if watch_params[:inner_image]
 
     pin_file_to_ipfs(watch)
 

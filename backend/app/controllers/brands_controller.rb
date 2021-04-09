@@ -10,6 +10,8 @@ class BrandsController < ApplicationController
       ActiveRecord::Base.transaction do
         brand = Brand.create!(register_params)
         brand.pending_users << current_user
+        brand.bir_2303_certification.attach(register_params[:bir_2303_certification]) if register_params[:bir_2303_certification]
+        brand.certificate_of_registration.attach(register_params[:certificate_of_registration]) if register_params[:certificate_of_registration]
       end
     end
 
