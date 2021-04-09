@@ -1,6 +1,6 @@
 import { RegisterBrandResponse, WSBrandResponse } from './types';
 // import { take, call, put, select, takeLatest } from 'redux-saga/effects';
-import { all, put, takeLatest, takeLeading } from 'redux-saga/effects';
+import { all, call, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import callApi from 'global/services/api';
 import {
   fetchWSBrands,
@@ -9,9 +9,11 @@ import {
   registerBrand,
 } from '.';
 import { wSBrandAdapter } from '../adapter';
+import callAxios from 'global/services/api/axios';
 
-function* callRegisterBrand(payload: any) {
-  const response: RegisterBrandResponse = yield callApi({
+function* callRegisterBrand({ payload }: any) {
+  console.log('PAYLOAD', payload);
+  const response: RegisterBrandResponse = yield call(callAxios, {
     method: 'post',
     route: '/brands/register',
     headers: {

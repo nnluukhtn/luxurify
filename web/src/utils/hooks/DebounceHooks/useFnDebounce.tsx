@@ -8,10 +8,10 @@ const useFnDebounce = () => {
   const debounceFn = (
     fn: (...args: any) => any,
     delay?: number,
-    args?: any,
+    ...args: any
   ) => {
     if (debouncer.current !== undefined) clearTimeout(debouncer.current);
-    debouncer.current = setTimeout(() => fn(args), delay || 1000);
+    debouncer.current = setTimeout(() => fn(...args), delay || 1000);
   };
 
   useEffect(() => {

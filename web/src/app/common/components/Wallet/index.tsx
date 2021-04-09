@@ -14,6 +14,7 @@ import { Networks } from '../../../../constants';
 import { Button } from 'antd.macro';
 import { TOKENS_BY_NETWORK } from '../TokenBalance/constants';
 import Actions from '../Actions';
+import WatchList from '../WatchList';
 
 // import { EtherView } from '../EtherView';
 
@@ -91,6 +92,7 @@ const Wallet = () => {
           TOKENS_BY_NETWORK[chainId]?.map(token => (
             <Actions key={token.address} {...token} />
           ))}
+        <WatchList {...TOKENS_BY_NETWORK[4][0]} />
       </SWRConfig>
     </div>
   );

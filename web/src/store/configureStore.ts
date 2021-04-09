@@ -30,7 +30,12 @@ export function configureAppStore(_initialState = {}, history: History) {
     middleware: [
       ...getDefaultMiddleware({
         serializableCheck: {
+          ignoredActions: [
+            'registerWatch/registerWatch',
+            'registerBrand/registerBrand',
+          ],
           ignoredActionPaths: [
+            'payload.params',
             'payload.callback',
             'payload.onSuccess',
             'payload.onFailed',

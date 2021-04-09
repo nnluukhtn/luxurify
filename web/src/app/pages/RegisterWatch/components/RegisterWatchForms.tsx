@@ -163,10 +163,6 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
     });
   };
 
-  const handleOnFileUpload = (isUploading: boolean) => {
-    formik.setSubmitting(isUploading);
-  };
-
   const handleAttachmentChange = (fieldName: string) => (
     type: string,
     files: AttachmentFile[],
@@ -385,8 +381,8 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
           error={formik.errors.priceType}
           type="select"
         >
-          <Select.Option value="fixed">fixed</Select.Option>
-          <Select.Option value="dynamic">dynamic</Select.Option>
+          <Select.Option value="FIXED">FIXED</Select.Option>
+          <Select.Option value="DYNAMIC">DYNAMIC</Select.Option>
         </InputForm>
         <Spacer height="0.7rem" />
         <InputForm
@@ -416,12 +412,12 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
           error={formik.errors.priceFixed}
           type="number"
         />
-        <Spacer height="0.7rem" />
+        <Spacer height="1.7rem" />
         <FormContainer>
           <AttachmentUpload
             fileList={formik.values.image || []}
             onFileChange={handleAttachmentChange('image')}
-            onFileUpload={handleOnFileUpload}
+            onFileUpload={() => {}}
             label="Image"
             accept={'image/*'}
             placeholder="Add an image file"
@@ -432,12 +428,12 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
             <ErrorContainer>{formik.errors.image}</ErrorContainer>
           )}
         </FormContainer>
-        <Spacer height="0.7rem" />
+        <Spacer height="1.7rem" />
         <FormContainer>
           <AttachmentUpload
             fileList={formik.values.innerImage || []}
             onFileChange={handleAttachmentChange('innerImage')}
-            onFileUpload={handleOnFileUpload}
+            onFileUpload={() => {}}
             label="Inner Image"
             accept={'image/*'}
             placeholder="Add an image file"

@@ -9,7 +9,11 @@ import {
 import { useFormik } from 'formik';
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { BrandPayload, RegisterBrandResponse } from '../slice/types';
+import {
+  BrandPayload,
+  RegisterBrandParams,
+  RegisterBrandResponse,
+} from '../slice/types';
 import * as Yup from 'yup';
 import AttachmentUpload from 'app/common/components/AttachmentUpload';
 import { AttachmentFile } from 'app/common/components/AttachmentUpload/types';
@@ -21,6 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ErrorContainer from 'app/common/components/ErrorContainer';
 import { useRegisterBrandSlice } from '../slice';
 import { makeSelectWSBrandOptions } from '../slice/selectors';
+import { registerBrandAdapter } from '../adapter';
 
 const RegisterBrandForms = () => {
   const { actions } = useRegisterBrandSlice();
@@ -87,7 +92,9 @@ const RegisterBrandForms = () => {
           }
           formik.setSubmitting(false);
         };
-        const brandPayload: BrandPayload = formik.values;
+        const brandPayload: RegisterBrandParams = registerBrandAdapter(
+          formik.values,
+        );
         dispatch(actions.registerBrand({ params: brandPayload, callback }));
       } else {
         callError('Please check your info again.');
@@ -114,6 +121,8 @@ const RegisterBrandForms = () => {
     dispatch(actions.fetchWSBrands({}));
   }, [actions, dispatch]);
 
+  console.log('Brand  Values: ', formik.values, formik.errors);
+
   return (
     <RegisterBrandFormContainer>
       <Header>Register A Brand</Header>
@@ -122,7 +131,7 @@ const RegisterBrandForms = () => {
       <InputForm
         type="autocomplete"
         options={brandOptions}
-        onChange={value => handleUpdateValue('name', value)}
+        handleOnSelect={value => handleUpdateValue('name', value)}
         placeholder="Brand Name"
         searchCondition={(keyword, option) =>
           option.value.toLowerCase().indexOf(keyword.toLowerCase()) >= 0

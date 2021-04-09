@@ -27,8 +27,8 @@ export const registerWatchAdapter = (
     price_type: watchParams.priceType,
     price_unit: watchParams.priceUnit,
     price_fixed: watchParams.priceFixed,
-    image: watchParams.image,
-    inner_image: watchParams.innerImage,
+    image: watchParams.image[0],
+    inner_image: watchParams.innerImage[0],
     name: watchParams.watchName,
   },
 });
