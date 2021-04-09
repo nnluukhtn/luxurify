@@ -4,13 +4,15 @@ import { Button, Row, Typography } from 'antd';
 import { Spacer } from 'app/common/styles';
 import { Contract } from 'ethers';
 import React, { useState } from 'react';
+import useSWR from 'swr';
 import ERC667ABI from '../../../../abi/ERC667.abi.json';
 
 const Actions = ({ address }) => {
   const { account, library } = useWeb3React<Web3Provider>();
   const [isLoading, setLoading] = useState('');
   const [result, setResult] = useState<any>(null);
-  // const { data: balance, mutate } = useSWR([address, 'balanceOf', account]);
+  const [watches, setWatches] = useState<any>(null);
+  const { data: balance, mutate } = useSWR([address, 'balanceOf', account]);
   // const { data: watches, mutate } = useSWR([address, 'watches']);
   const contract = new Contract(address, ERC667ABI, library?.getSigner());
 
@@ -25,9 +27,16 @@ const Actions = ({ address }) => {
       });
   };
 
-  const list = () => {
-    console.log(contract.functions);
-    contract.tokenOfOwnerByIndex(account, 0).then(setResult);
+  const list = async () => {
+    console.log('AVAILABLE FUNCTIONS: ', contract.functions);
+    // contract.totalSupply().then(setResult);
+    let watchList: any[] = [];
+    for (let i = 0; i < balance; i++) {
+      const token = await contract.tokenOfOwnerByIndex(account, i);
+      const watch = await contract.watches(token);
+      watchList.push(watch);
+    }
+    setWatches(watchList);
 
     // setResult();
   };
@@ -82,7 +91,16 @@ const Actions = ({ address }) => {
       >
         <Typography.Title level={4}>Result</Typography.Title>
         <pre>{JSON.stringify(result, null, 2)}</pre>
-        <p>{result && result?.[0]?.toString()}</p>
+        <p>{result && result?.toString()}</p>
+        {Array.isArray(watches) && (
+          <ul>
+            {watches.map((value, idx) => (
+              <li key={`watch_${idx}`}>
+                {idx}: {value.referenceNumber} - {value.name}
+              </li>
+            ))}
+          </ul>
+        )}
         {/* <pre>{JSON.stringify(watches, null, 2)}</pre> */}
         {/* {result && parseFloat(formatUnits(result, 18)).toPrecision(4)} */}
       </div>
