@@ -1,3 +1,4 @@
+import { RcFile } from 'antd/lib/upload';
 import { ApiResponse } from 'global/services/api/types';
 
 /* --- STATE --- */
@@ -56,6 +57,7 @@ export interface WSWatchRemote {
 
 export interface WSWatch {
   model: string;
+  watchName: string;
   referenceNumber: string;
   powerReserve: string;
   caseDiameter: number;
@@ -69,12 +71,14 @@ export interface WSWatch {
   brandName: string;
   caseMaterialName: string;
   braceletMaterialName: string;
+  bucketMaterialName: string;
 }
 
-export interface RegisterWatchParams
-  extends Pick<RegisterWatchPayload, 'model'> {
+export interface RegisterWatchParams {
+  model: string;
   referenceNumber: string;
   brandName: string;
+  watchName: string;
   powerReserve: string;
   caseDiameter: number;
   waterResistanceAtm: string;
@@ -86,32 +90,45 @@ export interface RegisterWatchParams
   glassName: string;
   caseMaterialName: string;
   braceletMaterialName: string;
+  bucketMaterialName: string;
   priceType: string;
   priceUnit: string;
   priceFixed: number;
+  image: RcFile[];
+  innerImage: RcFile[];
 }
 
 export interface RegisterWatchPayload {
-  reference_number: string;
-  model: string;
-  power_reserve: string;
-  case_diameter: string;
-  water_resistance_atm: string;
-  movement_name: string;
-  bracelet_color_name: string;
-  dial_color_name: string;
-  gender_name: string;
-  buckle_name: string;
-  glass_name: string;
-  brand_name: string;
-  case_material_name: string;
-  bracelet_material_name: string;
-  price_type: string;
-  price_unit: string;
-  price_fixed: number;
+  watch: {
+    reference_number: string;
+    name: string;
+    model: string;
+    power_reserve: string;
+    case_diameter: string;
+    water_resistance_atm: string;
+    movement_name: string;
+    bracelet_color_name: string;
+    dial_color_name: string;
+    gender_name: string;
+    buckle_name: string;
+    glass_name: string;
+    brand_name: string;
+    case_material_name: string;
+    bracelet_material_name: string;
+    bucket_material_name: string;
+    price_type: string;
+    price_unit: string;
+    price_fixed: number;
+    image: RcFile[];
+    inner_image: RcFile[];
+  };
 }
 
-export interface RegisterWatchResponse extends ApiResponse {}
+export interface RegisterWatchResponse extends ApiResponse {
+  response: {
+    token_uri: string;
+  };
+}
 
 export interface FetchWSWatchDataResponse extends ApiResponse {
   response: {

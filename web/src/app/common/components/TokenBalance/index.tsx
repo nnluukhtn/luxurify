@@ -1,7 +1,6 @@
 import { Web3Provider } from '@ethersproject/providers';
-import { formatUnits } from '@ethersproject/units';
 import { useWeb3React } from '@web3-react/core';
-import { Contract } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 import React, { useEffect } from 'react';
 import useSWR from 'swr';
 // import ERC20ABI from '../../../../abi/ERC20.abi.json';
@@ -52,7 +51,8 @@ const TokenBalance = ({ symbol, address, decimals }) => {
   }
   return (
     <div>
-      {parseFloat(formatUnits(balance, decimals)).toPrecision(4)} {symbol}
+      {balance && BigNumber.from(balance).toNumber()} {symbol}
+      {/* {parseFloat(formatUnits(balance, decimals)).toPrecision(4)} {symbol} */}
     </div>
   );
 };

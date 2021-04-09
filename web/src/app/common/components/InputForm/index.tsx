@@ -91,7 +91,7 @@ function InputForm({
       default:
         return (
           <StyledInput
-            {...props}
+            {...(props as any)}
             id={id}
             placeholder={placeholder || 'Please enter'}
             type={type}
