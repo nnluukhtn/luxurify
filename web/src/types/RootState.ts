@@ -5,6 +5,7 @@ import { RouterState } from 'connected-react-router';
 import { AdminBrandsState } from 'app/pages/Admin/Brands/slice/types';
 import { AdminState } from 'app/pages/Admin/types';
 import { RegisterWatchState } from 'app/pages/RegisterWatch/slice/types';
+import { WatchDetailState } from 'app/pages/Watches/WatchDetail/slice/types';
 // [IMPORT NEW CONTAINERSTATE ABOVE] < Needed for generating containers seamlessly
 
 /* 
@@ -18,5 +19,6 @@ export interface RootState {
   registerWatch?: RegisterWatchState;
   adminBrands?: AdminBrandsState;
   admin?: AdminState;
+  watchDetail?: WatchDetailState;
   // [INSERT NEW REDUCER KEY ABOVE] < Needed for generating containers seamlessly
 }

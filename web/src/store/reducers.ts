@@ -9,6 +9,7 @@ import { InjectedReducersType } from 'utils/types/injector-typings';
 import history from '../utils/history';
 import registerBrandReducer from 'app/pages/RegisterBrand/slice';
 import registerWatchReducer from 'app/pages/RegisterWatch/slice';
+import watchDetailReducer from 'app/pages/Watches/WatchDetail/slice';
 import brandReducer from 'app/pages/Admin/Brands/slice';
 import { adminReducer } from 'app/pages/Admin';
 
@@ -27,6 +28,7 @@ export function createReducer(injectedReducers: InjectedReducersType = {}) {
     registerWatch: registerWatchReducer,
     adminBrands: brandReducer,
     admin: adminReducer,
+    watchDetail: watchDetailReducer,
     ...injectedReducers,
   });
 }

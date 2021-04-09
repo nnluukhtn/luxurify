@@ -3,12 +3,14 @@ import { useWeb3React } from '@web3-react/core';
 import { Typography } from 'antd';
 import { Contract } from 'ethers';
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import useSWR from 'swr';
 import ERC667ABI from '../../../../abi/ERC667.abi.json';
 
 const WatchList = ({ address }) => {
   const { account, library } = useWeb3React<Web3Provider>();
   const [watches, setWatches] = useState<any>([]);
+  const history = useHistory();
   const { data: balance } = useSWR([address, 'balanceOf', account]);
   const contract = new Contract(address, ERC667ABI, library?.getSigner());
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +22,16 @@ const WatchList = ({ address }) => {
       for (let i = 0; i < balance; i++) {
         const token = await contract.tokenOfOwnerByIndex(account, i);
         const watch = await contract.watches(token);
-        watchList.push(watch);
+        const tokenURI = await contract.tokenURI(token);
+        const tokenBreakdown = tokenURI?.split('/');
+        console.log(tokenURI);
+        const watchData = {
+          tokenURI: tokenURI,
+          id: tokenBreakdown[tokenBreakdown.length - 1],
+          referenceNumber: watch.referenceNumber,
+          name: watch.name,
+        };
+        watchList.push(watchData);
       }
       setWatches(watchList);
       setIsLoading(false);
@@ -49,7 +60,15 @@ const WatchList = ({ address }) => {
         <ol>
           {watches.map((value, idx) => (
             <li key={`watch_${idx}`}>
-              {value.name} - {value.referenceNumber}
+              {value.tokenURI ? (
+                <a href={`/watches/${value.id}`}>
+                  {value.name} - {value.referenceNumber}
+                </a>
+              ) : (
+                <>
+                  {value.name} - {value.referenceNumber}
+                </>
+              )}
             </li>
           ))}
         </ol>
