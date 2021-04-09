@@ -1,87 +1,103 @@
+import Web3 from "web3";
 import React from "react";
-// import { HARDHAT_PORT, HARDHAT_PRIVATE_KEY } from '@env';
+import { Asset } from "expo-asset";
+import { RecoilRoot } from "recoil";
+import AppLoading from "expo-app-loading";
+import { StatusBar } from "expo-status-bar";
+import { Platform, StyleSheet, View, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   useWalletConnect,
   withWalletConnect,
 } from "@walletconnect/react-native-dapp";
 import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+  useFonts,
+  Inter_300Light,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_900Black,
+} from "@expo-google-fonts/inter";
 
 import { expo } from "../app.json";
 import { ConnectorContext } from "./ConnectorContext";
+import Login from "./features/Login";
+import Main from "./features/Main";
+import { NavigationContainer } from "@react-navigation/native";
 
-const styles = StyleSheet.create({
-  center: { alignItems: "center", justifyContent: "center" },
-  // eslint-disable-next-line react-native/no-color-literals
-  white: { backgroundColor: "white" },
-});
-
-// const shouldDeployContract = async (web3, abi, data, from: string) => {
-//   const deployment = new web3.eth.Contract(abi).deploy({ data });
-//   const gas = await deployment.estimateGas();
-//   const {
-//     options: { address: contractAddress },
-//   } = await deployment.send({ from, gas });
-//   return new web3.eth.Contract(abi, contractAddress);
-// };
+function cacheImages(images) {
+  return images.map((image) => {
+    if (typeof image === "string") {
+      return Image.prefetch(image);
+    } else {
+      return Asset.fromModule(image).downloadAsync();
+    }
+  });
+}
 
 function App(): JSX.Element {
+  // Values
+  const [isReady, setReady] = React.useState(false);
+  let [fontsLoaded] = useFonts({
+    Inter_300Light,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_900Black,
+  });
   const connector = useWalletConnect();
-  const [message, setMessage] = React.useState<string>("Loading...");
 
-  // const web3 = React.useMemo(
-  //   () => new Web3(new Web3.providers.HttpProvider(`http://${localhost}:${HARDHAT_PORT}`)),
-  //   [HARDHAT_PORT]
-  // );
-  // React.useEffect(() => {
-  //   (async () => {
-  //     const { address } = await web3.eth.accounts.privateKeyToAccount(HARDHAT_PRIVATE_KEY);
-  //     const contract = await shouldDeployContract(
-  //       web3,
-  //       Hello.abi,
-  //       Hello.bytecode,
-  //       address
-  //     );
-  //     setMessage(await contract.methods.sayHello('React Native').call());
-  //   })();
-  // }, [web3, shouldDeployContract, setMessage, HARDHAT_PRIVATE_KEY]);
+  // Event Handlers
+  const loadAssests = async () => {
+    const imageAssets = cacheImages([require("../assets/image/app-icon.png")]);
 
-  const connectWallet = React.useCallback(() => {
-    return connector.connect();
+    await Promise.all([...imageAssets]);
+  };
+
+  const web3 = React.useMemo(
+    () =>
+      new Web3(
+        new Web3.providers.HttpProvider(
+          `https://rinkeby.infura.io/v3/d7e93337406949719fe07bb309aeefea`
+        )
+      ),
+    []
+  );
+
+  const connectWallet = React.useCallback(async () => {
+    try {
+      const response = connector.connect();
+      return response;
+    } catch (e) {
+      console.log(e);
+    }
   }, [connector]);
 
   React.useEffect(() => {
     if (connector.connected) {
-      setMessage(connector.accounts.join(","));
+      // setMessage(connector.accounts.join(","));
     }
   }, [connector]);
 
+  if (!isReady || !fontsLoaded) {
+    return (
+      <AppLoading
+        startAsync={loadAssests}
+        onFinish={() => setReady(true)}
+        onError={console.warn}
+      />
+    );
+  }
+
   return (
-    <ConnectorContext.Provider value={connector}>
-      <View style={[StyleSheet.absoluteFill, styles.center, styles.white]}>
-        <Text testID="tid-message">{message}</Text>
-        {!connector.connected && (
-          <TouchableOpacity onPress={connectWallet}>
-            <Text>Connect a Wallet</Text>
-          </TouchableOpacity>
-        )}
-        {!!connector.connected && (
-          <>
-            {/* <TouchableOpacity onPress={signTransaction}>
-            <Text>Sign a Transaction</Text>
-          </TouchableOpacity> */}
-            <TouchableOpacity onPress={connectWallet}>
-              <Text>Connect a Wallet</Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
+    <ConnectorContext.Provider value={web3}>
+      <NavigationContainer>
+        <RecoilRoot>
+          <View style={[StyleSheet.absoluteFill]}>
+            {!connector.connected && <Login onPress={connectWallet} />}
+            {connector.connected && <Main />}
+            <StatusBar />
+          </View>
+        </RecoilRoot>
+      </NavigationContainer>
     </ConnectorContext.Provider>
   );
 }
@@ -89,10 +105,22 @@ function App(): JSX.Element {
 const { scheme } = expo;
 
 export default withWalletConnect(App, {
+  qrcodeModalOptions: {
+    mobileLinks: ["metamask"],
+  },
+  bridge: "https://bridge.walletconnect.org",
   redirectUrl: Platform.OS === "web" ? window.location.origin : `${scheme}://`,
   storageOptions: {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     asyncStorage: AsyncStorage,
+  },
+  clientMeta: {
+    description: "Luxurify verification system for supply chains",
+    url: "https://luxurify.io",
+    icons: [
+      "https://storage.googleapis.com/opensea-static/opensea-profile/15.png",
+    ],
+    name: "Luxurify",
   },
 });

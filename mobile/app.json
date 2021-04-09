@@ -8,6 +8,9 @@
     },
     "scheme": "myreactdapp",
     "icon": "assets/image/app-icon.png",
+    "assetBundlePatterns": [
+      "assets/image/*"
+    ],
     "splash": {
       "image": "assets/image/app-icon.png",
       "resizeMode": "contain",

@@ -1,6 +1,6 @@
 import React from "react";
-import WalletConnect from "@walletconnect/client";
+import Web3 from "web3";
 
-const initialValue: WalletConnect | null = null;
+const initialValue: Web3 | null = null;
 
 export const ConnectorContext = React.createContext(initialValue);

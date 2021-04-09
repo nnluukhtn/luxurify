@@ -19,7 +19,7 @@ class WatchSignalsController < ApplicationController
     @watch_signals_connection ||= Faraday.new(
       url: ENV['WATCH_SIGNALS_API']
       ) do |conn|
-      conn.options.timeout = 5
+      conn.options.timeout = 15
       conn.response :logger, nil, { headers: true, bodies: true, log_level: :info }
       conn.request :json
       conn.headers['Accept'] = 'application/json'

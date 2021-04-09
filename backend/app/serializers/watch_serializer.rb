@@ -62,6 +62,8 @@ class WatchSerializer < ActiveModel::Serializer
   end
 
   def token_uri
+    return unless object.ipfs_hash
+
     "#{ENV['PINATA_GATEWAY_API']}/#{object.ipfs_hash}"
   end
 end
