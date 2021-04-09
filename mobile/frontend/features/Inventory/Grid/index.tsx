@@ -43,6 +43,7 @@ const Grid: React.FC<Props> = ({}) => {
     <FlatGrid
       itemDimension={260}
       data={watchList}
+      style={{ backgroundColor: "white" }}
       spacing={10}
       renderItem={({ item, index }) => (
         <Item data={item} onPress={goDetailGen(index)} />

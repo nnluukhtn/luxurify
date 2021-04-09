@@ -6,7 +6,7 @@ import { SimpleLineIcons, AntDesign, Feather } from "@expo/vector-icons";
 import Logout from "../Logout";
 import HomeScreen from "../HomeScreen";
 import Inventory from "../Inventory";
-import Camera from "../Camera";
+import Camera from "../Camera/Scanner";
 
 const Tab = createMaterialBottomTabNavigator();
 

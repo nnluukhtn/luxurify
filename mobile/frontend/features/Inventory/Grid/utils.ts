@@ -1,4 +1,6 @@
+import _ from "lodash";
 import axios from "axios";
+import web3 from "web3";
 import toNumber from "lodash/toNumber";
 import { Contract } from "web3-eth-contract";
 import { defaultHeader } from "../../../constants";
@@ -36,14 +38,36 @@ export const getWatch = async ({ token, contract }: Props): Promise<Watch> => {
   return contractData;
 };
 
-export const getWatchMeta = async (refNum: string): Promise<WatchMeta> => {
+export const getWatchMeta = async ({
+  token,
+  contract,
+}: Props): Promise<Partial<WatchMeta>> => {
+  const meta = await contract.methods
+    .getTokenURI(web3.utils.toHex(token))
+    .call();
+
   const response = await axios({
     method: "get",
-    url: `https://api.watchsignals.com/watch/referencenumber/${refNum}`,
-    headers: defaultHeader as any,
-  });
-  const data: WatchMeta = response.data.data[0];
-  return data;
+    url: meta,
+  }).catch(() => undefined);
+
+  if (!response?.data) return {};
+
+  const data: WatchMeta = _.reduce(
+    response.data.attributes,
+    (acc, { trait_type, value }) => ({
+      ...acc,
+      [trait_type.replace(" ", "_").toLowerCase()]: value,
+    }),
+    {}
+  ) as WatchMeta;
+
+  return {
+    name: response.data.name,
+    description: response.data.description,
+    image: response.data.image,
+    ...data,
+  };
 };
 
 export const getWatchListByAccount = async ({
@@ -56,8 +80,8 @@ export const getWatchListByAccount = async ({
   for (let index = 0; index < totalIndex; index++) {
     const token = await getToken({ account, index, contract });
     const watch = await getWatch({ contract, token });
-    const meta = await getWatchMeta(watch.referenceNumber).catch(() => ({}));
-    watches.push({ ...watch, ...meta });
+    const meta = await getWatchMeta({ contract, token });
+    watches.push({ ...watch, ...meta, token });
   }
 
   return watches;

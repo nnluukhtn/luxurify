@@ -33,6 +33,12 @@ export const useContract = ({ account }: Props) => {
     if (!contract) {
       const newContract = initializeContract(web3, account);
       web3.eth.defaultAccount = account;
+
+      // Event listener handlers
+      const sub = web3.eth.subscribe("pendingTransactions", (err, trans) => {});
+
+      sub.on("data", (data) => alert(data));
+
       setContract(newContract);
     }
   }, []);

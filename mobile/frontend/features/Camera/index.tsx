@@ -20,7 +20,13 @@ const Camera: React.FC<Props> = ({}) => {
             headerShown: false,
           }}
         />
-        <Stack.Screen name="Camera.Detail" component={Detail} />
+        <Stack.Screen
+          name="Camera.Detail"
+          component={Detail}
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack.Navigator>
     </>
   );
