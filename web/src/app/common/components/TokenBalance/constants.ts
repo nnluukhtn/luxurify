@@ -6,10 +6,10 @@ export const TOKENS_BY_NETWORK: {
 } = {
   [Networks.Rinkeby]: [
     {
-      address: '0xA7A5107A0252154F5280EAa5AA19357dcb0350B5',
-      symbol: 'LINK',
-      name: 'ChainLink Token',
-      decimals: 18,
+      address: '0x555F4c486Fe7D899e9Dfb55f2425427cbA2C91de',
+      symbol: 'LXY',
+      name: 'Luxirify',
+      decimals: 0,
     },
   ],
   // [Networks.Localhost]: [

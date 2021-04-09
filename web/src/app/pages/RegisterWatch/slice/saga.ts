@@ -9,10 +9,13 @@ import {
 } from '.';
 import { wsWatchDataAdapter } from '../adapter';
 
-function* callRegisterWatch(payload: any) {
-  const response: RegisterWatchResponse = yield callApi({
+function* callRegisterWatch({ payload }: any) {
+  const response: RegisterWatchResponse = yield call(callApi, {
     method: 'post',
     route: '/watches',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
     data: payload.params,
   });
 

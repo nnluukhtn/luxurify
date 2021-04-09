@@ -40,7 +40,7 @@ const registerWatchSlice = createSlice({
       };
     },
     //
-    registerWatch(state, _action) {
+    registerWatch(state, action) {
       return state;
     },
   },

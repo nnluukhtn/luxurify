@@ -1,5 +1,4 @@
 import { Web3Provider } from '@ethersproject/providers';
-import { formatUnits } from '@ethersproject/units';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber, Contract } from 'ethers';
 import React, { useEffect } from 'react';
