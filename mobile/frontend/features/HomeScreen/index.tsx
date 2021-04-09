@@ -4,16 +4,25 @@ import { Text, SafeAreaView } from "react-native";
 import { ConnectorContext } from "../../ConnectorContext";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import Luxurify from "../../../contracts/Luxurify.json";
-import { contractState, initializeContract } from "../../atoms/contract";
-import { useRecoilState } from "recoil";
+import { useContract } from "../../atoms/contract";
+import { getWatchListByAccount } from "../Inventory/Grid/utils";
 
 const HomeScreen: React.FC = ({}) => {
   const connector = useWalletConnect();
   const web3 = useContext(ConnectorContext);
   const [smth, setSmth] = useState(null as any);
-  const [contract, setContract] = useRecoilState(contractState);
+  const contract = useContract({ account: connector.accounts[0] });
 
   // Event handler
+
+  const callWatches = async () => {
+    const watches = await getWatchListByAccount({
+      contract,
+      account: connector.accounts[0],
+    });
+
+    setSmth(watches);
+  };
 
   const call = async () => {
     const nonce = await web3.eth.getTransactionCount(
@@ -22,8 +31,8 @@ const HomeScreen: React.FC = ({}) => {
     );
 
     const contractData = contract.methods
-      // .name()
-      .claimNewWatch(33, "Rolex Datejust 116189PAVEL", "116189PAVEL")
+      .watches(connector.accounts[0])
+      // .claimNewWatch(33, "Rolex Datejust 116189PAVEL", "116189PAVEL")
       .encodeABI();
 
     const response = await connector
@@ -50,14 +59,6 @@ const HomeScreen: React.FC = ({}) => {
     });
   };
 
-  // Side Effects
-  useEffect(() => {
-    if (!contract) {
-      const newContract = initializeContract(web3, connector.accounts[0]);
-      setContract(newContract);
-    }
-  }, [contract]);
-
   // Main return
   return (
     <SafeAreaView>
@@ -65,7 +66,7 @@ const HomeScreen: React.FC = ({}) => {
         {/* <Text>{JSON.stringify(contract) || JSON.stringify(connector.uri)}</Text> */}
         {/* <Text>"{JSON.stringify(contract)}"</Text> */}
         <Text>{JSON.stringify(smth) || 0}</Text>
-        <ButtonContainer onPress={call}>
+        <ButtonContainer onPress={callWatches}>
           <ButtonText>Click</ButtonText>
         </ButtonContainer>
       </CenteredGroup>

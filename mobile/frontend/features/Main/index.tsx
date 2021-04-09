@@ -6,6 +6,7 @@ import { SimpleLineIcons, AntDesign, Feather } from "@expo/vector-icons";
 import Logout from "../Logout";
 import HomeScreen from "../HomeScreen";
 import Inventory from "../Inventory";
+import Camera from "../Camera";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -13,6 +14,7 @@ const Component: React.FC = ({}) => {
   // Main return
   return (
     <Tab.Navigator
+      sceneAnimationEnabled
       activeColor="#f0edf6"
       inactiveColor="#656369"
       barStyle={{ backgroundColor: "#111" }}
@@ -34,6 +36,17 @@ const Component: React.FC = ({}) => {
           tabBarLabel: "Inventory",
           tabBarIcon: ({ color }) => (
             <AntDesign name="appstore-o" color={color} size={23} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Camera"
+        component={Camera}
+        options={{
+          tabBarLabel: "Camera",
+          tabBarIcon: ({ color }) => (
+            <SimpleLineIcons name="camera" size={23} color={color} />
           ),
         }}
       />
