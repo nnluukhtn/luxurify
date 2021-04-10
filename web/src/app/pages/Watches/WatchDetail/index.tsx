@@ -6,7 +6,7 @@
 import { Col, Collapse, Image, Row, Skeleton, Typography } from 'antd';
 import Colors from 'app/common/Colors';
 import { PageContainer } from 'app/common/components';
-import { Container, Spacer } from 'app/common/styles';
+import { Container, Spacer, StyledButton } from 'app/common/styles';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -26,11 +26,15 @@ import ERC667ABI from '../../../../abi/ERC667.abi.json';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
+import CreateSellOrder from './components/CreateSellOrder';
+import { BigNumber, ethers } from 'ethers';
+import { formatUnits } from '@ethersproject/units';
+import web3 from 'web3';
 
 interface Props {}
 
 export function WatchDetail(props: Props) {
-  const { library } = useWeb3React<Web3Provider>();
+  const { account, library } = useWeb3React<Web3Provider>();
   const { watchId } = useParams<{ watchId: string }>();
   const { search } = useLocation();
   const [, callError] = useNotification();
@@ -39,6 +43,18 @@ export function WatchDetail(props: Props) {
   const qrRef = React.useRef<any | null>(null);
   const [isLoading, setLoading] = useState(false);
   const [price, setPrice] = useState<any>({});
+
+  const transfer = async address => {
+    const contract = new Contract(
+      TOKENS_BY_NETWORK[4]?.[0].address,
+      ERC667ABI,
+      library?.getSigner(),
+    );
+
+    console.log({ functions: contract?.functions, library });
+    const transfer = await contract?.ownerOf(3);
+    console.log({ transfer });
+  };
 
   useEffect(() => {
     const fetchDetail = async (apiURL: string) => {
@@ -69,8 +85,9 @@ export function WatchDetail(props: Props) {
       } catch (err) {
         callError('Error' + err);
       }
-      // console.log({ watchInfo });
-      // console.log(watchInfo[5].toNumber(), watchInfo[6].toNumber());
+      console.log({ watchInfo });
+      // console.log(BigInt(watchInfo?.[6]).toString());
+      // console.log('IS TRUE', price?.[6].eq(price?.[6]));
       setPrice(watchInfo);
       setLoading(false);
     };
@@ -182,13 +199,35 @@ export function WatchDetail(props: Props) {
                   {isLoading ? (
                     <LoadingOutlined />
                   ) : price ? (
-                    `${price[6]?.toNumber()} ${price[4] === 1 ? 'USD' : 'ETH'}`
+                    `${formatUnits(price[6], 18)} ${
+                      price[4] === 1 ? 'USD' : 'ETH'
+                    }`
                   ) : (
                     '-'
                   )}
                 </Price>
+                <br />
               </Col>
             </Row>
+
+            <Spacer height="0.6rem" />
+
+            <Row>
+              {price ? (
+                <CreateSellOrder
+                  watchId={+watchId}
+                  watchName={detail?.name || ''}
+                  startAmount={price[6]?._hex || ''}
+                />
+              ) : null}
+            </Row>
+            {/* <StyledButton
+              onClick={() =>
+                transfer('0xf57b2c51ded3a29e6891aba85459d600256cf317')
+              }
+            >
+              Transfer
+            </StyledButton> */}
           </Col>
         </Row>
       </PageContainer>

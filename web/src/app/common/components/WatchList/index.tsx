@@ -22,14 +22,13 @@ const WatchList = ({ address }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    console.log(account, balance, library);
     const getWatchList = async () => {
       setIsLoading(true);
       let watchList: any[] = [];
       for (let i = 0; i < balance; i++) {
         const token = await contract.tokenOfOwnerByIndex(account, i);
         const watch = await contract.watches(token);
-        const tokenURI = await contract.tokenURI(token);
+        const tokenURI = await contract.getTokenURI(token);
         const tokenBreakdown = tokenURI?.split('/');
         const watchData = {
           tokenURI: tokenBreakdown[tokenBreakdown.length - 1],
@@ -46,10 +45,17 @@ const WatchList = ({ address }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [balance, account, address]);
 
+  // useEffect(() => {
+  //   const getToken = async () => {
+  //     const result = await contract.tokenOfOwnerByIndex(account, 7);
+  //     const watch = await contract.getWatchInfo(result);
+  //   };
+  //   getToken();
+  // }, []);
+
   return (
     <div
       style={{
-        // border: '1px solid orange',
         borderRadius: '10px',
         minHeight: 50,
         minWidth: 280,
@@ -70,9 +76,8 @@ const WatchList = ({ address }) => {
       ) : Array.isArray(watches) ? (
         <StyledRow gutter={[16, 16]} justify="center" align="top">
           {watches.map((value, idx) => (
-            <Col>
+            <Col key={`watch_${idx}_${value.id}`}>
               <Card
-                key={`watch_${idx}`}
                 hoverable
                 style={{ width: 150, height: 240, textAlign: 'center' }}
                 loading={!value.name}
@@ -88,7 +93,7 @@ const WatchList = ({ address }) => {
                       alt="example"
                       style={{
                         maxWidth: 145,
-                        maxHeight: 120,
+                        maxHeight: 100,
                         objectFit: 'contain',
                         marginLeft: 2,
                         marginTop: 2,
@@ -98,7 +103,11 @@ const WatchList = ({ address }) => {
                   )
                 }
               >
-                <Meta title={value.name} description={value.referenceNumber} />
+                <span style={{ fontSize: 12, fontWeight: 600 }}>
+                  {value.name}
+                </span>
+                <br />
+                {value.referenceNumber}
                 {value.tokenURI && (
                   <Button type="link" style={{ fontSize: 12 }}>
                     see detail

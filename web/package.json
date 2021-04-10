@@ -48,6 +48,7 @@
     "js-cookie": "2.2.1",
     "lint-staged": "10.3.0",
     "node-plop": "0.26.2",
+    "opensea-js": "1.1.11",
     "plop": "2.7.4",
     "prettier": "2.1.1",
     "qrcode.react": "1.0.1",
