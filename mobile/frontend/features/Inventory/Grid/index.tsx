@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
 import styled from "styled-components/native";
 import { FlatGrid } from "react-native-super-grid";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -13,22 +14,30 @@ import { watchListState } from "./atoms";
 interface Props {}
 
 const Grid: React.FC<Props> = ({}) => {
-  const route = useRoute();
   const navigation = useNavigation();
   const connector = useWalletConnect();
   const contract = useContract({ account: connector.accounts[0] });
   const [watchList, setWatchlist] = useRecoilState(watchListState);
+  const [isLoading, setLoading] = useState(false);
+
+  const loadWatchList = async () => {
+    setLoading(true);
+    const watches = await getWatchListByAccount({
+      contract,
+      account: connector.accounts[0],
+    });
+    setWatchlist(watches);
+    setLoading(false);
+  };
 
   useEffect(() => {
     navigation.setOptions({ title: "Your inventory" });
 
-    (async () => {
-      const watches = await getWatchListByAccount({
-        contract,
-        account: connector.accounts[0],
-      });
-      setWatchlist(watches);
-    })();
+    navigation.addListener("focus", loadWatchList);
+
+    return () => {
+      navigation.removeListener("focus", loadWatchList);
+    };
   }, []);
 
   // Event handler
@@ -39,6 +48,15 @@ const Grid: React.FC<Props> = ({}) => {
   };
 
   // Main return
+
+  if (isLoading) {
+    return (
+      <View>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
   return (
     <FlatGrid
       itemDimension={260}
@@ -53,3 +71,13 @@ const Grid: React.FC<Props> = ({}) => {
 };
 
 export default Grid;
+
+const View = styled.View`
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  background-color: white;
+  justify-content: center;
+  align-items: center;
+`;

@@ -2,7 +2,8 @@ import { StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { BarCodeScannedCallback, BarCodeScanner } from "expo-barcode-scanner";
-import { SimpleLineIcons } from "@expo/vector-icons";
+import { Ionicons } from '@expo/vector-icons'; 
+import { ExternalQRPayload } from "../../../types";
 import styled from "styled-components/native";
 
 interface Params {
@@ -26,11 +27,13 @@ const Scanner = () => {
     setScanned(true);
     if (params?.callback) return params.callback(payload);
     else {
-      navigation.navigate("Camera", {
-        screen: "Camera.Detail",
-        params: {
-          id: payload.data,
-        },
+      const data = (JSON.parse(payload.data) as unknown) as ExternalQRPayload;
+      if (!data.token) {
+        return alert(data);
+      }
+      navigation.navigate("Inventory", {
+        screen: "Inventory.Detail",
+        params: { id: data.token },
       });
     }
   };
@@ -64,7 +67,7 @@ const Scanner = () => {
 
   return (
     <View style={StyleSheet.absoluteFillObject}>
-      <Frame name="frame" size={194} color="black" />
+      <Frame name="scan-outline" size={194} />
       <BarCodeScanner
         barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
@@ -80,8 +83,10 @@ export default Scanner;
  * Styles
  */
 
-const Frame = styled(SimpleLineIcons)`
+const Frame = styled(Ionicons)`
   z-index: 1;
+  opacity: 0.5;
+  color: darkgrey;
 `;
 
 const Button = styled.Button``;

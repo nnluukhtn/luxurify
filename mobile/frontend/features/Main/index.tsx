@@ -14,6 +14,7 @@ const Component: React.FC = ({}) => {
   // Main return
   return (
     <Tab.Navigator
+      sceneAnimationEnabled
       activeColor="#f0edf6"
       inactiveColor="#656369"
       barStyle={{ backgroundColor: "#111" }}
@@ -32,7 +33,7 @@ const Component: React.FC = ({}) => {
         name="Inventory"
         component={Inventory}
         options={{
-          tabBarLabel: "Inventory",
+          tabBarLabel: "Assets",
           tabBarIcon: ({ color }) => (
             <AntDesign name="appstore-o" color={color} size={23} />
           ),
