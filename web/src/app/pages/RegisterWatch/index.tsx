@@ -8,8 +8,8 @@ import { useWeb3React } from '@web3-react/core';
 import { PageContainer } from 'app/common/components';
 import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
 import { Container } from 'app/common/styles';
-import { Contract } from 'ethers';
-import React, { useState } from 'react';
+import { Contract, ethers } from 'ethers';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { registerWatchAdapter } from './adapter';
 import ProgressModal from './components/ProgressModal';
@@ -53,12 +53,12 @@ export function RegisterWatch(_props: Props) {
       ERC667ABI,
       library?.getSigner(),
     );
-    console.log('Signer', library, library?.getSigner());
     setActionName('Claiming watch...');
     setShowProgress(true);
     setLoading(true);
     setTransactionHash('');
     setPercent(10);
+    console.log('FUNCTIONS', contract.functions);
 
     let claimWatch: any;
     try {
@@ -66,6 +66,9 @@ export function RegisterWatch(_props: Props) {
         33,
         values.watchName,
         values.referenceNumber,
+        values.priceType === 'FIXED' ? 1 : 0,
+        values.priceUnit === 'ETH' ? 0 : 1,
+        ethers.utils.parseEther(values.priceFixed.toString()),
       );
     } catch (err) {
       callError('Error: ' + err);
@@ -75,7 +78,7 @@ export function RegisterWatch(_props: Props) {
 
     setPercent(20);
     setActionName('Waiting for Confirmations...');
-    console.log('CLAIMING: ', claimWatch);
+    // console.log('CLAIMING: ', claimWatch);
 
     let confirmResp: any;
     try {
@@ -94,7 +97,7 @@ export function RegisterWatch(_props: Props) {
   };
 
   const submitWatch = (values: RegisterWatchParams) => {
-    console.log('start registering with: ', values);
+    // console.log('start registering with: ', values);
     setPercent(50);
     setActionName('Registering your watch to our network...');
     const callback = (response: RegisterWatchResponse) => {
@@ -102,7 +105,7 @@ export function RegisterWatch(_props: Props) {
         setPercent(60);
         setActionName('Successfully registered watch.');
         callSuccess('Successfully registered a watch');
-        console.log('SUCCESS register: ', response);
+        // console.log('SUCCESS register: ', response);
         debounceFn(getToken, 1500, response.response.token_uri);
         // history.goBack();
       } else {
@@ -114,7 +117,7 @@ export function RegisterWatch(_props: Props) {
       }
     };
     const watchPayload: RegisterWatchPayload = registerWatchAdapter(values);
-    console.log('watchPayload', watchPayload);
+    // console.log('watchPayload', watchPayload);
     dispatch(actions.registerWatch({ params: watchPayload, callback }));
   };
 
@@ -126,12 +129,15 @@ export function RegisterWatch(_props: Props) {
     );
     setPercent(70);
     setActionName('Getting watch token...');
-    console.log('Getting watch token...', tokenUri);
+    // console.log('Getting watch token...', tokenUri);
     const balance = await contract.balanceOf(account);
-    const token = await contract.tokenOfOwnerByIndex(account, balance - 1);
+    const token = await contract.tokenOfOwnerByIndex(
+      account,
+      balance > 0 ? balance - 1 : 0,
+    );
     setPercent(80);
     setActionName('Successfully get token');
-    console.log('Get Token: ', token);
+    // console.log('Get Token: ', token);
     setURI(token.toNumber(), tokenUri);
   };
 
@@ -143,17 +149,21 @@ export function RegisterWatch(_props: Props) {
     );
     setPercent(90);
     setActionName('Setting Token URI...');
-    console.log('Setting URI,', token, tokenUri);
+    // console.log('Setting URI,', token, tokenUri);
     const resp = await newContract.setTokenURI(token, tokenUri);
     setPercent(100);
     setActionName('Successfully setting Token URI!');
-    console.log('setURI Resp: ', resp);
+    // console.log('setURI Resp: ', resp);
     const finalResp = await resp?.wait(console.log);
-    console.log('FINAL:', finalResp);
+    // console.log('FINAL:', finalResp);
     setTransactionHash(finalResp?.transactionHash);
     setLoading(false);
     setActionName('Finished!');
   };
+
+  useEffect(() => {
+    console.log('Signer', library, library?.getSigner());
+  }, [library]);
 
   return (
     <>

@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import { Networks } from '../../../../constants';
 import { Button } from 'antd.macro';
 import { TOKENS_BY_NETWORK } from '../TokenBalance/constants';
-import Actions from '../Actions';
+// import Actions from '../Actions';
 import WatchList from '../WatchList';
 
 // import { EtherView } from '../EtherView';
@@ -39,6 +39,7 @@ const Wallet = () => {
   };
 
   useEffect(() => {
+    // console.log({ account, chainId, library });
     if (!active) activate(injectedConnector);
     return () => {
       if (active) deactivate();
@@ -88,11 +89,11 @@ const Wallet = () => {
             {chainId !== undefined && <TokenList chainId={chainId} />}
           </Balance>
         </div>
-        {chainId !== undefined &&
+        {/* {chainId !== undefined &&
           TOKENS_BY_NETWORK[chainId]?.map(token => (
             <Actions key={token.address} {...token} />
-          ))}
-        <WatchList {...TOKENS_BY_NETWORK[4][0]} />
+          ))} */}
+        {chainId === 4 && <WatchList {...TOKENS_BY_NETWORK[4][0]} />}
       </SWRConfig>
     </div>
   );

@@ -1,4 +1,5 @@
-import { Button, PageHeader, PageHeaderProps, Typography } from 'antd';
+import { Button, PageHeader, PageHeaderProps } from 'antd';
+import { Logo } from 'app/common/assets';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -23,9 +24,12 @@ const NavigationBar = (props: Props) => {
       className="site-page-header"
       onBack={() => window.history.back()}
       title={
-        <Typography.Title level={3} style={{ marginTop: '0.3rem' }}>
-          Luxurify
-        </Typography.Title>
+        <img
+          src={Logo}
+          alt="logo"
+          onClick={() => history.push('/')}
+          style={{ cursor: 'pointer' }}
+        />
       }
       subTitle={<Subtitle user={user} isAuthenticated={isAuthenticated} />}
       extra={[

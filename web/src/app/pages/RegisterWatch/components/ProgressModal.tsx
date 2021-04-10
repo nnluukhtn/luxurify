@@ -34,6 +34,7 @@ const ProgressModal = ({
       title={null}
       footer={null}
       closable={closable}
+      maskClosable={false}
       bodyStyle={{
         height: 300,
         display: 'flex',
