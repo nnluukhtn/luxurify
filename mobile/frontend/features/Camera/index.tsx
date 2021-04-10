@@ -7,8 +7,6 @@ import Detail from "../Inventory/Detail";
 
 const Stack = createStackNavigator();
 
-interface Props {}
-
 const Camera = () => {
   // Main return
   return (

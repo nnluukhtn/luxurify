@@ -72,7 +72,9 @@ export const getWatchListByAccount = async ({
   contract,
   account,
 }: ListProps): Promise<Array<Watch & Partial<WatchMeta>>> => {
-  const totalIndex = _.toNumber(await contract.methods.balanceOf(account).call());
+  const totalIndex = _.toNumber(
+    await contract.methods.balanceOf(account).call()
+  );
   const watches: Array<Watch & Partial<WatchMeta>> = [];
 
   for (let index = 0; index < totalIndex; index++) {

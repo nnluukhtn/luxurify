@@ -11,18 +11,16 @@ const Inventory: React.FC<Props> = ({}) => {
 
   // Main return
   return (
-    <>
-      <Stack.Navigator>
-        <Stack.Screen name="Inventory.Grid" component={Grid} />
-        <Stack.Screen
-          name="Inventory.Detail"
-          component={Detail}
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack.Navigator>
-    </>
+    <Stack.Navigator>
+      <Stack.Screen name="Inventory.Grid" component={Grid} />
+      <Stack.Screen
+        name="Inventory.Detail"
+        component={Detail}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
   );
 };
 

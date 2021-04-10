@@ -54,15 +54,18 @@ const Detail = ({}) => {
     <View>
       <ScrollView>
         <Image source={{ uri: data.image }} />
+        <GoldBar>
+          <Label style={{ color: "white" }}>{data.name || "-"}</Label>
+        </GoldBar>
         <ContentContainer>
-          <Content>
-            <Label>Name</Label>
-            <Text>{data.name || "-"}</Text>
-          </Content>
-
           <Content>
             <Label>Model</Label>
             <Text>{data.model || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Brand name</Label>
+            <Text>{data.brand_name || "-"}</Text>
           </Content>
 
           <Content>
@@ -116,21 +119,14 @@ const Detail = ({}) => {
           </Content>
 
           <Content>
-            <Label>Brand name</Label>
-            <Text>{data.brand_name || "-"}</Text>
-          </Content>
-
-          <Content>
             <Label>Case Material name</Label>
             <Text>{data.case_material_name || "-"}</Text>
           </Content>
 
           <Content>
             <Label>Bracelet Material Name</Label>
-            <Text>{data.bracelet_material_name || "-"}</Text>
           </Content>
         </ContentContainer>
-        <Text>{JSON.stringify(data)}</Text>
       </ScrollView>
     </View>
   );
@@ -178,7 +174,16 @@ const Text = styled.Text`
 const Label = styled(Text)`
   flex: 2;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 600;
   color: darkgrey;
   padding-bottom: 3px;
+`;
+
+const GoldBar = styled.View`
+  width: 100%;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #dda522;
 `;
