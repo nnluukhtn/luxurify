@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native";
+import styled from "styled-components/native";
+import { Ionicons } from "@expo/vector-icons";
 import React, { useState, useEffect } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { BarCodeScannedCallback, BarCodeScanner } from "expo-barcode-scanner";
-import { Ionicons } from '@expo/vector-icons'; 
 import { ExternalQRPayload } from "../../../types";
-import styled from "styled-components/native";
 
 interface Params {
   callback?: BarCodeScannedCallback;
@@ -28,7 +28,7 @@ const Scanner = () => {
     if (params?.callback) return params.callback(payload);
     else {
       const data = (JSON.parse(payload.data) as unknown) as ExternalQRPayload;
-      if (!data.token) {
+      if (!data?.token) {
         return alert(data);
       }
       navigation.navigate("Inventory", {

@@ -6,57 +6,73 @@ import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import Luxurify from "../../../contracts/Luxurify.json";
 import { useContract } from "../../atoms/contract";
 import { getWatchListByAccount } from "../Inventory/Grid/utils";
+import { SeaportContext } from "../../SeaportContext";
 
 const HomeScreen: React.FC = ({}) => {
   const connector = useWalletConnect();
   const web3 = useContext(ConnectorContext);
+  const seaport = useContext(SeaportContext);
   const [smth, setSmth] = useState(null as any);
   const contract = useContract({ account: connector.accounts[0] });
 
   // Event handler
 
-  const callWatches = async () => {
-    const watches = await getWatchListByAccount({
-      contract,
-      account: connector.accounts[0],
-    });
-
-    setSmth(watches);
-  };
-
   const call = async () => {
-    const nonce = await web3.eth.getTransactionCount(
-      connector.accounts[0],
-      "pending"
-    );
-
-    const contractData = contract.methods
-      // .watches(connector.accounts[0])
-      .claimNewWatch(33, "Rolex Datejust 116189PAVEL", "116189PAVEL")
-      .encodeABI();
-
-    const response = await connector
-      .sendTransaction({
-        from: connector.accounts[0],
-        to: Luxurify.contract_address,
-        nonce: web3.utils.toHex(nonce),
-        value: "0x00",
-        data: contractData,
-      })
-      .catch((err) => {
-        setSmth(err);
-      });
-
-    setSmth(response);
-
-    await web3.eth.getTransactionReceipt(response, (err, tx) => {
-      if (tx) {
-        setSmth(tx);
-        console.log(tx);
-      } else if (err) {
-        setSmth(err);
-      }
+    const paymentTokenAddress = "0xf3F75d3E38Acb8608720F1Ea59cf645F1e8C8216";
+    const auction = await seaport.createSellOrder({
+      asset: {
+        tokenId: "0",
+        tokenAddress: Luxurify.contract_address,
+      },
+      accountAddress: connector.accounts[0],
+      startAmount: 100,
+      expirationTime: 0,
     });
+
+    // const auction = await seaport.api.getOrder({
+    //   owner: Luxurify.contract_address,
+    // });
+
+    // console.log(auction);
+
+    // const nonce = await web3.eth.getTransactionCount(
+    //   connector.accounts[0],
+    //   "pending"
+    // );
+    // const contractData = contract.methods
+    // // .watches(connector.accounts[0])
+    //   .claimNewWatch(
+    //     33,
+    //     "Rolex Datejust 116189PAVEL",
+    //     "116189PAVEL",
+    //     0,
+    //     1,
+    //     web3.utils.toWei("66669999", "ether")
+    //   )
+    //   .encodeABI();
+
+    // const response = await connector
+    //   .sendTransaction({
+    //     from: connector.accounts[0],
+    //     to: Luxurify.contract_address,
+    //     nonce: web3.utils.toHex(nonce),
+    //     value: "0x00",
+    //     data: contractData,
+    //   })
+    //   .catch((err) => {
+    //     setSmth(err);
+    //   });
+
+    // setSmth(response);
+
+    // await web3.eth.getTransactionReceipt(response, (err, tx) => {
+    //   if (tx) {
+    //     setSmth(tx);
+    //     console.log(tx);
+    //   } else if (err) {
+    //     setSmth(err);
+    //   }
+    // });
   };
 
   // Main return

@@ -2,9 +2,10 @@ import React from "react";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Watch, WatchMeta } from "../../../../types";
+import { OrderResponse } from "../utils";
 
 interface Props {
-  data: Watch & Partial<WatchMeta>;
+  data: Watch & Partial<WatchMeta> & OrderResponse;
   onPress: () => void;
 }
 
@@ -38,6 +39,14 @@ const Item: React.FC<Props> = ({ data, ...rest }) => {
       >
         <Label>{data.name}</Label>
         <Text>{`${data.referenceNumber || ""}`}</Text>
+        <OrderWrapper>
+          <OrderCount style={!!data.count ? { color: "green" } : {}}>
+            {data.count}
+          </OrderCount>
+          <OrderText style={!!data.count ? { color: "green" } : {}}>
+            Watting orders
+          </OrderText>
+        </OrderWrapper>
       </Group>
     </Container>
   );
@@ -63,14 +72,6 @@ const RowBreak = styled.View`
   background-color: black;
 `;
 
-const Background = styled.Image`
-  top: 0;
-  left: 0;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-`;
-
 const Container = styled.TouchableOpacity`
   height: 100px;
   width: 100%;
@@ -88,4 +89,19 @@ const Group = styled.View`
   flex-direction: row;
   width: 100%;
   height: 100%;
+`;
+
+const OrderCount = styled(Label)`
+  color: darkgrey;
+  margin-right: 4px;
+`;
+const OrderText = styled(OrderCount)`
+  color: darkgrey;
+`;
+
+const OrderWrapper = styled.View`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
 `;

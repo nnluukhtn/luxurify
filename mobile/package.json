@@ -23,6 +23,7 @@
     "expo-updates": "~0.4.0",
     "lodash": "^4.17.21",
     "node-libs-browser": "2.2.1",
+    "opensea-js": "^1.1.11",
     "path-browserify": "0.0.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",

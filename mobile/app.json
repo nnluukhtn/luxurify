@@ -14,7 +14,7 @@
     "splash": {
       "image": "assets/image/app-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#222222"
+      "backgroundColor": "#ffffff"
     }
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import QRCode from "react-native-qrcode-svg";
@@ -10,6 +10,7 @@ import { useContract } from "../../../atoms/contract";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import { InventoryModal } from "./constants";
 import { getComposedData } from "./utils";
+import { SeaportContext } from "../../../SeaportContext";
 
 interface Params {
   id?: string;
@@ -21,6 +22,7 @@ const Detail = ({}) => {
   const connector = useWalletConnect();
   const navigation = useNavigation();
   const contract = useContract({ account: connector.accounts[0] });
+  const seaport = useContext(SeaportContext);
 
   // States
   const [data, setData] = useState<(Watch & Partial<WatchMeta>) | null>(null);
@@ -29,9 +31,6 @@ const Detail = ({}) => {
 
   // Mapped values
   const params: Params = route?.params;
-  if (!params?.id) {
-    return <View>{navigation.goBack()}</View>;
-  }
 
   // Event handler
   const handleQRModal = () => {
@@ -46,7 +45,12 @@ const Detail = ({}) => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const watchData = await getComposedData({ token: params.id, contract });
+      const watchData = await getComposedData({
+        seaport,
+        account: connector.accounts[0],
+        token: params.id,
+        contract,
+      });
       setData(watchData);
       setLoading(false);
     })();
@@ -66,7 +70,6 @@ const Detail = ({}) => {
       </LoadingView>
     );
   }
-
   return (
     <>
       <View>
@@ -88,10 +91,28 @@ const Detail = ({}) => {
 
           <Image source={{ uri: data.image }} />
           <GoldBar>
-            <Label style={{ color: "white"}}>
-              {data.name || "-"}
-            </Label>
+            <Title style={{ color: "white" }}>{data.name || "-"}</Title>
           </GoldBar>
+          <PriceBar
+            style={{ borderBottomWidth: 1, borderBottomColor: "lightgrey" }}
+          >
+            <Title>Price:</Title>
+            <Price style={{ alignSelf: "center" }}>
+              {data.priceFixed || "-"}
+              {data.priceUnit === 0 ? (
+                <>
+                  <MaterialCommunityIcons
+                    name="ethereum"
+                    size={20}
+                    color="black"
+                  />
+                  ETH
+                </>
+              ) : (
+                " USD"
+              )}
+            </Price>
+          </PriceBar>
           <ContentContainer>
             <Content>
               <Label>Model</Label>
@@ -164,7 +185,6 @@ const Detail = ({}) => {
           visible={activeModal === InventoryModal.QR_SCAN}
           onDismiss={handleCloseModal}
           contentContainerStyle={{
-            width: "90%",
             height: 340,
             backgroundColor: "white",
             alignSelf: "center",
@@ -196,14 +216,8 @@ const View = styled.SafeAreaView`
   background-color: white;
 `;
 
-const ModalView = styled.View`
-  width: 400px;
-  height: 400px;
-  align-self: center;
-`;
-
 const Code = styled(QRCode)`
-  width: 100%;
+  width: 340px;
   height: 100%;
 `;
 
@@ -249,14 +263,27 @@ const Label = styled(Text)`
   padding-bottom: 3px;
 `;
 
+const Title = styled.Text`
+  font-size: 18px;
+  font-weight: 600;
+  color: darkgrey;
+`;
+
+const Price = styled.Text`
+  margin-left: 5px;
+  font-size: 18px;
+  font-weight: 600;
+  color: black;
+`;
+
 const GoldBar = styled.View`
   width: 100%;
   height: 50px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
   background-color: #dda522;
+  padding: 0px 10px;
 `;
 
 const Toolbar = styled(GoldBar)`
@@ -264,10 +291,16 @@ const Toolbar = styled(GoldBar)`
   justify-content: space-between;
   background-color: white;
   align-items: center;
-  padding: 0px 20px;
+  padding: 0px 10px;
+`;
+
+const PriceBar = styled(Toolbar)`
+  padding: 0px 10px;
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 const Logo = styled.Text`
   font-weight: 500;
-  font-size: 20;
-`
+  font-size: 20px;
+`;
