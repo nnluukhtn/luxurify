@@ -6,7 +6,9 @@ class WatchesController < ApplicationController
   end
 
   def create
-    watch = current_user.watches.create!(watch_params)
+    watch = current_user.watches.create!(watch_params.except(:image, :inner_image))
+    watch.image.attach(watch_params[:image]) if watch_params[:image]
+    watch.inner_image.attach(watch_params[:inner_image]) if watch_params[:inner_image]
 
     pin_file_to_ipfs(watch)
 
@@ -125,7 +127,7 @@ class WatchesController < ApplicationController
     @pinata_connection ||= Faraday.new(
       url: ENV['PINATA_API']
       ) do |conn|
-      conn.options.timeout = 10
+      conn.options.timeout = 15
       conn.response :logger, nil, { headers: true, bodies: true, log_level: :info }
       conn.request :multipart
       conn.request :json

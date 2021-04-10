@@ -29,6 +29,7 @@ import { useInjectSaga } from 'utils/redux-injectors';
 import saga from './saga';
 import NavigationBar from './common/components/NavigationBar';
 import { RegisterWatch } from './pages/RegisterWatch/Loadable';
+import { WatchDetail } from './pages/Watches/WatchDetail/Loadable';
 
 export function App() {
   useInjectSaga({
@@ -86,6 +87,9 @@ export function App() {
         )}
         {isAuthenticated && (
           <Route exact path="/register-watch" component={RegisterWatch} />
+        )}
+        {isAuthenticated && (
+          <Route exact path="/watches/:watchId" component={WatchDetail} />
         )}
         {isAuthenticated && <Route path="/" component={HomePage} />}
         <Route component={NotFoundPage} />

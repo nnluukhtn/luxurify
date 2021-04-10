@@ -26,8 +26,8 @@ export interface RegisterBrandParams {
   brand: {
     name: string;
     category: string;
-    bir_2303_certification: FileType[];
-    certification_of_registration: FileType[];
+    bir_2303_file: FileType[];
+    certificate_file: FileType[];
   };
 }
 

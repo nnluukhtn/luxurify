@@ -11,6 +11,7 @@ const overide = `
 interface Props {
   actionName: string;
   percent: number;
+  loading: boolean;
   visible: boolean;
   onClose: () => void;
   getContent?: () => React.ReactNode;
@@ -20,6 +21,7 @@ interface Props {
 const ProgressModal = ({
   actionName,
   visible,
+  loading,
   percent,
   onClose,
   getContent,
@@ -46,7 +48,11 @@ const ProgressModal = ({
       </Typography.Title>
       {getContent && <Typography.Text>{getContent()}</Typography.Text>}
       <div style={{ position: 'relative', width: 200 }}>
-        <PropagateLoader size={15} color="#ffb82f" css={overide} />
+        {loading ? (
+          <PropagateLoader size={15} color="#ffb82f" css={overide} />
+        ) : (
+          <p>Please close this pop up.</p>
+        )}
         <br />
       </div>
       <div style={{ width: 450 }}>

@@ -8,7 +8,7 @@ import { useWeb3React } from '@web3-react/core';
 import { PageContainer } from 'app/common/components';
 import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
 import { Container } from 'app/common/styles';
-import { BigNumber, Contract } from 'ethers';
+import { Contract } from 'ethers';
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { registerWatchAdapter } from './adapter';
@@ -37,9 +37,16 @@ export function RegisterWatch(_props: Props) {
   const [actionName, setActionName] = useState('');
   const [percent, setPercent] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string | undefined>(
     undefined,
   );
+  // const { data: balance } = useSWR([
+  //   TOKENS_BY_NETWORK[chainId || 4]?.[0].address,
+  //   'balanceOf',
+  //   account,
+  // ]);
+
   const claimWatch = async (values: RegisterWatchParams) => {
     const contract = new Contract(
       TOKENS_BY_NETWORK[chainId || 4]?.[0].address,
@@ -49,6 +56,8 @@ export function RegisterWatch(_props: Props) {
     console.log('Signer', library, library?.getSigner());
     setActionName('Claiming watch...');
     setShowProgress(true);
+    setLoading(true);
+    setTransactionHash('');
     setPercent(10);
 
     let claimWatch: any;
@@ -65,7 +74,7 @@ export function RegisterWatch(_props: Props) {
     }
 
     setPercent(20);
-    setActionName('Waiting for Confirmation...');
+    setActionName('Waiting for Confirmations...');
     console.log('CLAIMING: ', claimWatch);
 
     let confirmResp: any;
@@ -87,18 +96,14 @@ export function RegisterWatch(_props: Props) {
   const submitWatch = (values: RegisterWatchParams) => {
     console.log('start registering with: ', values);
     setPercent(50);
-    setActionName('Register your watch to our network...');
+    setActionName('Registering your watch to our network...');
     const callback = (response: RegisterWatchResponse) => {
       if (response.success) {
         setPercent(60);
         setActionName('Successfully registered watch.');
         callSuccess('Successfully registered a watch');
         console.log('SUCCESS register: ', response);
-        debounceFn(
-          getToken,
-          1500,
-          response.response.token_uri + transactionHash,
-        );
+        debounceFn(getToken, 1500, response.response.token_uri);
         // history.goBack();
       } else {
         setActionName('Error while registering your watch');
@@ -122,11 +127,12 @@ export function RegisterWatch(_props: Props) {
     setPercent(70);
     setActionName('Getting watch token...');
     console.log('Getting watch token...', tokenUri);
-    const token = await contract.tokenOfOwnerByIndex(account, 4);
+    const balance = await contract.balanceOf(account);
+    const token = await contract.tokenOfOwnerByIndex(account, balance - 1);
     setPercent(80);
     setActionName('Successfully get token');
     console.log('Get Token: ', token);
-    debounceFn(setURI, 1500, [token, tokenUri]);
+    setURI(token.toNumber(), tokenUri);
   };
 
   const setURI = async (token: number, tokenUri: string) => {
@@ -138,23 +144,16 @@ export function RegisterWatch(_props: Props) {
     setPercent(90);
     setActionName('Setting Token URI...');
     console.log('Setting URI,', token, tokenUri);
-    const resp = await newContract.setTokenURI(
-      BigNumber.from(token).toNumber(),
-      tokenUri,
-    );
+    const resp = await newContract.setTokenURI(token, tokenUri);
     setPercent(100);
     setActionName('Successfully setting Token URI!');
     console.log('setURI Resp: ', resp);
     const finalResp = await resp?.wait(console.log);
     console.log('FINAL:', finalResp);
+    setTransactionHash(finalResp?.transactionHash);
+    setLoading(false);
+    setActionName('Finished!');
   };
-
-  // useEffect(() => {
-  //   setURI(
-  //     BigNumber.from('0x15').toNumber(),
-  //     'https://gateway.pinata.cloud/ipfs/0x4139c57f3e0f381af18f4d80df910ce857e1fec6194f2b60a7a17e91466fb3a2',
-  //   );
-  // }, []);
 
   return (
     <>
@@ -178,7 +177,14 @@ export function RegisterWatch(_props: Props) {
           actionName={actionName}
           percent={percent}
           visible={showProgress}
-          closable={actionName.indexOf('Error') >= 0}
+          loading={isLoading}
+          getContent={() =>
+            transactionHash ? <p>hash: {transactionHash}</p> : null
+          }
+          closable={
+            actionName.indexOf('Error') >= 0 ||
+            actionName.indexOf('Finish') >= 0
+          }
           onClose={() => setShowProgress(false)}
         />
       </Container>

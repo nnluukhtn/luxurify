@@ -119,8 +119,8 @@ export interface RegisterWatchPayload {
     price_type: string;
     price_unit: string;
     price_fixed: number;
-    image: RcFile[];
-    inner_image: RcFile[];
+    image: RcFile;
+    inner_image: RcFile;
   };
 }
 

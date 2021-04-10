@@ -12,8 +12,8 @@ export const registerBrandAdapter = (
     brand: {
       name: brandPayload.name,
       category: brandPayload.category,
-      bir_2303_certification: brandPayload.bir2303Cert,
-      certification_of_registration: brandPayload.registrationCert,
+      certificate_file: brandPayload.registrationCert[0],
+      bir_2303_file: brandPayload.bir2303Cert[0],
     },
   };
 };
