@@ -19,12 +19,12 @@ async function main() {
 
   console.log("Set token URI for contract: ", luxurify.address);
   const txn1 = await luxurify.setTokenURI(
-    1,
+    0,
     "https://gateway.pinata.cloud/ipfs/Qmba4ZiQcXPQuvZmi5VRoiVQpaLtQ3F9BmwWdBcprrSwvS"
   );
   console.log("Txn: ", txn1);
   const txn2 = await luxurify.setTokenURI(
-    3,
+    1,
     "https://gateway.pinata.cloud/ipfs/Qmba4ZiQcXPQuvZmi5VRoiVQpaLtQ3F9BmwWdBcprrSwvS"
   );
   console.log("Txn: ", txn2);

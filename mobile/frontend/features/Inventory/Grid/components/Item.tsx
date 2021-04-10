@@ -20,7 +20,7 @@ const Item: React.FC<Props> = ({ data, ...rest }) => {
           alignItems: "center",
         }}
       >
-        {data.movementname === "Automatic" ? (
+        {data.movement_name === "Automatic" ? (
           <Feather name="watch" size={32} color="black" />
         ) : (
           <Ionicons name="watch-outline" size={32} color="black" />
@@ -37,7 +37,7 @@ const Item: React.FC<Props> = ({ data, ...rest }) => {
         }}
       >
         <Label>{data.name}</Label>
-        <Text>{`${data.avg_price || ""} ${data.currency || ""}`}</Text>
+        <Text>{`${data.referenceNumber || ""}`}</Text>
       </Group>
     </Container>
   );

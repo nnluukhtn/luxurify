@@ -33,6 +33,8 @@ export const useContract = ({ account }: Props) => {
     if (!contract) {
       const newContract = initializeContract(web3, account);
       web3.eth.defaultAccount = account;
+
+      // Event listener handlers
       setContract(newContract);
     }
   }, []);

@@ -31,8 +31,8 @@ const HomeScreen: React.FC = ({}) => {
     );
 
     const contractData = contract.methods
-      .watches(connector.accounts[0])
-      // .claimNewWatch(33, "Rolex Datejust 116189PAVEL", "116189PAVEL")
+      // .watches(connector.accounts[0])
+      .claimNewWatch(33, "Rolex Datejust 116189PAVEL", "116189PAVEL")
       .encodeABI();
 
     const response = await connector
@@ -66,7 +66,7 @@ const HomeScreen: React.FC = ({}) => {
         {/* <Text>{JSON.stringify(contract) || JSON.stringify(connector.uri)}</Text> */}
         {/* <Text>"{JSON.stringify(contract)}"</Text> */}
         <Text>{JSON.stringify(smth) || 0}</Text>
-        <ButtonContainer onPress={callWatches}>
+        <ButtonContainer onPress={call}>
           <ButtonText>Click</ButtonText>
         </ButtonContainer>
       </CenteredGroup>

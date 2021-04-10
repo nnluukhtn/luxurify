@@ -9,7 +9,7 @@ interface Params {
   callback?: BarCodeScannedCallback;
 }
 
-const Scanner: React.FC = ({}) => {
+const Scanner = () => {
   // Values
   const route = useRoute();
   const navigation = useNavigation();
@@ -26,8 +26,12 @@ const Scanner: React.FC = ({}) => {
     setScanned(true);
     if (params?.callback) return params.callback(payload);
     else {
-      navigation.navigate("Camera.Detail");
-      alert(JSON.stringify(payload));
+      navigation.navigate("Camera", {
+        screen: "Camera.Detail",
+        params: {
+          id: payload.data,
+        },
+      });
     }
   };
 
