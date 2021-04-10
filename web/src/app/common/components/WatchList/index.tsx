@@ -1,7 +1,9 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
-import { Button, Card, Col, Row, Skeleton, Typography } from 'antd';
+import { Card, Col, Row, Skeleton } from 'antd';
 import { WatchVector } from 'app/common/assets';
+import Colors from 'app/common/Colors';
+import { Header, Spacer } from 'app/common/styles';
 import { Contract } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -45,26 +47,26 @@ const WatchList = ({ address }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [balance, account, address]);
 
-  // useEffect(() => {
-  //   const getToken = async () => {
-  //     const result = await contract.tokenOfOwnerByIndex(account, 7);
-  //     const watch = await contract.getWatchInfo(result);
-  //   };
-  //   getToken();
-  // }, []);
+  useEffect(() => {
+    // const getToken = async () => {
+    //   const result = await contract.tokenOfOwnerByIndex(account, 7);
+    //   const watch = await contract.getWatchInfo(result);
+    // };
+    // getToken();
+    return () => {
+      setWatches(getEmptyObjectList(14));
+    };
+  }, []);
 
   return (
     <WatchListContainer>
-      <Typography.Title
-        level={4}
-        style={{ textAlign: 'center', marginBottom: '2rem' }}
-      >
+      <Header style={{ textAlign: 'center', fontSize: '1.5rem' }}>
         Owner's claimed watches
-        <br />
-        <Typography.Text style={{ fontSize: '0.8rem', fontWeight: 600 }}>
-          (Total: {balance && balance.toString()})
-        </Typography.Text>
-      </Typography.Title>
+      </Header>
+      <div style={{ fontSize: '0.9rem', textAlign: 'center' }}>
+        ( Total: {balance && balance.toString()} )
+      </div>
+      <Spacer height="2rem" />
 
       {isLoading && !watches ? (
         <>Getting list...</>
@@ -74,7 +76,8 @@ const WatchList = ({ address }) => {
             <Col key={`watch_${idx}_${value.id}`}>
               <Card
                 hoverable
-                style={{ width: 150, height: 240, textAlign: 'center' }}
+                style={{ width: 150, height: 240, position: 'relative' }}
+                bodyStyle={{ textAlign: 'center' }}
                 loading={!value.name}
                 onClick={() =>
                   value.tokenURI &&
@@ -82,31 +85,36 @@ const WatchList = ({ address }) => {
                 }
                 cover={
                   !value.name ? (
-                    <Skeleton.Image />
+                    <Skeleton.Image style={{ width: 150, height: 100 }} />
                   ) : (
                     <img
                       alt="example"
                       style={{
-                        maxWidth: 145,
+                        maxWidth: 90,
                         maxHeight: 100,
                         objectFit: 'contain',
-                        marginLeft: 2,
-                        marginTop: 2,
+                        margin: 'auto',
+                        marginTop: '8px',
                       }}
                       src={WatchVector}
                     />
                   )
                 }
               >
-                <span style={{ fontSize: 12, fontWeight: 600 }}>
-                  {value.name}
-                </span>
-                <br />
-                {value.referenceNumber}
+                <p style={{ fontSize: 12, fontWeight: 600 }}>{value.name}</p>
                 {value.tokenURI && (
-                  <Button type="link" style={{ fontSize: 12 }}>
-                    see detail
-                  </Button>
+                  <div
+                    style={{
+                      color: Colors.B300_BLUE,
+                      position: 'absolute',
+                      left: 0,
+                      bottom: '8px',
+                      textAlign: 'center',
+                      width: '100%',
+                    }}
+                  >
+                    see details
+                  </div>
                 )}
               </Card>
             </Col>
@@ -134,6 +142,6 @@ const WatchListContainer = styled.div`
   width: auto;
   padding: 1rem;
   padding-top: 0;
-  overflow: auto;
+  overflow: hidden;
   margin: 0.5rem auto 2rem auto;
 `;

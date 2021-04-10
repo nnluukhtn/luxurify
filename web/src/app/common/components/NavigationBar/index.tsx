@@ -3,6 +3,7 @@ import { Logo } from 'app/common/assets';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
 import {
   selectIsAuthenticated,
   selectUser,
@@ -28,20 +29,20 @@ const NavigationBar = (props: Props) => {
           src={Logo}
           alt="logo"
           onClick={() => history.push('/')}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'pointer', paddingBottom: 4 }}
         />
       }
       subTitle={<Subtitle user={user} isAuthenticated={isAuthenticated} />}
       extra={[
         isAuthenticated ? (
-          <Button key="3" onClick={() => history.push('/register-brand')}>
+          <StyledButton key="3" onClick={() => history.push('/register-brand')}>
             Register Brand
-          </Button>
+          </StyledButton>
         ) : null,
         isAuthenticated ? (
-          <Button key="2" onClick={() => history.push('/register-watch')}>
+          <StyledButton key="2" onClick={() => history.push('/register-watch')}>
             Register Watch
-          </Button>
+          </StyledButton>
         ) : null,
         <SignInOutButton
           key="1"
@@ -55,3 +56,7 @@ const NavigationBar = (props: Props) => {
 };
 
 export default NavigationBar;
+
+const StyledButton = styled(Button)`
+  border-radius: 5px;
+`;

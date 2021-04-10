@@ -1,3 +1,4 @@
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { signOut } from 'app/actions';
 import { ApiResponse } from 'global/services/api/types';
@@ -46,6 +47,8 @@ const SignInOutButton = ({ isAuthenticated, isAdmin }: Props) => {
       key="1"
       type="primary"
       onClick={() => history.push('/sign-in')}
+      icon={<UserOutlined />}
+      style={{ display: 'flex', alignItems: 'center' }}
     >
       Sign in
     </StyledButton>
@@ -54,4 +57,6 @@ const SignInOutButton = ({ isAuthenticated, isAdmin }: Props) => {
 
 export default SignInOutButton;
 
-const StyledButton = styled(Button)``;
+const StyledButton = styled(Button)`
+  border-radius: 5px;
+`;

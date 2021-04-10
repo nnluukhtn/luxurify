@@ -80,7 +80,14 @@ class QRCodePrint extends React.Component<Props> {
               <br />
               {watchName}
             </Sub>
-            {watchImage && <img src={watchImage} alt="watch" width="50%" />}
+            {watchImage && (
+              <img
+                src={watchImage}
+                alt="watch"
+                width="50%"
+                style={{ objectFit: 'contain' }}
+              />
+            )}
             <QRContainer>
               <QRCode
                 className="watch_QRCode"

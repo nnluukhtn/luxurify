@@ -121,8 +121,6 @@ const RegisterBrandForms = () => {
     dispatch(actions.fetchWSBrands({}));
   }, [actions, dispatch]);
 
-  console.log('Brand  Values: ', formik.values, formik.errors);
-
   return (
     <RegisterBrandFormContainer>
       <Header>Register A Brand</Header>
@@ -212,7 +210,7 @@ const RegisterBrandForms = () => {
 export default RegisterBrandForms;
 
 export const RegisterBrandFormContainer = styled.div`
-  margin: 5rem auto;
+  margin: 3rem auto 5rem auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

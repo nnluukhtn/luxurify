@@ -24,6 +24,7 @@ import ERC667ABI from '../../../abi/ERC667.abi.json';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import { useDispatch } from 'react-redux';
 import { useFnDebounce } from 'utils/hooks/DebounceHooks';
+import { useHistory } from 'react-router-dom';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -34,7 +35,7 @@ export function RegisterWatch(_props: Props) {
   const dispatch = useDispatch();
   const debounceFn = useFnDebounce();
   const { actions } = useRegisterWatchSlice();
-  // const history = useHistory();
+  const history = useHistory();
   const [callSuccess, callError] = useNotification();
   const [actionName, setActionName] = useState('');
   const [percent, setPercent] = useState(0);
@@ -50,7 +51,7 @@ export function RegisterWatch(_props: Props) {
       ERC667ABI,
       library?.getSigner(),
     );
-    setActionName('Claiming watch..., Please comfirm using Metamax.');
+    setActionName(`Claiming watch...<wbr/>Please comfirm using Metamax.`);
     setShowProgress(true);
     setLoading(true);
     setTransactionHash('');
@@ -76,9 +77,8 @@ export function RegisterWatch(_props: Props) {
     setPercent(20);
     setActionName('Waiting for Confirmations...');
 
-    let confirmResp: any;
     try {
-      confirmResp = await claimWatch.wait(console.log);
+      await claimWatch.wait(console.log);
     } catch (err) {
       callError('Error: ' + err);
       setActionName('Error while waiting for confirmations');
@@ -186,7 +186,10 @@ export function RegisterWatch(_props: Props) {
             actionName.indexOf('Error') >= 0 ||
             actionName.indexOf('Finish') >= 0
           }
-          onClose={() => setShowProgress(false)}
+          onClose={() => {
+            if (actionName.indexOf('Finish') >= 0) history.push('/');
+            setShowProgress(false);
+          }}
         />
       </Container>
     </>

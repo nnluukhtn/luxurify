@@ -3,10 +3,10 @@
  * WatchDetail
  *
  */
-import { Col, Collapse, Image, Row, Skeleton, Typography } from 'antd';
+import { Col, Collapse, Image, Row, Skeleton } from 'antd';
 import Colors from 'app/common/Colors';
 import { PageContainer } from 'app/common/components';
-import { Container, Spacer } from 'app/common/styles';
+import { Container, Header, Spacer } from 'app/common/styles';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -109,10 +109,8 @@ export function WatchDetail(props: Props) {
       >
         <DetailContainer>
           <SmallHeader>Watch Info</SmallHeader>
-          {detail.name && (
-            <Typography.Title level={4}>{detail.name}</Typography.Title>
-          )}
-          <Row>
+          {detail.name && <Header>{detail.name}</Header>}
+          <Row style={{ marginTop: '1rem' }}>
             <Col span={12}>
               <ImageContainer>
                 {detail.image ? (
@@ -120,19 +118,27 @@ export function WatchDetail(props: Props) {
                     src={detail.image}
                     preview
                     style={{
-                      maxWidth: 400,
-                      maxHeight: 400,
-                      objectFit: 'cover',
+                      width: 400,
+                      height: 400,
+                      objectFit: 'contain',
                       border: '1px solid lightgray',
                       borderRadius: 5,
                     }}
+                    placeholder={
+                      <Skeleton.Image style={{ height: 400, width: 400 }} />
+                    }
                   />
                 ) : (
-                  <Skeleton.Image />
+                  <Skeleton.Image
+                    style={{
+                      width: 400,
+                      height: 400,
+                    }}
+                  />
                 )}
               </ImageContainer>
 
-              <Spacer height="0.6rem" />
+              <Spacer height="1.6rem" />
 
               <Row>
                 <Col span={4}>
@@ -142,7 +148,7 @@ export function WatchDetail(props: Props) {
                   <Price>
                     {isLoading ? (
                       <LoadingOutlined />
-                    ) : price ? (
+                    ) : price && price[6] ? (
                       `${formatUnits(price[6], 18)} ${
                         price[4] === 1 ? 'USD' : 'ETH'
                       }`
@@ -250,9 +256,11 @@ export function WatchDetail(props: Props) {
 }
 
 const ImageContainer = styled.div`
-  width: 480px;
-  height: 415px;
-  object-fit: cover;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Label = styled.span`

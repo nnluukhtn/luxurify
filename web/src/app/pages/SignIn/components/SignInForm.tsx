@@ -150,10 +150,11 @@ const SignInForm = ({ email, isAdmin, action = signIn }: Props) => {
 export default SignInForm;
 
 export const Header = styled.div`
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   font-weight: 450;
   margin: 0;
   color: ${Colors.N800_BLACK};
+  font-family: 'Cormorant Garamond', serif;
 `;
 
 export const SubHeader = styled.div`

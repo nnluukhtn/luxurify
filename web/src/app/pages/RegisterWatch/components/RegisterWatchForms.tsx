@@ -474,7 +474,7 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
 export default RegisterWatchForms;
 
 export const RegisterWatchFormContainer = styled.div`
-  margin: 5rem auto;
+  margin: 3rem auto 5rem auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

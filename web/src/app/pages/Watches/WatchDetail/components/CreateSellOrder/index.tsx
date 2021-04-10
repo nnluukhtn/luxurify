@@ -1,5 +1,5 @@
 import Modal from 'antd/lib/modal/Modal';
-import { Header, StyledButton } from 'app/common/styles';
+import { StyledButton } from 'app/common/styles';
 import React, { useContext, useEffect, useState } from 'react';
 import { seaportContext } from 'contexts/SeaportContext';
 import { OpenSeaAsset } from 'opensea-js/lib/types';
@@ -7,7 +7,7 @@ import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants'
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { formatUnits } from '@ethersproject/units';
 import styled from 'styled-components';
 
@@ -71,10 +71,11 @@ const CreateSellOrder = ({ watchId, watchName, startAmount }: Props) => {
       </StyledButton>
       <Modal
         visible={showModal}
-        title={<Header style={{ fontSize: '1rem' }}>Create sell order</Header>}
+        title={<Header>Create sell order</Header>}
         onCancel={() => setShowModal(false)}
         onOk={listingItem}
         bodyStyle={{ textAlign: 'center' }}
+        closable={false}
       >
         Are you sure to create a sell order for this item:
         <br />
@@ -94,4 +95,10 @@ export default CreateSellOrder;
 
 const TextBold = styled.span`
   font-weight: 600;
+`;
+
+const Header = styled.div`
+  font-weight: 500;
+  font-size: 1.1rem;
+  text-align: center;
 `;

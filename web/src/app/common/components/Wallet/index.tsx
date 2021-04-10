@@ -82,7 +82,6 @@ const Wallet = () => {
           <strong>Account: </strong> {account || '-'}
         </p>
 
-        {/* <EtherView /> */}
         <div style={{ width: 'min-content', margin: '0 auto' }}>
           <Balance>
             <EthBalance />

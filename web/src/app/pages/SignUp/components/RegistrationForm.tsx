@@ -1,4 +1,3 @@
-import { Button } from 'antd';
 import Colors from 'app/common/Colors';
 import InputForm from 'app/common/components/InputForm';
 import { Spacer, StyledButton, StyledCheckbox } from 'app/common/styles';
@@ -94,18 +93,6 @@ const RegistrationForm = () => {
       <SubHeader>Fill in the form to create an account</SubHeader>
 
       <Spacer height="2rem" />
-      {/* <InputForm name="firstName" placeholder="First Name" disabled />
-
-      <Spacer height="0.7rem" />
-      <InputForm name="lastName" placeholder="Last Name" disabled />
-
-      <Spacer height="0.7rem" />
-      <InputForm name="mobile" placeholder="Mobile Number" disabled />
-
-      <Spacer height="2rem" />
-      <InputForm name="username" placeholder="Usermame" disabled />
-
-      <Spacer height="0.7rem" /> */}
       <InputForm
         id="email"
         name="email"
@@ -150,22 +137,6 @@ const RegistrationForm = () => {
       >
         Sign Up
       </StyledButton>
-      <div
-        style={{
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          marginTop: 32,
-        }}
-      >
-        <Button
-          type="link"
-          onClick={() => history.push('/sign-in')}
-          style={{ fontSize: 12 }}
-        >
-          Sign In
-        </Button>
-      </div>
     </RegistrationContainer>
   );
 };
@@ -173,10 +144,11 @@ const RegistrationForm = () => {
 export default RegistrationForm;
 
 export const Header = styled.div`
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   font-weight: 450;
   margin: 0;
   color: ${Colors.N800_BLACK};
+  font-family: 'Cormorant Garamond', serif;
 `;
 
 export const SubHeader = styled.div`
