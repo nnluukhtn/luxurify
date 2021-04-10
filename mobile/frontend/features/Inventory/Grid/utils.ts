@@ -1,9 +1,7 @@
 import _ from "lodash";
 import axios from "axios";
 import web3 from "web3";
-import toNumber from "lodash/toNumber";
 import { Contract } from "web3-eth-contract";
-import { defaultHeader } from "../../../constants";
 import { Watch, WatchMeta } from "../../../types";
 
 interface Props {
@@ -57,7 +55,7 @@ export const getWatchMeta = async ({
     response.data.attributes,
     (acc, { trait_type, value }) => ({
       ...acc,
-      [trait_type.replace(" ", "_").toLowerCase()]: value,
+      [trait_type.replaceAll(" ", "_").toLowerCase()]: value,
     }),
     {}
   ) as WatchMeta;
@@ -74,7 +72,7 @@ export const getWatchListByAccount = async ({
   contract,
   account,
 }: ListProps): Promise<Array<Watch & Partial<WatchMeta>>> => {
-  const totalIndex = toNumber(await contract.methods.balanceOf(account).call());
+  const totalIndex = _.toNumber(await contract.methods.balanceOf(account).call());
   const watches: Array<Watch & Partial<WatchMeta>> = [];
 
   for (let index = 0; index < totalIndex; index++) {

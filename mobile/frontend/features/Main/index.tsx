@@ -14,7 +14,6 @@ const Component: React.FC = ({}) => {
   // Main return
   return (
     <Tab.Navigator
-      sceneAnimationEnabled
       activeColor="#f0edf6"
       inactiveColor="#656369"
       barStyle={{ backgroundColor: "#111" }}

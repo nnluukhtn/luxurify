@@ -10,7 +10,7 @@ interface Params {
   id?: string;
 }
 
-const Detail: React.FC = ({}) => {
+const Detail = ({}) => {
   // Values
   const route = useRoute();
   const connector = useWalletConnect();
@@ -22,6 +22,7 @@ const Detail: React.FC = ({}) => {
 
   // Mapped values
   const params: Params = route?.params;
+  console.log({ params });
   if (!params?.id) {
     return <View>{navigation.goBack()}</View>;
   }
@@ -36,7 +37,7 @@ const Detail: React.FC = ({}) => {
 
   useEffect(() => {
     if (data?.name) {
-      navigation.setOptions({ title: data.name, headerShown: true });
+      navigation.setOptions({ title: data.name });
     }
   }, [data?.name]);
 
@@ -51,20 +52,133 @@ const Detail: React.FC = ({}) => {
 
   return (
     <View>
-      <Text>{JSON.stringify(data)}</Text>
+      <ScrollView>
+        <Image source={{ uri: data.image }} />
+        <ContentContainer>
+          <Content>
+            <Label>Name</Label>
+            <Text>{data.name || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Model</Label>
+            <Text>{data.model || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Power reserve</Label>
+            <Text>{data.power_reserve || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Case Diameter</Label>
+            <Text>{data.case_diameter || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Water Resustabce ATM</Label>
+            <Text>{data.water_resistance_atm || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Movement name</Label>
+            <Text>{data.movement_name || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Bracelet Color Name</Label>
+            <Text>{data.bracelet_color_name || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Bracelet Material Name</Label>
+            <Text>{data.bracelet_material_name || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Dial Color Name</Label>
+            <Text>{data.dial_color_name || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Gender name</Label>
+            <Text>{data.gender_name || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Buckle name</Label>
+            <Text>{data.buckle_name || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Glass name</Label>
+            <Text>{data.glass_name || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Brand name</Label>
+            <Text>{data.brand_name || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Case Material name</Label>
+            <Text>{data.case_material_name || "-"}</Text>
+          </Content>
+
+          <Content>
+            <Label>Bracelet Material Name</Label>
+            <Text>{data.bracelet_material_name || "-"}</Text>
+          </Content>
+        </ContentContainer>
+        <Text>{JSON.stringify(data)}</Text>
+      </ScrollView>
     </View>
   );
 };
 
 export default Detail;
 
-const View = styled.View`
+const Image = styled.Image`
   width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
+  height: 400px;
 `;
 
-const Text = styled.Text``;
+const ScrollView = styled.ScrollView`
+  display: flex;
+  flex-direction: column;
+`;
+
+const View = styled.View`
+  flex: 1;
+  background-color: white;
+`;
+
+const ContentContainer = styled.View`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  padding: 15px;
+`;
+
+const Content = styled.View`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+`;
+
+const Text = styled.Text`
+  flex: 4;
+  font-size: 17px;
+  padding-left: 10px;
+  padding-bottom: 7px;
+`;
+
+const Label = styled(Text)`
+  flex: 2;
+  font-size: 18px;
+  font-weight: 500;
+  color: darkgrey;
+  padding-bottom: 3px;
+`;

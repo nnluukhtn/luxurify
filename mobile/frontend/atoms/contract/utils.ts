@@ -35,10 +35,6 @@ export const useContract = ({ account }: Props) => {
       web3.eth.defaultAccount = account;
 
       // Event listener handlers
-      const sub = web3.eth.subscribe("pendingTransactions", (err, trans) => {});
-
-      sub.on("data", (data) => alert(data));
-
       setContract(newContract);
     }
   }, []);
