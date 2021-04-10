@@ -9,6 +9,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import { BigNumber, ethers } from 'ethers';
 import { formatUnits } from '@ethersproject/units';
+import styled from 'styled-components';
 
 interface Props {
   watchId: number;
@@ -25,8 +26,6 @@ const CreateSellOrder = ({ watchId, watchName, startAmount }: Props) => {
   // const seaport = new OpenSeaPort((window as any).web3.currentProvider, {
   //   networkName: Network.Rinkeby,
   // });
-
-  console.log({ seaport });
 
   const listingItem = async () => {
     if (account) {
@@ -63,25 +62,36 @@ const CreateSellOrder = ({ watchId, watchName, startAmount }: Props) => {
     };
 
     if (seaport && watchId) fetchAssets();
-  }, [seaport && watchId]);
+  }, [seaport, watchId]);
 
   return (
     <div>
-      <StyledButton onClick={() => setShowModal(true)}>
+      <StyledButton type="primary" onClick={() => setShowModal(true)}>
         Create sell order
       </StyledButton>
       <Modal
         visible={showModal}
-        title={<Header>Create Sell Order</Header>}
+        title={<Header style={{ fontSize: '1rem' }}>Create sell order</Header>}
         onCancel={() => setShowModal(false)}
         onOk={listingItem}
+        bodyStyle={{ textAlign: 'center' }}
       >
-        Are you sure to create a sell order for this item: {watchName}, ID:{' '}
-        {watchId} with the fixed price of{' '}
-        {formatUnits(BigNumber.from(startAmount), 18)} ETH ?
+        Are you sure to create a sell order for this item:
+        <br />
+        <TextBold>{watchName}</TextBold>
+        <br />
+        with the fixed price of{' '}
+        <TextBold>
+          {formatUnits(BigNumber.from(startAmount), 18)} ETH
+        </TextBold>{' '}
+        ?
       </Modal>
     </div>
   );
 };
 
 export default CreateSellOrder;
+
+const TextBold = styled.span`
+  font-weight: 600;
+`;

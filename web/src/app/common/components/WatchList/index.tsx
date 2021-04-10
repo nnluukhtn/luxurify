@@ -1,8 +1,8 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import { Button, Card, Col, Row, Skeleton, Typography } from 'antd';
-import Meta from 'antd/lib/card/Meta';
-import { Contract, ethers } from 'ethers';
+import { WatchVector } from 'app/common/assets';
+import { Contract } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -54,23 +54,18 @@ const WatchList = ({ address }) => {
   // }, []);
 
   return (
-    <div
-      style={{
-        borderRadius: '10px',
-        minHeight: 50,
-        minWidth: 280,
-        width: 'auto',
-        padding: '1rem',
-        overflow: 'scroll',
-        margin: '2rem auto',
-      }}
-    >
-      <Typography.Title level={4}>
-        Owner's watch list{' '}
-        <Typography.Text style={{ fontSize: '1rem', fontWeight: 600 }}>
+    <WatchListContainer>
+      <Typography.Title
+        level={4}
+        style={{ textAlign: 'center', marginBottom: '2rem' }}
+      >
+        Owner's claimed watches
+        <br />
+        <Typography.Text style={{ fontSize: '0.8rem', fontWeight: 600 }}>
           (Total: {balance && balance.toString()})
         </Typography.Text>
       </Typography.Title>
+
       {isLoading && !watches ? (
         <>Getting list...</>
       ) : Array.isArray(watches) ? (
@@ -98,7 +93,7 @@ const WatchList = ({ address }) => {
                         marginLeft: 2,
                         marginTop: 2,
                       }}
-                      src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fst3.depositphotos.com%2F2060785%2F17020%2Fv%2F450%2Fdepositphotos_170205484-stock-illustration-icon-wristwatch-vector.jpg&f=1&nofb=1"
+                      src={WatchVector}
                     />
                   )
                 }
@@ -120,7 +115,7 @@ const WatchList = ({ address }) => {
       ) : (
         'None'
       )}
-    </div>
+    </WatchListContainer>
   );
 };
 
@@ -130,4 +125,15 @@ const StyledRow = styled(Row)`
   /* :nth-child() {
     margin: 0.5rem;
   } */
+`;
+
+const WatchListContainer = styled.div`
+  border-radius: 10px;
+  min-height: 50;
+  min-width: 280;
+  width: auto;
+  padding: 1rem;
+  padding-top: 0;
+  overflow: auto;
+  margin: 0.5rem auto 2rem auto;
 `;

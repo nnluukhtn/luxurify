@@ -6,7 +6,7 @@
 import { Col, Collapse, Image, Row, Skeleton, Typography } from 'antd';
 import Colors from 'app/common/Colors';
 import { PageContainer } from 'app/common/components';
-import { Container, Spacer, StyledButton } from 'app/common/styles';
+import { Container, Spacer } from 'app/common/styles';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -27,14 +27,12 @@ import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import CreateSellOrder from './components/CreateSellOrder';
-import { BigNumber, ethers } from 'ethers';
 import { formatUnits } from '@ethersproject/units';
-import web3 from 'web3';
 
 interface Props {}
 
 export function WatchDetail(props: Props) {
-  const { account, library } = useWeb3React<Web3Provider>();
+  const { library } = useWeb3React<Web3Provider>();
   const { watchId } = useParams<{ watchId: string }>();
   const { search } = useLocation();
   const [, callError] = useNotification();
@@ -44,17 +42,17 @@ export function WatchDetail(props: Props) {
   const [isLoading, setLoading] = useState(false);
   const [price, setPrice] = useState<any>({});
 
-  const transfer = async address => {
-    const contract = new Contract(
-      TOKENS_BY_NETWORK[4]?.[0].address,
-      ERC667ABI,
-      library?.getSigner(),
-    );
+  // const transfer = async address => {
+  //   const contract = new Contract(
+  //     TOKENS_BY_NETWORK[4]?.[0].address,
+  //     ERC667ABI,
+  //     library?.getSigner(),
+  //   );
 
-    console.log({ functions: contract?.functions, library });
-    const transfer = await contract?.ownerOf(3);
-    console.log({ transfer });
-  };
+  //   console.log({ functions: contract?.functions, library });
+  //   const transfer = await contract?.ownerOf(3);
+  //   console.log({ transfer });
+  // };
 
   useEffect(() => {
     const fetchDetail = async (apiURL: string) => {
@@ -78,18 +76,18 @@ export function WatchDetail(props: Props) {
         ERC667ABI,
         library?.getSigner(),
       );
-      let watchInfo: any;
-      setLoading(true);
-      try {
-        watchInfo = await contract.getWatchInfo(+watchId);
-      } catch (err) {
-        callError('Error' + err);
+      if (contract && library) {
+        let watchInfo: any;
+        setLoading(true);
+        try {
+          watchInfo = await contract.getWatchInfo(+watchId);
+        } catch (err) {
+          callError('Error' + err);
+        }
+        console.log({ watchInfo });
+        setPrice(watchInfo);
+        setLoading(false);
       }
-      console.log({ watchInfo });
-      // console.log(BigInt(watchInfo?.[6]).toString());
-      // console.log('IS TRUE', price?.[6].eq(price?.[6]));
-      setPrice(watchInfo);
-      setLoading(false);
     };
     if (watchId) {
       console.log({ library });
@@ -104,132 +102,139 @@ export function WatchDetail(props: Props) {
 
   return (
     <Container>
-      <PageContainer innerStyle={{ paddingBottom: '5rem' }}>
-        <SmallHeader>Watch Detail</SmallHeader>
-        {detail.name && (
-          <Typography.Title level={4}>{detail.name}</Typography.Title>
-        )}
-        <Row>
-          <Col span={10}>
-            <ImageContainer>
-              {detail.image ? (
-                <Image
-                  src={detail.image}
-                  preview
-                  style={{
-                    maxWidth: 400,
-                    maxHeight: 400,
-                    objectFit: 'cover',
-                    border: '1px solid lightgray',
-                    borderRadius: 5,
-                  }}
-                />
-              ) : (
-                <Skeleton.Image />
-              )}
-            </ImageContainer>
-
-            <Row>
-              <StyledCollapse
-                defaultActiveKey={0}
-                ghost
-                expandIcon={props => (
-                  <QrcodeOutlined
-                    style={{ fontSize: 16 }}
-                    rotate={props.isActive ? 180 : 0}
+      <PageContainer
+        innerStyle={{
+          paddingBottom: '5rem',
+        }}
+      >
+        <DetailContainer>
+          <SmallHeader>Watch Info</SmallHeader>
+          {detail.name && (
+            <Typography.Title level={4}>{detail.name}</Typography.Title>
+          )}
+          <Row>
+            <Col span={12}>
+              <ImageContainer>
+                {detail.image ? (
+                  <Image
+                    src={detail.image}
+                    preview
+                    style={{
+                      maxWidth: 400,
+                      maxHeight: 400,
+                      objectFit: 'cover',
+                      border: '1px solid lightgray',
+                      borderRadius: 5,
+                    }}
                   />
+                ) : (
+                  <Skeleton.Image />
                 )}
-              >
-                <Collapse.Panel
-                  header={<MediumLabel>QR Code</MediumLabel>}
-                  key="1"
-                  // showArrow={false}
-                >
-                  <ReactToPrint
-                    documentTitle={`Luxurify_watch_${detail?.name || ''}`}
-                    trigger={() => (
-                      <StyledQRCode
-                        className="watch_QRCode"
-                        renderAs="canvas"
-                        id={watchId}
-                        value={JSON.stringify({ token: watchId, uri })}
-                        size={180}
-                        level={'L'}
-                        includeMargin={false}
-                      />
+              </ImageContainer>
+
+              <Spacer height="0.6rem" />
+
+              <Row>
+                <Col span={4}>
+                  <MediumLabel>Price: </MediumLabel>
+                </Col>
+                <Col>
+                  <Price>
+                    {isLoading ? (
+                      <LoadingOutlined />
+                    ) : price ? (
+                      `${formatUnits(price[6], 18)} ${
+                        price[4] === 1 ? 'USD' : 'ETH'
+                      }`
+                    ) : (
+                      '-'
                     )}
-                    content={() => qrRef.current}
+                  </Price>
+                  <br />
+                </Col>
+              </Row>
+
+              <Spacer height="0.6rem" />
+
+              <Row style={{ paddingTop: '1rem' }}>
+                {price && price[6] ? (
+                  <CreateSellOrder
+                    watchId={+watchId}
+                    watchName={detail?.name || ''}
+                    startAmount={price[6]?._hex || ''}
                   />
-                  <PrintText>
-                    <PrinterOutlined
-                      style={{
-                        fontSize: 16,
-                        marginRight: '1rem',
-                      }}
-                    />
-                    Click on the code to print
-                  </PrintText>
-                </Collapse.Panel>
-              </StyledCollapse>
-            </Row>
-          </Col>
-
-          <Col span={12} style={{ marginLeft: '1rem' }}>
-            <Row style={{ height: 415 }}>
-              <ul>
-                {detail && detail.attributes?.length
-                  ? detail.attributes.map((item, idx) => (
-                      <li
-                        key={`watchDetail_${idx}`}
-                        style={{ marginBottom: '0.4rem' }}
-                      >
-                        <Label>{item.trait_type}:</Label> {item.value}
-                      </li>
-                    ))
-                  : null}
-              </ul>
-            </Row>
-            <Spacer height="0.6rem" />
-            <Row style={{ paddingLeft: '1.5rem' }}>
-              <Col span={3}>
-                <MediumLabel>Price: </MediumLabel>
-              </Col>
-              <Col>
-                <Price>
-                  {isLoading ? (
-                    <LoadingOutlined />
-                  ) : price ? (
-                    `${formatUnits(price[6], 18)} ${
-                      price[4] === 1 ? 'USD' : 'ETH'
-                    }`
-                  ) : (
-                    '-'
-                  )}
-                </Price>
-                <br />
-              </Col>
-            </Row>
-
-            <Spacer height="0.6rem" />
-
-            <Row>
-              {price ? (
-                <CreateSellOrder
-                  watchId={+watchId}
-                  watchName={detail?.name || ''}
-                  startAmount={price[6]?._hex || ''}
-                />
-              ) : null}
-            </Row>
-            {/* <StyledButton
+                ) : null}
+              </Row>
+              {/* <StyledButton
               onClick={() =>
                 transfer('0xf57b2c51ded3a29e6891aba85459d600256cf317')
               }
             >
               Transfer
             </StyledButton> */}
-          </Col>
-        </Row>
+            </Col>
+
+            <Col span={12} style={{ paddingLeft: '0.5rem' }}>
+              <Row style={{ height: 415 }}>
+                <ul>
+                  {detail && detail.attributes?.length
+                    ? detail.attributes.map((item, idx) => (
+                        <li
+                          key={`watchDetail_${idx}`}
+                          style={{ marginBottom: '0.4rem' }}
+                        >
+                          <Label>{item.trait_type}:</Label> {item.value}
+                        </li>
+                      ))
+                    : null}
+                </ul>
+              </Row>
+              <Row style={{ paddingLeft: '2rem' }}>
+                <StyledCollapse
+                  defaultActiveKey={0}
+                  ghost
+                  expandIcon={props => (
+                    <QrcodeOutlined
+                      style={{ fontSize: 16 }}
+                      rotate={props.isActive ? 180 : 0}
+                    />
+                  )}
+                >
+                  <Collapse.Panel
+                    header={<MediumLabel>QR Code</MediumLabel>}
+                    key="1"
+                    // showArrow={false}
+                  >
+                    <ReactToPrint
+                      documentTitle={`Luxurify_watch_${detail?.name || ''}`}
+                      trigger={() => (
+                        <StyledQRCode
+                          className="watch_QRCode"
+                          renderAs="canvas"
+                          id={watchId}
+                          value={JSON.stringify({ token: watchId, uri })}
+                          size={180}
+                          level={'L'}
+                          includeMargin={false}
+                        />
+                      )}
+                      content={() => qrRef.current}
+                    />
+                    <PrintText>
+                      <PrinterOutlined
+                        style={{
+                          fontSize: 16,
+                          marginRight: '0.6rem',
+                        }}
+                      />
+                      Click on the code to print
+                    </PrintText>
+                  </Collapse.Panel>
+                </StyledCollapse>
+              </Row>
+            </Col>
+          </Row>
+        </DetailContainer>
       </PageContainer>
       <InvisibleContainer>
         <QRCodePrint
@@ -299,4 +304,11 @@ export const StyledCollapse = styled(Collapse)`
   .ant-collapse-header {
     padding-left: 1.7rem !important;
   }
+`;
+
+export const DetailContainer = styled.div`
+  margin: 2rem auto;
+  width: 800px;
+  height: 100%;
+  overflow: hidden;
 `;
