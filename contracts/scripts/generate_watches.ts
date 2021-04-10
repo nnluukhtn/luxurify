@@ -22,13 +22,19 @@ async function main() {
   const txn1 = await luxurify.claimNewWatch(
     33,
     "Rolex Datejust 116189PAVEL",
-    "116189PAVEL"
+    "116189PAVEL",
+    1, // "FIXED"
+    0, // "ETH"
+    ethers.utils.parseEther("3.3333")
   );
   console.log("Txn: ", txn1);
   const txn2 = await luxurify.claimNewWatch(
     44,
     "Omega Speedmaster 3510.50",
-    "351050"
+    "351050",
+    1, // "FIXED"
+    1, // "USD"
+    3333
   );
   console.log("Txn: ", txn2);
 }
