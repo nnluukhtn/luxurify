@@ -94,7 +94,7 @@ const Transfer = ({ callback, watchId, watchName }: Props) => {
         closable={false}
       >
         <div>
-          Are you sure to buy this item:
+          Are you sure you want to buy this item:
           <br />
           <TextBold>{watchName}</TextBold>
         </div>

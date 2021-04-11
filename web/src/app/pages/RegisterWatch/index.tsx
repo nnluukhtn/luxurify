@@ -20,7 +20,7 @@ import {
   RegisterWatchResponse,
   RegisterWatchPayload,
 } from './slice/types';
-import ERC667ABI from 'app/abi/ERC667.abi.json';
+import ERC721ABI from 'app/abi/ERC721.abi.json';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import { useDispatch } from 'react-redux';
 import { useFnDebounce } from 'utils/hooks/DebounceHooks';
@@ -59,7 +59,7 @@ export function RegisterWatch(_props: Props) {
   const claimWatch = async (values: RegisterWatchParams) => {
     const contract = new Contract(
       TOKENS_BY_NETWORK[chainId || 4]?.[0].address,
-      ERC667ABI,
+      ERC721ABI,
       library?.getSigner(),
     );
     setActionName(() => (
@@ -133,7 +133,7 @@ export function RegisterWatch(_props: Props) {
   const getToken = async (tokenUri: string) => {
     const contract = new Contract(
       TOKENS_BY_NETWORK[chainId || 4]?.[0].address,
-      ERC667ABI,
+      ERC721ABI,
       library?.getSigner(),
     );
     setPercent(70);
@@ -161,7 +161,7 @@ export function RegisterWatch(_props: Props) {
   const setURI = async (token: number, tokenUri: string) => {
     const newContract = new Contract(
       TOKENS_BY_NETWORK[chainId || 4]?.[0].address,
-      ERC667ABI,
+      ERC721ABI,
       library?.getSigner(),
     );
     setPercent(90);

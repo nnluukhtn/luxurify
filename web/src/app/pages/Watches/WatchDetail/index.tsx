@@ -16,7 +16,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Contract } from '@ethersproject/contracts';
 import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
-import ERC667ABI from 'app/abi/ERC667.abi.json';
+import ERC721ABI from 'app/abi/ERC721.abi.json';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import CreateSellOrder from './components/CreateSellOrder';
@@ -45,8 +45,9 @@ export function WatchDetail(props: Props) {
   const [isSelling, setIsSelling] = useState(false);
   const [isOwner, setisOwner] = useState(false);
   const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
-  const contract = new Contract(tokenAddress, ERC667ABI, library?.getSigner());
+  const contract = new Contract(tokenAddress, ERC721ABI, library?.getSigner());
 
+  console.log({ functions: contract.functions });
   // Event handlers
 
   const fetchAssets = async () => {
@@ -55,10 +56,12 @@ export function WatchDetail(props: Props) {
       tokenId: watchId,
     });
     console.log({ asset });
-    setIsSelling(
-      asset?.sellOrders?.find(order => order.target === asset.tokenAddress) !==
-        undefined,
+    const sellOrder = asset?.sellOrders?.find(
+      order => order.target === asset.tokenAddress,
     );
+    setIsSelling(sellOrder !== undefined);
+    // if (sellOrder !== undefined)
+    // console.log(formatUnits(sellOrder!.currentPrice!, 18));
   };
 
   const onActionSucceed = () => {

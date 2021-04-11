@@ -10,7 +10,7 @@ import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import styled from 'styled-components';
 import InputForm from 'app/common/components/InputForm';
 import { SwapOutlined } from '@ant-design/icons';
-// import ERC667ABI from 'app/abi/ERC667.abi.json';
+// import ERC721ABI from 'app/abi/ERC721.abi.json';
 // import { Contract } from 'ethers';
 
 interface Props {
@@ -48,7 +48,7 @@ const Transfer = ({ watchId, watchName }: Props) => {
         console.log({ listing });
         callSuccess(`Successfully transfer this item to ${targetAddress}.`);
       } catch (err) {
-        callError('Error' + err.messgage);
+        callError(err);
       }
     } else {
       callError('Error: Can not get your account');
@@ -60,7 +60,7 @@ const Transfer = ({ watchId, watchName }: Props) => {
   //   if (account && library && targetAddress) {
   //     const contract = new Contract(
   //       tokenAddress,
-  //       ERC667ABI,
+  //       ERC721ABI,
   //       library?.getSigner(),
   //     );
   //     const transfer = await contract.safeTransferFrom(
@@ -118,7 +118,7 @@ const Transfer = ({ watchId, watchName }: Props) => {
         closable={false}
       >
         <div>
-          Are you sure to transfer this item:
+          Are you sure you want to transfer this item:
           <br />
           <TextBold>{watchName}</TextBold>
           <br />

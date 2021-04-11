@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core';
 import { BigNumber, Contract } from 'ethers';
 import React, { useEffect } from 'react';
 import useSWR from 'swr';
-import ERC667ABI from 'app/abi/ERC667.abi.json';
+import ERC721ABI from 'app/abi/ERC721.abi.json';
 
 const TokenBalance = ({ symbol, address, decimals }) => {
   const { account, library } = useWeb3React<Web3Provider>();
@@ -12,7 +12,7 @@ const TokenBalance = ({ symbol, address, decimals }) => {
   useEffect(() => {
     // listen for changes on an Ethereum address
     console.log(`listening for Transfer...`);
-    const contract = new Contract(address, ERC667ABI, library?.getSigner());
+    const contract = new Contract(address, ERC721ABI, library?.getSigner());
 
     const fromMe = contract.filters.Transfer(account, null);
 
