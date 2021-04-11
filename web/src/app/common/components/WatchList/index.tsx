@@ -91,7 +91,9 @@ const WatchList = ({ address }) => {
                 }
                 cover={
                   !value.name ? (
-                    <Skeleton.Image style={{ width: 150, height: 100 }} />
+                    <Skeleton.Image
+                      style={{ width: 150, height: 100, marginLeft: 10 }}
+                    />
                   ) : (
                     <img
                       alt="example"
