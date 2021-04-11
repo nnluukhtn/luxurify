@@ -5,7 +5,7 @@
 
 ## Video Demo
 
-- TBA
+- https://youtu.be/YVOM-uXeu7o
 
 ## Luxurify Ecosystem
 
