@@ -10,6 +10,7 @@ import { Header, Spacer } from 'app/common/styles';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { seaportContext } from 'contexts/SeaportContext';
+import { TOKENS_BY_NETWORK } from '../TokenBalance/constants';
 
 const WatchList = ({ address }) => {
   const history = useHistory();
@@ -23,10 +24,10 @@ const WatchList = ({ address }) => {
     setIsLoading(true);
 
     const { orders } = (await seaport?.api.getOrders({
-      asset_contract_address: '0xbB433BE62d68560Ffb72a181B45c02192DEb01B9',
+      asset_contract_address: TOKENS_BY_NETWORK[4][0].address,
       side: OrderSide.Sell,
     })) || { orders: [], count: 0 };
-
+    console.log({ orders });
     const watchList = orders.map(order => ({
       tokenURI: order.asset?.tokenAddress,
       id: order.asset?.tokenId,

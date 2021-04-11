@@ -19,14 +19,12 @@ const overide = `
 interface Props {
   account: string;
   watchId: number;
-  isUSD: boolean;
   watchName: string;
   startAmount: string;
   onListed: () => void;
 }
 
 const CreateSellOrder = ({
-  isUSD,
   account,
   watchId,
   watchName,
@@ -136,8 +134,7 @@ const CreateSellOrder = ({
           <br />
           with the fixed price of{' '}
           <TextBold>
-            {formatUnits(BigNumber.from(startAmount), 18)}{' '}
-            {isUSD ? 'USD' : 'ETH'}
+            {formatUnits(BigNumber.from(startAmount), 18)} ETH
           </TextBold>
         </div>
         <Spacer height="1rem" />

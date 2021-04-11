@@ -63,7 +63,6 @@ export function App() {
   React.useLayoutEffect(() => {
     // Magic happening
     if (!active) {
-      console.log('Runned');
       activate(injectedConnector);
     }
   }, [activate, active]);

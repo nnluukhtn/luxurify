@@ -83,9 +83,22 @@ export function RegisterWatch(_props: Props) {
         values.referenceNumber,
         values.priceType === 'FIXED' ? 1 : 0,
         values.priceUnit === 'ETH' ? 0 : 1,
-        ethers.utils.parseEther(values.priceFixed.toString())._hex,
-        ethers.utils.parseEther(values.priceDynamic.toString())._hex,
+        values.priceType !== 'FIXED'
+          ? ethers.utils.parseEther('0')._hex
+          : ethers.utils.parseEther(values.priceFixed.toString())._hex,
+        values.priceType === 'FIXED'
+          ? ethers.utils.parseEther('0')._hex
+          : (values.priceDynamic as any)._hex,
       );
+      console.log('args', [
+        33,
+        values.watchName,
+        values.referenceNumber,
+        values.priceType === 'FIXED' ? 1 : 0,
+        values.priceUnit === 'ETH' ? 0 : 1,
+        values.priceType !== 'FIXED' ? 0 : values.priceFixed,
+        values.priceType === 'FIXED' ? 0 : values.priceDynamic,
+      ]);
     } catch (err) {
       callError('Error: ' + err);
       setActionName(() => 'Error while claiming watch');

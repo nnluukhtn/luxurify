@@ -28,6 +28,7 @@ import WatchQR from './components/WatchQR';
 import { seaportContext } from 'contexts/SeaportContext';
 import { OpenSeaAsset } from 'opensea-js/lib/types';
 import Buy from './components/Buy';
+import { ethers } from 'ethers';
 
 interface Props {}
 
@@ -86,6 +87,8 @@ export function WatchDetail(props: Props) {
 
   const fetchDetail = async () => {
     const url = await contract.functions.getTokenURI(watchId);
+    const smth = await contract.functions.getEthUsdPrice();
+    console.log({ smth });
     setUri(url);
     const response = await fetch(url);
     console.log(response.body);
@@ -176,10 +179,8 @@ export function WatchDetail(props: Props) {
                     <Price>
                       {isLoading ? (
                         <LoadingOutlined />
-                      ) : price && price[6] ? (
-                        `${formatUnits(price[6], 18)} ${
-                          price[4] === 1 ? 'USD' : 'ETH'
-                        }`
+                      ) : price && price[7] ? (
+                        `${formatUnits(price[7], 18)} ETH`
                       ) : (
                         '-'
                       )}
@@ -204,22 +205,28 @@ export function WatchDetail(props: Props) {
                   <>
                     <Label>Owned by you</Label>
                     <Row style={{ paddingTop: '1rem' }}>
-                      {price && price[6] && account && !isSelling ? (
+                      {price && price[7] && account && !isSelling ? (
                         <>
                           {console.log({ price })}
+                          {console.log({
+                            priceType: price[3],
+                            priceUnit: price[4],
+                            priceFixed: formatUnits(price[5], 18),
+                            priceDynamic: formatUnits(price[6], 18),
+                            priceTobesold: price[7],
+                          })}
                           <CreateSellOrder
                             account={account}
                             watchId={+watchId}
-                            isUSD={!!price[4]}
                             watchName={detail?.name || ''}
-                            startAmount={price[6]?._hex || ''}
+                            startAmount={price[7]?._hex || ''}
                             onListed={onActionSucceed}
                           />
                         </>
                       ) : null}
                     </Row>
                     <Row style={{ paddingTop: '1rem' }}>
-                      {price && price[6] && !isSelling ? (
+                      {price && price[7] && !isSelling ? (
                         <Transfer
                           // account={account}
                           watchId={+watchId}
@@ -231,7 +238,7 @@ export function WatchDetail(props: Props) {
                 ) : (
                   <>
                     <Row style={{ paddingTop: '1rem' }}>
-                      {price && price[6] && isSelling ? (
+                      {price && price[7] && isSelling ? (
                         <Buy
                           // account={account}
                           callback={() => {
