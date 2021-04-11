@@ -47,7 +47,6 @@ export function WatchDetail(props: Props) {
   const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
   const contract = new Contract(tokenAddress, ERC721ABI, library?.getSigner());
 
-  console.log({ functions: contract.functions });
   // Event handlers
 
   const fetchAssets = async () => {
@@ -89,6 +88,7 @@ export function WatchDetail(props: Props) {
     const url = await contract.functions.getTokenURI(watchId);
     setUri(url);
     const response = await fetch(url);
+    console.log(response.body);
     const json = await response.json();
     setDetail(json);
   };
@@ -101,7 +101,7 @@ export function WatchDetail(props: Props) {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uri]);
+  }, []);
 
   useEffect(() => {
     if (watchId) {

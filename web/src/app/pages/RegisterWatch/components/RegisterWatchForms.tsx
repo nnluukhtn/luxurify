@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import InputForm from 'app/common/components/InputForm';
 import {
   FormContainer,
@@ -10,7 +10,7 @@ import {
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import styled from 'styled-components';
-import { Col, Row, Select } from 'antd';
+import { Col, Row, Select, Spin } from 'antd';
 import { useRegisterWatchSlice } from '../slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -28,30 +28,29 @@ import AttachmentUpload from 'app/common/components/AttachmentUpload';
 import ErrorContainer from 'app/common/components/ErrorContainer';
 import { AttachmentFile } from 'app/common/components/AttachmentUpload/types';
 import { Contract } from 'ethers';
-import ERC667ABI from 'app/abi/ERC667.abi.json';
-import { useWeb3React } from '@web3-react/core';
-import { Web3Provider } from '@ethersproject/providers';
-import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
+import ERC721ABI from 'app/abi/LuxurifyClient.abi.json';
+import { LUXURIFY_CLIENT_CONTRACT } from 'app/common/components/TokenBalance/constants';
 import { getLibrary } from 'index';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
   onSubmit: (values: any) => void;
 }
 
 const RegisterWatchForms = ({ onSubmit }: Props) => {
-  const library = getLibrary();
-  const { actions } = useRegisterWatchSlice();
-  const { chainId } = useWeb3React<Web3Provider>();
-  const { actions: registerBrandActions } = useRegisterBrandSlice();
-  const dispatch = useDispatch();
-  const [callSuccess, callError] = useNotification();
   const history = useHistory();
+  const library = getLibrary();
+  const dispatch = useDispatch();
+  const { actions } = useRegisterWatchSlice();
+  const { actions: registerBrandActions } = useRegisterBrandSlice();
+  const [callSuccess, callError] = useNotification();
   const debounceFn = useFnDebounce();
   const contract = new Contract(
-    TOKENS_BY_NETWORK[chainId || 4]?.[0].address,
-    ERC667ABI,
+    LUXURIFY_CLIENT_CONTRACT,
+    ERC721ABI,
     library?.getSigner(),
   );
+
   const formik = useFormik<RegisterWatchParams>({
     initialValues: {
       referenceNumber: '',
@@ -73,6 +72,7 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
       priceType: 'FIXED',
       priceUnit: 'ETH',
       priceFixed: 0,
+      priceDynamic: 0,
       image: [],
       innerImage: [],
     },
@@ -117,6 +117,7 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
   const watchData = useSelector(makeSelectWSWatch(memoRefNum));
   const isLoading = useSelector(makeSelectWSWatchLoading);
   const brandOptions = useSelector(makeSelectWSBrandOptions);
+  const [loading, setLoading] = useState(false);
 
   // functions
   const getWSWatchData = useCallback(() => {
@@ -392,6 +393,22 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
             handleUpdateValue('priceType', value);
             if (value === 'DYNAMIC') {
               handleUpdateValue('priceUnit', 'USD');
+              (async () => {
+                setLoading(true);
+                contract.on(
+                  'requestWatchInfoByReferenceNumberFulfilled',
+                  (id, price) => {
+                    handleUpdateValue('priceDynamic', price);
+                    contract.removeAllListeners(
+                      'requestWatchInfoByReferenceNumberFulfilled',
+                    );
+                    setLoading(false);
+                  },
+                );
+                await contract.functions.requestWatchInfoByReferenceNumber(
+                  formik.values.referenceNumber, // 116189PAVEL
+                );
+              })();
             }
           }}
           value={formik.values.priceType}
@@ -401,6 +418,12 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
           <Select.Option value="FIXED">FIXED</Select.Option>
           <Select.Option value="DYNAMIC">DYNAMIC</Select.Option>
         </InputForm>
+        {loading && (
+          <Row>
+            <Spin size="small" indicator={<LoadingOutlined size={14} />} />{' '}
+            <span style={{ marginLeft: '8px' }}>Getting Dynamic Data</span>
+          </Row>
+        )}
         <Spacer height="0.7rem" />
         <InputForm
           id="priceUnit"
@@ -425,6 +448,7 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
           name="priceFixed"
           placeholder="Price Fixed"
           label="Price Fixed"
+          disabled={formik.values.priceType === 'DYNAMIC'}
           onChange={formik.handleChange}
           value={formik.values.priceFixed}
           error={formik.errors.priceFixed}
@@ -480,6 +504,7 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
               onClick={onClickSubmit}
               type="primary"
               loading={formik.isSubmitting}
+              disabled={loading}
             >
               Submit
             </StyledButton>

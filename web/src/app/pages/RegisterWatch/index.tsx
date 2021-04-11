@@ -84,6 +84,7 @@ export function RegisterWatch(_props: Props) {
         values.priceType === 'FIXED' ? 1 : 0,
         values.priceUnit === 'ETH' ? 0 : 1,
         ethers.utils.parseEther(values.priceFixed.toString())._hex,
+        ethers.utils.parseEther(values.priceDynamic.toString())._hex,
       );
     } catch (err) {
       callError('Error: ' + err);

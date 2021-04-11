@@ -75,6 +75,7 @@ export interface WSWatch {
   priceType?: string;
   priceUnit?: string;
   priceFixed?: number;
+  priceDynamic?: number;
 }
 
 export interface RegisterWatchParams {
@@ -97,6 +98,7 @@ export interface RegisterWatchParams {
   priceType: string;
   priceUnit: string;
   priceFixed: number;
+  priceDynamic: number;
   image: RcFile[];
   innerImage: RcFile[];
 }

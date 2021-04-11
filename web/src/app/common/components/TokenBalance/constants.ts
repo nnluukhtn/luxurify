@@ -1,6 +1,9 @@
 import { Networks } from '../../../../constants';
 import { IERC20 } from './types';
 
+export const LUXURIFY_CLIENT_CONTRACT =
+  '0x6712deef8d85f9b856dbd914f61c92ea3a13bcd6';
+
 export const TOKENS_BY_NETWORK: {
   [key: number]: IERC20[];
 } = {
