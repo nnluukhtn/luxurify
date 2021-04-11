@@ -1,8 +1,11 @@
 import _ from "lodash";
-import axios from "axios";
 import web3 from "web3";
+import axios from "axios";
+import { OpenSeaPort } from "opensea-js";
 import { Contract } from "web3-eth-contract";
 import { Watch, WatchMeta } from "../../../types";
+import WatchData from "../../../types/WatchData";
+import OrderResponse from "../../../types/OrderResponse";
 
 interface Props {
   token: string;
@@ -18,6 +21,13 @@ interface TokenProps {
 interface ListProps {
   account: string;
   contract: Contract;
+  seaport: OpenSeaPort;
+}
+
+interface GetOrderProps {
+  account: string;
+  seaport: OpenSeaPort;
+  token: string;
 }
 
 export const getToken = async ({
@@ -32,8 +42,19 @@ export const getToken = async ({
 };
 
 export const getWatch = async ({ token, contract }: Props): Promise<Watch> => {
-  const contractData: Watch = await contract.methods.watches(token).call();
-  return contractData;
+  const contractData: any[] = await contract.methods.getWatchInfo(token).call();
+
+  const BN = web3.utils.toBN;
+
+  return {
+    name: contractData[1],
+    randomId: contractData[0],
+    referenceNumber: contractData[2],
+    priceType: _.toNumber(contractData[3]),
+    priceUnit: _.toNumber(contractData[4]),
+    priceFixed: BN(contractData[5]).toString(),
+    token,
+  };
 };
 
 export const getWatchMeta = async ({
@@ -50,7 +71,6 @@ export const getWatchMeta = async ({
   }).catch(() => undefined);
 
   if (!response?.data) return {};
-
   const data: WatchMeta = _.reduce(
     response.data.attributes,
     (acc, { trait_type, value }) => ({
@@ -69,18 +89,43 @@ export const getWatchMeta = async ({
 };
 
 export const getWatchListByAccount = async ({
+  seaport,
   contract,
   account,
-}: ListProps): Promise<Array<Watch & Partial<WatchMeta>>> => {
-  const totalIndex = _.toNumber(await contract.methods.balanceOf(account).call());
-  const watches: Array<Watch & Partial<WatchMeta>> = [];
+}: ListProps): Promise<Array<WatchData>> => {
+  const totalIndex = _.toNumber(
+    await contract.methods.balanceOf(account).call()
+  );
+  const watches: Array<WatchData> = [];
 
   for (let index = 0; index < totalIndex; index++) {
     const token = await getToken({ account, index, contract });
     const watch = await getWatch({ contract, token });
     const meta = await getWatchMeta({ contract, token });
-    watches.push({ ...watch, ...meta, token });
+    const order = await getOrders({ token, account, seaport });
+    const ownerHash: string = await contract.methods.ownerOf(token);
+    watches.push({
+      ...watch,
+      ...meta,
+      ...order,
+      token,
+      isOwner: ownerHash === account,
+    });
   }
 
   return watches;
+};
+
+export const getOrders = async ({
+  token,
+  seaport,
+  account,
+}: GetOrderProps): Promise<OrderResponse> => {
+  const orders = ((await seaport.api
+    .getOrders({
+      owner: account,
+      token_id: token,
+    })
+    .catch(() => ({ orders: [], count: 0 }))) as unknown) as OrderResponse;
+  return { orders: orders.orders, count: orders.orders.length };
 };

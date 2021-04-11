@@ -1,18 +1,14 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
 // Screens
 import Scanner from "./Scanner";
-import Detail from "../Inventory/Detail";
 
 const Stack = createStackNavigator();
-
-interface Props {}
 
 const Camera = () => {
   // Main return
   return (
-    <Stack.Navigator initialRouteName="Camera.Scanner">
+    <Stack.Navigator>
       <Stack.Screen
         name="Camera.Scanner"
         component={Scanner}
@@ -20,7 +16,6 @@ const Camera = () => {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="Camera.Detail" component={Detail} />
     </Stack.Navigator>
   );
 };

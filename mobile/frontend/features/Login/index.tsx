@@ -11,20 +11,6 @@ const Login: React.FC<Props> = ({ onPress }) => {
   return (
     <Container>
       <Group>
-        <Image
-          source={require("../../../assets/image/app-icon.png")}
-          style={{
-            width: 60,
-            height: 60,
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 3,
-            },
-            shadowOpacity: 0.27,
-            shadowRadius: 4.65,
-          }}
-        />
         <Header>LUXURIFY</Header>
         <Text>Mobile</Text>
       </Group>

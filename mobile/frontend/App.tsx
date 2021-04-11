@@ -4,6 +4,11 @@ import { Asset } from "expo-asset";
 import { RecoilRoot } from "recoil";
 import AppLoading from "expo-app-loading";
 import { StatusBar } from "expo-status-bar";
+import { OpenSeaPort, Network } from "opensea-js";
+import {
+  Provider as PaperProvider,
+  Portal as PortalProvider,
+} from "react-native-paper";
 import { Platform, StyleSheet, View, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -23,6 +28,8 @@ import { ConnectorContext } from "./ConnectorContext";
 import Login from "./features/Login";
 import Main from "./features/Main";
 import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { SeaportContext } from "./SeaportContext";
 
 function cacheImages(images) {
   return images.map((image) => {
@@ -33,6 +40,8 @@ function cacheImages(images) {
     }
   });
 }
+
+const Stack = createStackNavigator();
 
 function App(): JSX.Element {
   // Values
@@ -52,15 +61,19 @@ function App(): JSX.Element {
     await Promise.all([...imageAssets]);
   };
 
-  const web3 = React.useMemo(
-    () =>
-      new Web3(
-        new Web3.providers.HttpProvider(
-          `https://rinkeby.infura.io/v3/d7e93337406949719fe07bb309aeefea`
-        )
-      ),
-    []
+  const provider = new Web3.providers.HttpProvider(
+    "https://rinkeby.infura.io/v3/d7e93337406949719fe07bb309aeefea"
   );
+
+  const web3 = React.useMemo(() => new Web3(provider), []);
+
+  // Seaport
+
+  const seaport = new OpenSeaPort(provider, {
+    networkName: Network.Rinkeby,
+  });
+
+  // WalletConnect
 
   const connectWallet = React.useCallback(async () => {
     try {
@@ -89,15 +102,29 @@ function App(): JSX.Element {
 
   return (
     <ConnectorContext.Provider value={web3}>
-      <NavigationContainer>
-        <RecoilRoot>
-          <View style={[StyleSheet.absoluteFill]}>
-            {!connector.connected && <Login onPress={connectWallet} />}
-            {connector.connected && <Main />}
-            <StatusBar />
-          </View>
-        </RecoilRoot>
-      </NavigationContainer>
+      <SeaportContext.Provider value={seaport}>
+        <NavigationContainer>
+          <RecoilRoot>
+            <PaperProvider>
+              <PortalProvider>
+                <View style={[StyleSheet.absoluteFill]}>
+                  {!connector.connected && <Login onPress={connectWallet} />}
+                  {connector.connected && (
+                    <Stack.Navigator>
+                      <Stack.Screen
+                        name="Main"
+                        component={Main}
+                        options={{ headerShown: false }}
+                      />
+                    </Stack.Navigator>
+                  )}
+                  <StatusBar />
+                </View>
+              </PortalProvider>
+            </PaperProvider>
+          </RecoilRoot>
+        </NavigationContainer>
+      </SeaportContext.Provider>
     </ConnectorContext.Provider>
   );
 }

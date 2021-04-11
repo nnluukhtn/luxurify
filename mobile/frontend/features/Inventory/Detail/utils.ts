@@ -1,19 +1,31 @@
-import axios from "axios";
-import web3 from "web3";
 import { Contract } from "web3-eth-contract";
-import { Watch, WatchMeta } from "../../../types";
-import { getWatch, getWatchMeta } from "../Grid/utils";
+import { WatchData } from "../../../types";
+import { getOrders, getWatch, getWatchMeta } from "../Grid/utils";
+import { OpenSeaPort } from "opensea-js";
 
 interface GetComposedDataProps {
   token: string;
   contract: Contract;
+  seaport: OpenSeaPort;
+  toCheckAccount: string;
+  account: string;
 }
 
 export const getComposedData = async ({
+  seaport,
+  account,
+  toCheckAccount,
   contract,
   token,
-}: GetComposedDataProps): Promise<Watch & Partial<WatchMeta>> => {
+}: GetComposedDataProps): Promise<WatchData> => {
   const watch = await getWatch({ contract, token });
   const meta = await getWatchMeta({ contract, token });
-  return { ...watch, ...meta, token };
+  const orders = await getOrders({ seaport, token, account });
+  return {
+    ...watch,
+    ...meta,
+    ...orders,
+    token,
+    isOwner: toCheckAccount === account,
+  };
 };
