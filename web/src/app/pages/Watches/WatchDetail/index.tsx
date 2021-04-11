@@ -28,7 +28,6 @@ import WatchQR from './components/WatchQR';
 import { seaportContext } from 'contexts/SeaportContext';
 import { OpenSeaAsset } from 'opensea-js/lib/types';
 import Buy from './components/Buy';
-import { ethers } from 'ethers';
 
 interface Props {}
 

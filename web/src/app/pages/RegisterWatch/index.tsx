@@ -32,14 +32,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 interface Props {}
 
 export function RegisterWatch(_props: Props) {
-  const {
-    library,
-    active,
-    activate,
-    deactivate,
-    chainId,
-    account,
-  } = useWeb3React<Web3Provider>();
+  const { library, chainId, account } = useWeb3React<Web3Provider>();
   const dispatch = useDispatch();
   const debounceFn = useFnDebounce();
   const { actions } = useRegisterWatchSlice();
