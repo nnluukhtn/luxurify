@@ -51,6 +51,18 @@ The Luxurify ecosystem is a platform featuring luxury watch registration, verifi
 
 - We also integrate with real data from WatchSignal to get watch data by reference number. Endpoint is at https://luxurify.herokuapp.com/watch_signals/watch/reference_number/:reference_number
 
+### OpenSea Integration
+
+- All NFTs and Auctions can be found at https://testnets.opensea.io/assets/luxurify-5e3h1nrawv
+
+### Infura
+
+- We use Infura to provide instant access over HTTPS and WebSockets to the Ethereum and IPFS networks
+
+### Pinatra
+
+- We also use Pinatra to upload and manage files on IPFS
+
 ## TODO List
 
 - Escrow auction to support 3rd service verify the watch before approve the buy/sell watch order.
