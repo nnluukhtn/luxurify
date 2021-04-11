@@ -27,18 +27,31 @@ import { makeSelectWSBrandOptions } from 'app/pages/RegisterBrand/slice/selector
 import AttachmentUpload from 'app/common/components/AttachmentUpload';
 import ErrorContainer from 'app/common/components/ErrorContainer';
 import { AttachmentFile } from 'app/common/components/AttachmentUpload/types';
+import { Contract } from 'ethers';
+import ERC667ABI from 'app/abi/ERC667.abi.json';
+import { useWeb3React } from '@web3-react/core';
+import { Web3Provider } from '@ethersproject/providers';
+import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
+import { getLibrary } from 'index';
 
 interface Props {
   onSubmit: (values: any) => void;
 }
 
 const RegisterWatchForms = ({ onSubmit }: Props) => {
+  const library = getLibrary();
   const { actions } = useRegisterWatchSlice();
+  const { chainId } = useWeb3React<Web3Provider>();
   const { actions: registerBrandActions } = useRegisterBrandSlice();
   const dispatch = useDispatch();
   const [callSuccess, callError] = useNotification();
   const history = useHistory();
   const debounceFn = useFnDebounce();
+  const contract = new Contract(
+    TOKENS_BY_NETWORK[chainId || 4]?.[0].address,
+    ERC667ABI,
+    library?.getSigner(),
+  );
   const formik = useFormik<RegisterWatchParams>({
     initialValues: {
       referenceNumber: '',
@@ -375,9 +388,12 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
           name="priceType"
           placeholder="Price Type"
           label="Price Type"
-          handleOnSelect={(value, _option) =>
-            handleUpdateValue('priceType', value)
-          }
+          handleOnSelect={(value, _option) => {
+            handleUpdateValue('priceType', value);
+            if (value === 'DYNAMIC') {
+              handleUpdateValue('priceUnit', 'USD');
+            }
+          }}
           value={formik.values.priceType}
           error={formik.errors.priceType}
           type="select"
@@ -391,14 +407,16 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
           name="priceUnit"
           placeholder="Price Unit"
           label="Price Unit"
-          handleOnSelect={(value, _option) =>
-            handleUpdateValue('priceUnit', value)
-          }
+          handleOnSelect={(value, _option) => {
+            handleUpdateValue('priceUnit', value);
+          }}
           value={formik.values.priceUnit}
           error={formik.errors.priceUnit}
           type="select"
         >
-          <Select.Option value="ETH">ETH</Select.Option>
+          {formik.values.priceType !== 'DYNAMIC' && (
+            <Select.Option value="ETH">ETH</Select.Option>
+          )}
           <Select.Option value="USD">USD</Select.Option>
         </InputForm>
         <Spacer height="0.7rem" />

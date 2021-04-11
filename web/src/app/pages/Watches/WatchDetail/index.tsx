@@ -230,6 +230,7 @@ export function WatchDetail(props: Props) {
                           callback={() => {
                             fetchDetail();
                             getWatchFromChain(watchId);
+                            fetchAssets();
                           }}
                           watchId={+watchId}
                           watchName={detail?.name || ''}
