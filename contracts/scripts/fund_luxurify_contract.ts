@@ -5,7 +5,7 @@
 // Runtime Environment's members available in the global scope.
 import { run, ethers } from "hardhat";
 const hre = require("hardhat");
-const payment = "300000000000000000000";
+const payment = "300000000000000000000"; // 300 LINK
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command

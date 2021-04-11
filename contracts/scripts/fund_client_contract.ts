@@ -5,6 +5,7 @@
 // Runtime Environment's members available in the global scope.
 import { run, ethers } from "hardhat";
 const hre = require("hardhat");
+const payment = "300000000000000000000"; // 300 LINK
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -14,31 +15,18 @@ async function main() {
   // manually to make sure everything is compiled
   await run("compile");
 
-  const address = process.env.CONTRACT_ADDRESS
-  const Luxurify = await ethers.getContractFactory("Luxurify");
-  const luxurify = await Luxurify.attach(address);
+  // We get the contract to deploy
+  const LuxurifyWatchSignalsClient = await hre.ethers.getContractFactory("LuxurifyWatchSignalsClient");
+  // Network: Rinkeby
+  const luxurifyClient = await LuxurifyWatchSignalsClient.deploy(
+    "https://luxurify.herokuapp.com" // clientApiEndpoint
+  );
+  await luxurifyClient.deployed();
 
-  console.log("Creating requests on contract: ", luxurify.address);
-  const txn1 = await luxurify.claimNewWatch(
-    33,
-    "Rolex Datejust 116189PAVEL",
-    "116189PAVEL",
-    1, // "FIXED"
-    0, // "ETH"
-    ethers.utils.parseEther("3.3333"), // Fixed price
-    0 // Dynamic price
-  );
-  console.log("Txn: ", txn1);
-  const txn2 = await luxurify.claimNewWatch(
-    44,
-    "Omega Speedmaster 3510.50",
-    "351050",
-    0, // "DYNAMIC"
-    1, // "USD",
-    0,  // Fixed price
-    3333 // Dynamic price
-  );
-  console.log("Txn: ", txn2);
+  const token = await hre.ethers.getContractAt("LinkTokenInterface", "0x01BE23585060835E02B77ef475b0Cc51aA1e0709");
+  console.log("Funding LuxurifyClient contract: ", luxurifyClient.address);
+  const tx = await token.transfer(luxurifyClient.address, payment);
+  console.log("Txn: ", tx);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

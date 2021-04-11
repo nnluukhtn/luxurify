@@ -28,6 +28,7 @@ contract Luxurify is ERC721, VRFConsumerBase {
     PriceType priceType;
     Currency priceUnit;
     uint256 priceFixed;
+    uint256 priceDynamic;
     uint256 priceToBeSold;
   }
 
@@ -39,6 +40,7 @@ contract Luxurify is ERC721, VRFConsumerBase {
   mapping(bytes32 => PriceType) private watchPriceTypes;
   mapping(bytes32 => Currency) private watchPriceUnits;
   mapping(bytes32 => uint256) private watchPriceFixeds;
+  mapping(bytes32 => uint256) private watchPriceDynamics;
   mapping(bytes32 => uint256) private watchPriceToBeSolds;
   mapping(bytes32 => uint256) private requestToTokenIds;
 
@@ -53,6 +55,7 @@ contract Luxurify is ERC721, VRFConsumerBase {
     PriceType _priceType,
     Currency _priceUnit,
     uint256 _priceFixed,
+    uint256 _priceDynamic,
     uint256 _priceToBeSold
   );
 
@@ -79,7 +82,8 @@ contract Luxurify is ERC721, VRFConsumerBase {
     string memory referenceNumber,
     PriceType priceType,
     Currency priceUnit,
-    uint256 priceFixed
+    uint256 priceFixed,
+    uint256 priceDynamic
   ) public returns (bytes32) {
     require(
       LINK.balanceOf(address(this)) >= fee,
@@ -91,6 +95,7 @@ contract Luxurify is ERC721, VRFConsumerBase {
     watchPriceTypes[requestId] = priceType;
     watchPriceUnits[requestId] = priceUnit;
     watchPriceFixeds[requestId] = priceFixed;
+    watchPriceDynamics[requestId] = priceDynamic;
     tokenOwners[requestId] = msg.sender;
     return requestId;
   }
@@ -109,6 +114,7 @@ contract Luxurify is ERC721, VRFConsumerBase {
         watchPriceTypes[requestId],
         watchPriceUnits[requestId],
         watchPriceFixeds[requestId],
+        watchPriceDynamics[requestId],
         0 // Default price to be sold is 0
       )
     );
@@ -122,6 +128,7 @@ contract Luxurify is ERC721, VRFConsumerBase {
       watchPriceTypes[requestId],
       watchPriceUnits[requestId],
       watchPriceFixeds[requestId],
+      watchPriceDynamics[requestId],
       0
     );
   }
@@ -137,6 +144,8 @@ contract Luxurify is ERC721, VRFConsumerBase {
       uint timeStamp,
       uint80 answeredInRound
     ) = ethUsdPriceFeed.latestRoundData();
+    // If the round is not complete yet, timestamp is 0
+    require(timeStamp > 0, "Round not complete");
     return price;
   }
 
@@ -151,32 +160,34 @@ contract Luxurify is ERC721, VRFConsumerBase {
       PriceType,
       Currency,
       uint256,
+      uint256,
       uint256
     )
   {
+    Watch memory watch = watches[tokenId];
     uint256 priceToBeSold = 0;
-    PriceType priceType = watches[tokenId].priceType;
-    Currency priceUnit = watches[tokenId].priceUnit;
-    uint256 priceFixed = watches[tokenId].priceFixed;
 
-    if (priceType == Luxurify.PriceType.FIXED) {
-      if (priceUnit == Luxurify.Currency.ETH) {
-        priceToBeSold = priceFixed;
-      } else if (priceUnit == Luxurify.Currency.USD) {
+    if (watch.priceType == Luxurify.PriceType.FIXED) {
+      if (watch.priceUnit == Luxurify.Currency.ETH) {
+        priceToBeSold = watch.priceFixed;
+      } else if (watch.priceUnit == Luxurify.Currency.USD) {
         int ethUsdPrice = getEthUsdPrice();
-        priceToBeSold = priceFixed * 1 ether / uint(ethUsdPrice);
+        priceToBeSold = (watch.priceFixed * 1 ether / uint(ethUsdPrice));
       }
-    } else if (priceType == Luxurify.PriceType.DYNAMIC) {
-      // priceToBeSold = watchPriceToBeSolds[tokenId];
+    } else if (watch.priceType == Luxurify.PriceType.DYNAMIC) {
+      // Assume USD currency
+      int ethUsdPrice = getEthUsdPrice();
+      priceToBeSold = (watch.priceDynamic * 1 ether / uint(ethUsdPrice));
     }
 
     return (
-      watches[tokenId].randomId,
-      watches[tokenId].name,
-      watches[tokenId].referenceNumber,
-      priceType,
-      priceUnit,
-      priceFixed,
+      watch.randomId,
+      watch.name,
+      watch.referenceNumber,
+      watch.priceType,
+      watch.priceUnit,
+      watch.priceFixed,
+      watch.priceDynamic,
       priceToBeSold
     );
   }

@@ -5,7 +5,6 @@
 // Runtime Environment's members available in the global scope.
 import { run, ethers } from "hardhat";
 const hre = require("hardhat");
-
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
   // line interface.
@@ -14,31 +13,18 @@ async function main() {
   // manually to make sure everything is compiled
   await run("compile");
 
-  const address = process.env.CONTRACT_ADDRESS
-  const Luxurify = await ethers.getContractFactory("Luxurify");
-  const luxurify = await Luxurify.attach(address);
+  const address = process.env.CLIENT_CONTRACT_ADDRESS
+  const LuxurifyWatchSignalsClient = await ethers.getContractFactory("LuxurifyWatchSignalsClient");
+  const luxurifyClient = await LuxurifyWatchSignalsClient.attach(address);
 
-  console.log("Creating requests on contract: ", luxurify.address);
-  const txn1 = await luxurify.claimNewWatch(
-    33,
-    "Rolex Datejust 116189PAVEL",
-    "116189PAVEL",
-    1, // "FIXED"
-    0, // "ETH"
-    ethers.utils.parseEther("3.3333"), // Fixed price
-    0 // Dynamic price
-  );
-  console.log("Txn: ", txn1);
-  const txn2 = await luxurify.claimNewWatch(
-    44,
-    "Omega Speedmaster 3510.50",
-    "351050",
-    0, // "DYNAMIC"
-    1, // "USD",
-    0,  // Fixed price
-    3333 // Dynamic price
-  );
-  console.log("Txn: ", txn2);
+  console.log("Query data for contract: ", luxurifyClient.address);
+  const refNum = "116189PAVEL";
+  const txn = await luxurifyClient.requestWatchInfoByReferenceNumber(refNum);
+  console.log("requestId txn: ", txn);
+
+  luxurifyClient.on("requestWatchInfoByReferenceNumberFulfilled", (requestId, avgPrice) => {
+    console.log(requestId, avgPrice);
+  });
 }
 
 // We recommend this pattern to be able to use async/await everywhere
