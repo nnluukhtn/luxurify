@@ -78,7 +78,13 @@ const Transfer = ({ watchId, watchName }: Props) => {
         tokenAddress,
         tokenId: watchId,
       });
-      console.log({ asset });
+      console.log(
+        { asset },
+        'isSelling: ',
+        asset?.sellOrders?.find(
+          order => order.target === asset.tokenAddress,
+        ) !== undefined,
+      );
     };
 
     if (seaport && watchId) fetchAssets();

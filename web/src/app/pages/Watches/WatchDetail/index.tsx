@@ -25,6 +25,8 @@ import Transfer from './components/Transfer';
 import { injectedConnector } from 'index';
 import { Helmet } from 'react-helmet-async';
 import WatchQR from './components/WatchQR';
+import { seaportContext } from 'contexts/SeaportContext';
+import { OpenSeaAsset } from 'opensea-js/lib/types';
 
 interface Props {}
 
@@ -32,6 +34,7 @@ export function WatchDetail(props: Props) {
   const { library, active, activate, deactivate, account } = useWeb3React<
     Web3Provider
   >();
+  const seaport = React.useContext(seaportContext);
   const { watchId } = useParams<{ watchId: string }>();
   const { search } = useLocation();
   const [, callError] = useNotification();
@@ -39,6 +42,8 @@ export function WatchDetail(props: Props) {
   const [detail, setDetail] = useState<WatchDetailData | null>(null);
   const [isLoading, setLoading] = useState(false);
   const [price, setPrice] = useState<any>({});
+  const [isSelling, setIsSelling] = useState(false);
+  const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
 
   // const transfer = async address => {
   //   const contract = new Contract(
@@ -70,7 +75,7 @@ export function WatchDetail(props: Props) {
   useEffect(() => {
     const getWatchFromChain = async watchId => {
       const contract = new Contract(
-        TOKENS_BY_NETWORK[4]?.[0].address,
+        tokenAddress,
         ERC667ABI,
         library?.getSigner(),
       );
@@ -93,6 +98,24 @@ export function WatchDetail(props: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchId]);
+
+  useEffect(() => {
+    const fetchAssets = async () => {
+      const asset: OpenSeaAsset | undefined = await seaport?.api.getAsset({
+        tokenAddress,
+        tokenId: watchId,
+      });
+      console.log({ asset });
+      setIsSelling(
+        asset?.sellOrders?.find(
+          order => order.target === asset.tokenAddress,
+        ) !== undefined,
+      );
+    };
+
+    if (seaport && watchId) fetchAssets();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seaport, watchId]);
 
   useEffect(() => {
     // console.log({ account, chainId, library });
@@ -167,6 +190,16 @@ export function WatchDetail(props: Props) {
                         }`
                       ) : (
                         '-'
+                      )}
+                      {isSelling && (
+                        <Label
+                          style={{
+                            marginLeft: '1rem',
+                            color: Colors.G500_GREEN,
+                          }}
+                        >
+                          SELLING
+                        </Label>
                       )}
                     </Price>
                     <br />

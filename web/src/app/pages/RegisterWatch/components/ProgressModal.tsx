@@ -1,6 +1,6 @@
 import { Progress, Typography } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { PropagateLoader } from 'react-spinners';
 
 const overide = `
@@ -9,7 +9,7 @@ const overide = `
 `;
 
 interface Props {
-  actionName: string;
+  actionName: ReactNode;
   percent: number;
   loading: boolean;
   visible: boolean;
@@ -48,7 +48,7 @@ const ProgressModal = ({
         level={4}
         style={{ fontSize: '1.3rem', textAlign: 'center' }}
       >
-        <p>{actionName}</p>
+        {actionName}
       </Typography.Title>
       {getContent && (
         <Typography.Text
