@@ -1,4 +1,4 @@
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { signOut } from 'app/actions';
 import { ApiResponse } from 'global/services/api/types';

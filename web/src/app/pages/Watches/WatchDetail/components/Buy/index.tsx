@@ -41,7 +41,7 @@ const Transfer = ({ callback, watchId, watchName }: Props) => {
           order,
           accountAddress: account,
         });
-        await magicAwaking(30000);
+        await magicAwaking(15000);
         callSuccess(`Successfully buying this item.`);
       } catch (err) {
         callError('Error' + err.messgage);

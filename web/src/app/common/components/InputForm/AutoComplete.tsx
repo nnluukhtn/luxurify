@@ -1,5 +1,4 @@
 import { AutoComplete } from 'antd';
-import Colors from 'app/common/Colors';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 

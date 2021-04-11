@@ -72,7 +72,7 @@ export function WatchDetail(props: Props) {
       try {
         watchInfo = await contract.getWatchInfo(+watchId);
         const ownerAddress = await contract.functions.ownerOf(+watchId);
-        setisOwner(ownerAddress === account);
+        setisOwner(ownerAddress[0] === account);
       } catch (err) {
         callError('Error' + err);
       }
@@ -218,7 +218,23 @@ export function WatchDetail(props: Props) {
                       ) : null}
                     </Row>
                   </>
-                ) : null}
+                ) : (
+                  <>
+                    <Row style={{ paddingTop: '1rem' }}>
+                      {price && price[6] && isSelling ? (
+                        <Buy
+                          // account={account}
+                          callback={() => {
+                            fetchDetail();
+                            getWatchFromChain(watchId);
+                          }}
+                          watchId={+watchId}
+                          watchName={detail?.name || ''}
+                        />
+                      ) : null}
+                    </Row>
+                  </>
+                )}
               </Col>
 
               <Col span={12} style={{ paddingLeft: '0.5rem' }}>
