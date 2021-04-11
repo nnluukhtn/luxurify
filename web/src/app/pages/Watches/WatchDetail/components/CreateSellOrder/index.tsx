@@ -4,8 +4,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { seaportContext } from 'contexts/SeaportContext';
 import { OpenSeaAsset } from 'opensea-js/lib/types';
 import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
-import { useWeb3React } from '@web3-react/core';
-import { Web3Provider } from '@ethersproject/providers';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import { BigNumber } from 'ethers';
 import { formatUnits } from '@ethersproject/units';
@@ -29,6 +27,7 @@ const CreateSellOrder = ({
   const [showModal, setShowModal] = useState(false);
   const seaport = useContext(seaportContext);
   const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
+  // const [isListing, setListing] = useState();
 
   const listingItem = async () => {
     console.log('run list', account);
@@ -91,6 +90,7 @@ const CreateSellOrder = ({
           {formatUnits(BigNumber.from(startAmount), 18)} ETH
         </TextBold>{' '}
         ?
+        <br />
       </Modal>
     </div>
   );

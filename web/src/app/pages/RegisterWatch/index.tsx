@@ -45,7 +45,7 @@ export function RegisterWatch(_props: Props) {
   const { actions } = useRegisterWatchSlice();
   const history = useHistory();
   const [callSuccess, callError] = useNotification();
-  const [actionName, setActionName] = useState('');
+  const [actionName, setActionName] = useState<any>(() => '');
   const [percent, setPercent] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -59,7 +59,13 @@ export function RegisterWatch(_props: Props) {
       ERC667ABI,
       library?.getSigner(),
     );
-    setActionName(`Claiming watch...<wbr/>Please comfirm using Metamax.`);
+    setActionName(() => (
+      <p>
+        Claiming watch...
+        <wbr />
+        Please comfirm using Metamax.`
+      </p>
+    ));
     setShowProgress(true);
     setLoading(true);
     setTransactionHash('');
@@ -78,39 +84,39 @@ export function RegisterWatch(_props: Props) {
       );
     } catch (err) {
       callError('Error: ' + err);
-      setActionName('Error while claiming watch');
+      setActionName(() => 'Error while claiming watch');
       return;
     }
 
     setPercent(20);
-    setActionName('Waiting for Confirmations...');
+    setActionName(() => 'Waiting for Confirmations...');
 
     try {
       await claimWatch.wait(console.log);
     } catch (err) {
       callError('Error: ' + err);
-      setActionName('Error while waiting for confirmations');
+      setActionName(() => 'Error while waiting for confirmations');
       return;
     }
 
     setPercent(30);
-    setActionName('Claimed watch.');
+    setActionName(() => 'Claimed watch.');
     setTransactionHash(claimWatch?.hash);
     debounceFn(submitWatch, 1500, values);
   };
 
   const submitWatch = (values: RegisterWatchParams) => {
     setPercent(50);
-    setActionName('Registering your watch to our network...');
+    setActionName(() => 'Registering your watch to our network...');
     const callback = (response: RegisterWatchResponse) => {
       if (response.success) {
         setPercent(60);
-        setActionName('Successfully registered watch.');
+        setActionName(() => 'Successfully registered watch.');
         callSuccess('Successfully registered a watch');
         debounceFn(getToken, 1500, response.response.token_uri);
         // history.goBack();
       } else {
-        setActionName('Error while registering your watch');
+        setActionName(() => 'Error while registering your watch');
         callError(
           'There is an error while trying to register watch, ' +
             response?.error?.message,
@@ -128,18 +134,18 @@ export function RegisterWatch(_props: Props) {
       library?.getSigner(),
     );
     setPercent(70);
-    setActionName('Getting watch token...');
-    setActionName(`Let's wait for 30s, go get some coffee...`);
+    setActionName(() => 'Getting watch token...');
+    setActionName(() => `Let's wait for 30s, go get some coffee...`);
 
     await sleep(30000);
-    setActionName('Checking for an updated Balance...');
+    setActionName(() => 'Checking for an updated Balance...');
 
     const balance = await contract.balanceOf(account);
 
     const token = await contract.tokenOfOwnerByIndex(account, balance - 1);
 
     setPercent(80);
-    setActionName('Successfully get token');
+    setActionName(() => 'Successfully get token');
     setURI(token.toNumber(), tokenUri);
   };
 
@@ -150,17 +156,17 @@ export function RegisterWatch(_props: Props) {
       library?.getSigner(),
     );
     setPercent(90);
-    setActionName('Setting Token URI..., Please comfirm using Metamax.');
+    setActionName(() => 'Setting Token URI..., Please comfirm using Metamax.');
 
     const resp = await newContract.setTokenURI(token, tokenUri);
     setPercent(95);
-    setActionName('Waiting for Confirmations...');
+    setActionName(() => 'Waiting for Confirmations...');
 
     const finalResp = await resp?.wait(console.log);
     setTransactionHash(finalResp?.transactionHash);
     setPercent(100);
     setLoading(false);
-    setActionName('Finished!');
+    setActionName(() => 'Finished!');
   };
 
   useEffect(() => {
@@ -200,11 +206,11 @@ export function RegisterWatch(_props: Props) {
           }
           closable={
             true ||
-            actionName.indexOf('Error') >= 0 ||
-            actionName.indexOf('Finish') >= 0
+            actionName().indexOf('Error') >= 0 ||
+            actionName().indexOf('Finish') >= 0
           }
           onClose={() => {
-            if (actionName.indexOf('Finish') >= 0) history.push('/');
+            if (actionName().indexOf('Finish') >= 0) history.push('/');
             setShowProgress(false);
           }}
         />

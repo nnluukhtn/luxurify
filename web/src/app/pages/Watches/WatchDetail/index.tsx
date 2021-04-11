@@ -43,6 +43,7 @@ export function WatchDetail(props: Props) {
   const [isLoading, setLoading] = useState(false);
   const [price, setPrice] = useState<any>({});
   const [isSelling, setIsSelling] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
   const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
 
   // const transfer = async address => {
@@ -105,12 +106,16 @@ export function WatchDetail(props: Props) {
         tokenAddress,
         tokenId: watchId,
       });
-      console.log({ asset });
+      console.log(
+        { asset, account },
+        asset?.owner.address === account?.toLowerCase(),
+      );
       setIsSelling(
         asset?.sellOrders?.find(
           order => order.target === asset.tokenAddress,
         ) !== undefined,
       );
+      if (account) setIsOwner(asset?.owner.address === account.toLowerCase());
     };
 
     if (seaport && watchId) fetchAssets();
@@ -118,6 +123,7 @@ export function WatchDetail(props: Props) {
   }, [seaport, watchId]);
 
   useEffect(() => {
+    if (!account || !library) callError('Can not get Account info');
     // console.log({ account, chainId, library });
     if (!active) activate(injectedConnector);
     return () => {
@@ -198,7 +204,7 @@ export function WatchDetail(props: Props) {
                             color: Colors.G500_GREEN,
                           }}
                         >
-                          SELLING
+                          ON SALE
                         </Label>
                       )}
                     </Price>
@@ -208,25 +214,29 @@ export function WatchDetail(props: Props) {
 
                 <Spacer height="0.6rem" />
 
-                <Row style={{ paddingTop: '1rem' }}>
-                  {price && price[6] && account ? (
-                    <CreateSellOrder
-                      account={account}
-                      watchId={+watchId}
-                      watchName={detail?.name || ''}
-                      startAmount={price[6]?._hex || ''}
-                    />
-                  ) : null}
-                </Row>
-                <Row style={{ paddingTop: '1rem' }}>
-                  {price && price[6] ? (
-                    <Transfer
-                      // account={account}
-                      watchId={+watchId}
-                      watchName={detail?.name || ''}
-                    />
-                  ) : null}
-                </Row>
+                {isOwner ? (
+                  <>
+                    <Row style={{ paddingTop: '1rem' }}>
+                      {price && price[6] && account && !isSelling ? (
+                        <CreateSellOrder
+                          account={account}
+                          watchId={+watchId}
+                          watchName={detail?.name || ''}
+                          startAmount={price[6]?._hex || ''}
+                        />
+                      ) : null}
+                    </Row>
+                    <Row style={{ paddingTop: '1rem' }}>
+                      {price && price[6] && !isSelling ? (
+                        <Transfer
+                          // account={account}
+                          watchId={+watchId}
+                          watchName={detail?.name || ''}
+                        />
+                      ) : null}
+                    </Row>
+                  </>
+                ) : null}
 
                 {/* <StyledButton
               onClick={() =>

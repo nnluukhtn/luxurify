@@ -10,8 +10,8 @@ import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import styled from 'styled-components';
 import InputForm from 'app/common/components/InputForm';
 import { SwapOutlined } from '@ant-design/icons';
-import ERC667ABI from 'app/abi/ERC667.abi.json';
-import { Contract } from 'ethers';
+// import ERC667ABI from 'app/abi/ERC667.abi.json';
+// import { Contract } from 'ethers';
 
 interface Props {
   watchId: number;
@@ -19,7 +19,10 @@ interface Props {
 }
 
 const Transfer = ({ watchId, watchName }: Props) => {
-  const { account, library } = useWeb3React<Web3Provider>();
+  const {
+    account,
+    // library,
+  } = useWeb3React<Web3Provider>();
   const seaport = useContext(seaportContext);
   const [callSuccess, callError] = useNotification();
   const [showModal, setShowModal] = useState(false);
@@ -52,25 +55,25 @@ const Transfer = ({ watchId, watchName }: Props) => {
     }
   };
 
-  const safeTransfer = async () => {
-    console.log('run transfer', { account, targetAddress });
-    if (account && library && targetAddress) {
-      const contract = new Contract(
-        tokenAddress,
-        ERC667ABI,
-        library?.getSigner(),
-      );
-      const transfer = await contract.safeTransferFrom(
-        account,
-        targetAddress,
-        watchId,
-      );
-      const response = await transfer.wait();
-      console.log(response);
-    } else {
-      callError('Error: Can not get your account or signer');
-    }
-  };
+  // const safeTransfer = async () => {
+  //   console.log('run transfer', { account, targetAddress });
+  //   if (account && library && targetAddress) {
+  //     const contract = new Contract(
+  //       tokenAddress,
+  //       ERC667ABI,
+  //       library?.getSigner(),
+  //     );
+  //     const transfer = await contract.safeTransferFrom(
+  //       account,
+  //       targetAddress,
+  //       watchId,
+  //     );
+  //     const response = await transfer.wait();
+  //     console.log(response);
+  //   } else {
+  //     callError('Error: Can not get your account or signer');
+  //   }
+  // };
 
   useEffect(() => {
     const fetchAssets = async () => {

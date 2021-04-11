@@ -1,20 +1,19 @@
 import { Progress, Typography } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { PropagateLoader } from 'react-spinners';
 
 const overide = `
   display: block;
-  right: -90px;
 `;
 
 interface Props {
-  actionName: ReactNode;
+  actionName: () => JSX.Element | null;
   percent: number;
   loading: boolean;
   visible: boolean;
   onClose: () => void;
-  getContent?: () => React.ReactNode;
+  getContent?: () => JSX.Element | null;
   closable?: boolean;
 }
 
