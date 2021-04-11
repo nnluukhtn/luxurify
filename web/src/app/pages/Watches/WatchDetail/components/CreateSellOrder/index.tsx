@@ -12,7 +12,6 @@ import { FormOutlined } from '@ant-design/icons';
 import { PropagateLoader } from 'react-spinners';
 import { Switch } from 'antd';
 import InputForm from 'app/common/components/InputForm';
-import { isInteger } from 'lodash';
 
 const overide = `
   display: block;
@@ -106,6 +105,7 @@ const CreateSellOrder = ({
       if (isPrivate) setPrivate(false);
       setBuyerAddress('');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showModal]);
 
   return (
@@ -127,7 +127,7 @@ const CreateSellOrder = ({
           {isListing ? (
             <>Creating sell order for</>
           ) : (
-            <>Are you sure to create a sell order for this item:</>
+            <>Are you sure you want to sell this item:</>
           )}
           <br />
           <TextBold>{watchName}</TextBold>

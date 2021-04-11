@@ -154,6 +154,12 @@
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "_priceDynamic",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "_priceToBeSold",
         "type": "uint256"
       }
@@ -268,6 +274,11 @@
         "internalType": "uint256",
         "name": "priceFixed",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "priceDynamic",
+        "type": "uint256"
       }
     ],
     "name": "claimNewWatch",
@@ -366,6 +377,11 @@
         "internalType": "enum Luxurify.Currency",
         "name": "",
         "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -723,6 +739,11 @@
       {
         "internalType": "uint256",
         "name": "priceFixed",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "priceDynamic",
         "type": "uint256"
       },
       {

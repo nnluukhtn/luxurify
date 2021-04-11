@@ -6,7 +6,7 @@ import EthBalance from '../EthBalance';
 import TokenList from '../TokenList';
 import { SWRConfig } from 'swr';
 import fetcher from 'utils/fetcher';
-import ERC667ABI from 'app/abi/ERC667.abi.json';
+import ERC721ABI from 'app/abi/ERC721.abi.json';
 import Balance from '../Balance';
 import styled from 'styled-components';
 import { Networks } from '../../../../constants';
@@ -48,7 +48,7 @@ const Wallet = () => {
   }, []);
 
   return (
-    <SWRConfig value={{ fetcher: fetcher(library, ERC667ABI) }}>
+    <SWRConfig value={{ fetcher: fetcher(library, ERC721ABI) }}>
       <WalletContainer>
         {active ? (
           <div style={{ marginBottom: '2rem' }}>

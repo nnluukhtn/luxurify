@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import useSWR from 'swr';
-import ERC667ABI from 'app/abi/ERC667.abi.json';
+import ERC721ABI from 'app/abi/ERC721.abi.json';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
 
 const getEmptyObjectList = (length: number) => {
@@ -22,7 +22,7 @@ const WatchList = ({ address }) => {
   const [, callError] = useNotification();
   const [watches, setWatches] = useState<any>(getEmptyObjectList(14));
   const { data: balance } = useSWR([address, 'balanceOf', account]);
-  const contract = new Contract(address, ERC667ABI, library?.getSigner());
+  const contract = new Contract(address, ERC721ABI, library?.getSigner());
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {

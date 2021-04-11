@@ -5,7 +5,7 @@ import { Spacer } from 'app/common/styles';
 import { Contract } from 'ethers';
 import React, { useState } from 'react';
 import useSWR from 'swr';
-import ERC667ABI from 'app/abi/ERC667.abi.json';
+import ERC721ABI from 'app/abi/ERC721.abi.json';
 
 const Actions = ({ address }) => {
   const { account, library } = useWeb3React<Web3Provider>();
@@ -13,7 +13,7 @@ const Actions = ({ address }) => {
   const [result, setResult] = useState<any>(null);
   // const [watches, setWatches] = useState<any>(null);
   const { data: balance } = useSWR([address, 'balanceOf', account]);
-  const contract = new Contract(address, ERC667ABI, library?.getSigner());
+  const contract = new Contract(address, ERC721ABI, library?.getSigner());
 
   const claimWatch = () => {
     // setLoading('claiming');
