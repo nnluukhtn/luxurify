@@ -76,7 +76,7 @@ const WatchList = ({ address }) => {
             <Col key={`watch_${idx}_${value.id}`}>
               <Card
                 hoverable
-                style={{ width: 150, height: 240, position: 'relative' }}
+                style={{ width: 170, height: 260, position: 'relative' }}
                 bodyStyle={{ textAlign: 'center' }}
                 loading={!value.name}
                 onClick={() =>

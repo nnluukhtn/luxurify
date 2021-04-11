@@ -22,7 +22,7 @@ import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import CreateSellOrder from './components/CreateSellOrder';
 import { formatUnits } from '@ethersproject/units';
 import Transfer from './components/Transfer';
-import { injectedConnector } from 'index';
+import { getLibrary, injectedConnector } from 'index';
 import { Helmet } from 'react-helmet-async';
 import WatchQR from './components/WatchQR';
 import { seaportContext } from 'contexts/SeaportContext';
@@ -31,7 +31,8 @@ import { OpenSeaAsset } from 'opensea-js/lib/types';
 interface Props {}
 
 export function WatchDetail(props: Props) {
-  const { library, active, activate, deactivate, account } = useWeb3React<
+  const library = getLibrary();
+  const { active, activate, deactivate, account } = useWeb3React<
     Web3Provider
   >();
   const seaport = React.useContext(seaportContext);
