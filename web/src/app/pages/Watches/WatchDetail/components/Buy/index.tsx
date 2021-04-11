@@ -108,9 +108,3 @@ export default Transfer;
 const TextBold = styled.span`
   font-weight: 600;
 `;
-
-const Header = styled.div`
-  font-weight: 500;
-  font-size: 1.1rem;
-  text-align: center;
-`;

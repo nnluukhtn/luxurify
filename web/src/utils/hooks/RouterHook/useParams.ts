@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getSearch, push } from 'connected-react-router';
 import queryString from 'query-string';
 import _ from 'lodash';
