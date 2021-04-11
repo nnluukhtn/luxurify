@@ -25,7 +25,7 @@ export interface WSWatchRemote {
   powerreserve: string;
   casediameter: string;
   casematerialid: string;
-  waterresistanceatm: string;
+  waterresistanceatm: number;
   bezelmaterialid: string;
   glassid: string;
   dialcolorid: string;
@@ -61,7 +61,7 @@ export interface WSWatch {
   referenceNumber: string;
   powerReserve: string;
   caseDiameter: number;
-  waterResistanceAtm: string;
+  waterResistanceAtm: number;
   movementName: string;
   braceletColorName: string;
   dialColorName: string;
@@ -81,7 +81,7 @@ export interface RegisterWatchParams {
   watchName: string;
   powerReserve: string;
   caseDiameter: number;
-  waterResistanceAtm: string;
+  waterResistanceAtm: number;
   movementName: string;
   braceletColorName: string;
   dialColorName: string;
@@ -105,7 +105,7 @@ export interface RegisterWatchPayload {
     model: string;
     power_reserve: string;
     case_diameter: string;
-    water_resistance_atm: string;
+    water_resistance_atm: number;
     movement_name: string;
     bracelet_color_name: string;
     dial_color_name: string;

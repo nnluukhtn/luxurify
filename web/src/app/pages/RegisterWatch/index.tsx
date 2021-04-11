@@ -7,7 +7,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import { PageContainer } from 'app/common/components';
 import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
-import { Container } from 'app/common/styles';
+import { BackgroundContainer } from 'app/common/styles';
 import { Contract, ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -26,6 +26,7 @@ import { useDispatch } from 'react-redux';
 import { useFnDebounce } from 'utils/hooks/DebounceHooks';
 import { useHistory } from 'react-router-dom';
 import { injectedConnector } from 'index';
+import Colors from 'app/common/Colors';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -45,7 +46,9 @@ export function RegisterWatch(_props: Props) {
   const { actions } = useRegisterWatchSlice();
   const history = useHistory();
   const [callSuccess, callError] = useNotification();
-  const [actionName, setActionName] = useState<any>(() => '');
+  const [actionName, setActionName] = useState<JSX.Element | string | null>(
+    null,
+  );
   const [percent, setPercent] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -60,17 +63,17 @@ export function RegisterWatch(_props: Props) {
       library?.getSigner(),
     );
     setActionName(() => (
-      <p>
+      <>
         Claiming watch...
-        <wbr />
-        Please comfirm using Metamax.`
-      </p>
+        <br />
+        Please comfirm using Metamax.
+      </>
     ));
     setShowProgress(true);
     setLoading(true);
     setTransactionHash('');
     setPercent(10);
-    // console.log('FUNCTIONS', contract.functions);
+    console.log('signer', library, account);
 
     let claimWatch: any;
     try {
@@ -135,7 +138,13 @@ export function RegisterWatch(_props: Props) {
     );
     setPercent(70);
     setActionName(() => 'Getting watch token...');
-    setActionName(() => `Let's wait for 30s, go get some coffee...`);
+    setActionName(() => (
+      <>
+        Let's wait for 30s
+        <br />
+        go get some coffee...
+      </>
+    ));
 
     await sleep(30000);
     setActionName(() => 'Checking for an updated Balance...');
@@ -156,7 +165,13 @@ export function RegisterWatch(_props: Props) {
       library?.getSigner(),
     );
     setPercent(90);
-    setActionName(() => 'Setting Token URI..., Please comfirm using Metamax.');
+    setActionName(() => (
+      <>
+        Setting Token URI...
+        <br />
+        Please comfirm using Metamax.
+      </>
+    ));
 
     const resp = await newContract.setTokenURI(token, tokenUri);
     setPercent(95);
@@ -167,6 +182,13 @@ export function RegisterWatch(_props: Props) {
     setPercent(100);
     setLoading(false);
     setActionName(() => 'Finished!');
+  };
+
+  const getClosable = () => {
+    const action = actionName?.toString();
+    if (action) {
+      return action.indexOf('Error') >= 0 || action.indexOf('Finish') >= 0;
+    } else return false;
   };
 
   useEffect(() => {
@@ -185,13 +207,17 @@ export function RegisterWatch(_props: Props) {
         <meta name="description" content="Luxurify - Register Watch" />
       </Helmet>
 
-      <Container>
+      <BackgroundContainer>
         <PageContainer
           fluid
           innerStyle={{
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'center',
+            backgroundColor: Colors.N0_WHITE,
+            maxWidth: 500,
+            marginTop: '3rem',
+            borderRadius: 5,
           }}
         >
           <RegisterWatchForms onSubmit={claimWatch} />
@@ -202,19 +228,22 @@ export function RegisterWatch(_props: Props) {
           visible={showProgress}
           loading={isLoading}
           getContent={() =>
-            transactionHash ? <p>hash: {transactionHash}</p> : null
+            transactionHash ? (
+              <p>
+                Transaction hash:
+                <br />
+                {transactionHash}
+              </p>
+            ) : null
           }
-          closable={
-            true ||
-            actionName().indexOf('Error') >= 0 ||
-            actionName().indexOf('Finish') >= 0
-          }
+          closable={getClosable()}
           onClose={() => {
-            if (actionName().indexOf('Finish') >= 0) history.push('/');
+            const action = actionName?.toString();
+            if (action && action?.indexOf('Finish') >= 0) history.push('/');
             setShowProgress(false);
           }}
         />
-      </Container>
+      </BackgroundContainer>
     </>
   );
 }

@@ -1,5 +1,6 @@
+import Colors from 'app/common/Colors';
 import { PageContainer } from 'app/common/components';
-import { Container } from 'app/common/styles';
+import { BackgroundContainer } from 'app/common/styles';
 import SignInForm from 'app/pages/SignIn/components/SignInForm';
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -22,18 +23,24 @@ export function AdminSignIn() {
         <title>Admin Sign In</title>
         <meta name="description" content="Luxurify - Admin Sign In" />
       </Helmet>
-      <Container>
+      <BackgroundContainer>
         <PageContainer
           fluid
           innerStyle={{
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: Colors.N0_WHITE,
+            maxWidth: 500,
+            height: 430,
+            marginTop: '4rem',
+            borderRadius: 5,
           }}
         >
           <SignInForm email={email || ''} action={adminSignIn} isAdmin />
         </PageContainer>
-      </Container>
+      </BackgroundContainer>
     </>
   );
 }

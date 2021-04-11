@@ -15,6 +15,7 @@ export const Container = styled.div`
 
 export const BackgroundContainer = styled(Container)`
   background-image: url(${Background});
+  background-size: 180%;
 `;
 
 export const FormLabel = styled.div`

@@ -9,7 +9,7 @@ import { PageContainer } from 'app/common/components';
 import { Container, Header, Spacer } from 'app/common/styles';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { WatchDetailData } from './slice/types';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -37,11 +37,13 @@ export function WatchDetail(props: Props) {
   const seaport = React.useContext(seaportContext);
   const { watchId } = useParams<{ watchId: string }>();
   const [uri, setUri] = useState('');
+  const history = useHistory();
   const [, callError] = useNotification();
   const [detail, setDetail] = useState<WatchDetailData | null>(null);
-  const [isLoading, setLoading] = useState(false);
   const [price, setPrice] = useState<any>({});
+  const [isLoading, setLoading] = useState(false);
   const [isSelling, setIsSelling] = useState(false);
+  const [isOwner, setisOwner] = useState(false);
   const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
   const contract = new Contract(tokenAddress, ERC667ABI, library?.getSigner());
 
@@ -59,12 +61,18 @@ export function WatchDetail(props: Props) {
     );
   };
 
+  const onActionSucceed = () => {
+    history.push('/');
+  };
+
   const getWatchFromChain = async watchId => {
     if (contract && library) {
       let watchInfo: any;
       setLoading(true);
       try {
         watchInfo = await contract.getWatchInfo(+watchId);
+        const ownerAddress = await contract.functions.ownerOf(+watchId);
+        setisOwner(ownerAddress === account);
       } catch (err) {
         callError('Error' + err);
       }
@@ -186,45 +194,31 @@ export function WatchDetail(props: Props) {
 
                 <Spacer height="0.6rem" />
 
-                <Row style={{ paddingTop: '1rem' }}>
-                  {price && price[6] && account && !isSelling ? (
-                    <CreateSellOrder
-                      account={account}
-                      watchId={+watchId}
-                      watchName={detail?.name || ''}
-                      startAmount={price[6]?._hex || ''}
-                    />
-                  ) : null}
-                </Row>
-                <Row style={{ paddingTop: '1rem' }}>
-                  {price && price[6] && !isSelling ? (
-                    <Transfer
-                      // account={account}
-                      watchId={+watchId}
-                      watchName={detail?.name || ''}
-                    />
-                  ) : null}
-                </Row>
-                <Row>
-                  {price && price[6] && isSelling ? (
-                    <Buy
-                      callback={() => {
-                        getWatchFromChain(watchId);
-                      }}
-                      // account={account}
-                      watchId={+watchId}
-                      watchName={detail?.name || ''}
-                    />
-                  ) : null}
-                </Row>
-
-                {/* <StyledButton
-              onClick={() =>
-                transfer('0xf57b2c51ded3a29e6891aba85459d600256cf317')
-              }
-            >
-              Transfer
-            </StyledButton> */}
+                {isOwner ? (
+                  <>
+                    <Label>Owned by you</Label>
+                    <Row style={{ paddingTop: '1rem' }}>
+                      {price && price[6] && account && !isSelling ? (
+                        <CreateSellOrder
+                          account={account}
+                          watchId={+watchId}
+                          watchName={detail?.name || ''}
+                          startAmount={price[6]?._hex || ''}
+                          onListed={onActionSucceed}
+                        />
+                      ) : null}
+                    </Row>
+                    <Row style={{ paddingTop: '1rem' }}>
+                      {price && price[6] && !isSelling ? (
+                        <Transfer
+                          // account={account}
+                          watchId={+watchId}
+                          watchName={detail?.name || ''}
+                        />
+                      ) : null}
+                    </Row>
+                  </>
+                ) : null}
               </Col>
 
               <Col span={12} style={{ paddingLeft: '0.5rem' }}>
