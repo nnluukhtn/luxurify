@@ -10,24 +10,28 @@ import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import { BigNumber } from 'ethers';
 import { formatUnits } from '@ethersproject/units';
 import styled from 'styled-components';
+import { FormOutlined } from '@ant-design/icons';
 
 interface Props {
+  account: string;
   watchId: number;
   watchName: string;
   startAmount: string;
 }
 
-const CreateSellOrder = ({ watchId, watchName, startAmount }: Props) => {
-  const { account } = useWeb3React<Web3Provider>();
+const CreateSellOrder = ({
+  account,
+  watchId,
+  watchName,
+  startAmount,
+}: Props) => {
   const [callSuccess, callError] = useNotification();
   const [showModal, setShowModal] = useState(false);
   const seaport = useContext(seaportContext);
   const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
-  // const seaport = new OpenSeaPort((window as any).web3.currentProvider, {
-  //   networkName: Network.Rinkeby,
-  // });
 
   const listingItem = async () => {
+    console.log('run list', account);
     if (account) {
       console.log('listing...');
       try {
@@ -67,6 +71,7 @@ const CreateSellOrder = ({ watchId, watchName, startAmount }: Props) => {
   return (
     <div>
       <StyledButton type="primary" onClick={() => setShowModal(true)}>
+        <FormOutlined style={{ position: 'relative', top: '-3px' }} />
         Create sell order
       </StyledButton>
       <Modal

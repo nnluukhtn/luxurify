@@ -9,7 +9,7 @@ import { PageContainer } from 'app/common/components';
 import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
 import { Container } from 'app/common/styles';
 import { Contract, ethers } from 'ethers';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { registerWatchAdapter } from './adapter';
 import ProgressModal from './components/ProgressModal';
@@ -20,18 +20,26 @@ import {
   RegisterWatchResponse,
   RegisterWatchPayload,
 } from './slice/types';
-import ERC667ABI from '../../../abi/ERC667.abi.json';
+import ERC667ABI from 'app/abi/ERC667.abi.json';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import { useDispatch } from 'react-redux';
 import { useFnDebounce } from 'utils/hooks/DebounceHooks';
 import { useHistory } from 'react-router-dom';
+import { injectedConnector } from 'index';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 interface Props {}
 
 export function RegisterWatch(_props: Props) {
-  const { account, library, chainId } = useWeb3React<Web3Provider>();
+  const {
+    library,
+    active,
+    activate,
+    deactivate,
+    chainId,
+    account,
+  } = useWeb3React<Web3Provider>();
   const dispatch = useDispatch();
   const debounceFn = useFnDebounce();
   const { actions } = useRegisterWatchSlice();
@@ -154,6 +162,15 @@ export function RegisterWatch(_props: Props) {
     setLoading(false);
     setActionName('Finished!');
   };
+
+  useEffect(() => {
+    // console.log({ account, chainId, library });
+    if (!active) activate(injectedConnector);
+    return () => {
+      if (active) deactivate();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>

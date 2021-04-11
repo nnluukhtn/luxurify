@@ -3,8 +3,7 @@ import { useWeb3React } from '@web3-react/core';
 import { BigNumber, Contract } from 'ethers';
 import React, { useEffect } from 'react';
 import useSWR from 'swr';
-// import ERC20ABI from '../../../../abi/ERC20.abi.json';
-import ERC667ABI from '../../../../abi/ERC667.abi.json';
+import ERC667ABI from 'app/abi/ERC667.abi.json';
 
 const TokenBalance = ({ symbol, address, decimals }) => {
   const { account, library } = useWeb3React<Web3Provider>();

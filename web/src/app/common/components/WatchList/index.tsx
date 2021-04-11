@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import useSWR from 'swr';
-import ERC667ABI from '../../../../abi/ERC667.abi.json';
+import ERC667ABI from 'app/abi/ERC667.abi.json';
 
 const getEmptyObjectList = (length: number) => {
   return Array(length).fill({});

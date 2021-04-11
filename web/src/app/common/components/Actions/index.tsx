@@ -5,7 +5,7 @@ import { Spacer } from 'app/common/styles';
 import { Contract } from 'ethers';
 import React, { useState } from 'react';
 import useSWR from 'swr';
-import ERC667ABI from '../../../../abi/ERC667.abi.json';
+import ERC667ABI from 'app/abi/ERC667.abi.json';
 
 const Actions = ({ address }) => {
   const { account, library } = useWeb3React<Web3Provider>();
