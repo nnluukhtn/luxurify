@@ -9,129 +9,100 @@ import { PageContainer } from 'app/common/components';
 import { Container, Header, Spacer } from 'app/common/styles';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { WatchDetailData } from './slice/types';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Contract } from '@ethersproject/contracts';
 import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
+import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import ERC667ABI from 'app/abi/ERC667.abi.json';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
-import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import CreateSellOrder from './components/CreateSellOrder';
 import { formatUnits } from '@ethersproject/units';
 import Transfer from './components/Transfer';
-import { getLibrary, injectedConnector } from 'index';
+import { getLibrary } from 'index';
 import { Helmet } from 'react-helmet-async';
 import WatchQR from './components/WatchQR';
 import { seaportContext } from 'contexts/SeaportContext';
 import { OpenSeaAsset } from 'opensea-js/lib/types';
+import Buy from './components/Buy';
 
 interface Props {}
 
 export function WatchDetail(props: Props) {
   const library = getLibrary();
-  const { active, activate, deactivate, account } = useWeb3React<
-    Web3Provider
-  >();
+  const { account } = useWeb3React<Web3Provider>();
   const seaport = React.useContext(seaportContext);
   const { watchId } = useParams<{ watchId: string }>();
-  const { search } = useLocation();
+  const [uri, setUri] = useState('');
   const [, callError] = useNotification();
-  const uri = new URLSearchParams(search).get('uri');
   const [detail, setDetail] = useState<WatchDetailData | null>(null);
   const [isLoading, setLoading] = useState(false);
   const [price, setPrice] = useState<any>({});
   const [isSelling, setIsSelling] = useState(false);
-  const [isOwner, setIsOwner] = useState(false);
   const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
+  const contract = new Contract(tokenAddress, ERC667ABI, library?.getSigner());
 
-  // const transfer = async address => {
-  //   const contract = new Contract(
-  //     TOKENS_BY_NETWORK[4]?.[0].address,
-  //     ERC667ABI,
-  //     library?.getSigner(),
-  //   );
+  // Event handlers
 
-  //   console.log({ functions: contract?.functions, library });
-  //   const transfer = await contract?.ownerOf(3);
-  //   console.log({ transfer });
-  // };
+  const fetchAssets = async () => {
+    const asset: OpenSeaAsset | undefined = await seaport?.api.getAsset({
+      tokenAddress,
+      tokenId: watchId,
+    });
+    console.log({ asset });
+    setIsSelling(
+      asset?.sellOrders?.find(order => order.target === asset.tokenAddress) !==
+        undefined,
+    );
+  };
+
+  const getWatchFromChain = async watchId => {
+    if (contract && library) {
+      let watchInfo: any;
+      setLoading(true);
+      try {
+        watchInfo = await contract.getWatchInfo(+watchId);
+      } catch (err) {
+        callError('Error' + err);
+      }
+      console.log({ watchInfo });
+      setPrice(watchInfo);
+      setLoading(false);
+    }
+  };
+
+  const fetchDetail = async () => {
+    const url = await contract.functions.getTokenURI(watchId);
+    setUri(url);
+    const response = await fetch(url);
+    const json = await response.json();
+    setDetail(json);
+  };
+
+  // Side-Effects
 
   useEffect(() => {
-    const fetchDetail = async (apiURL: string) => {
-      const response = await fetch(
-        `https://gateway.pinata.cloud/ipfs/${apiURL}`,
-      );
-      const json = await response.json();
-      setDetail(json);
-    };
-
-    if (uri && !detail) {
-      fetchDetail(uri);
+    if (!detail) {
+      fetchDetail();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uri]);
 
   useEffect(() => {
-    const getWatchFromChain = async watchId => {
-      const contract = new Contract(
-        tokenAddress,
-        ERC667ABI,
-        library?.getSigner(),
-      );
-      if (contract && library) {
-        let watchInfo: any;
-        setLoading(true);
-        try {
-          watchInfo = await contract.getWatchInfo(+watchId);
-        } catch (err) {
-          callError('Error' + err);
-        }
-        console.log({ watchInfo });
-        setPrice(watchInfo);
-        setLoading(false);
-      }
-    };
     if (watchId) {
-      console.log({ library });
       getWatchFromChain(watchId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchId]);
 
   useEffect(() => {
-    const fetchAssets = async () => {
-      const asset: OpenSeaAsset | undefined = await seaport?.api.getAsset({
-        tokenAddress,
-        tokenId: watchId,
-      });
-      console.log(
-        { asset, account },
-        asset?.owner.address === account?.toLowerCase(),
-      );
-      setIsSelling(
-        asset?.sellOrders?.find(
-          order => order.target === asset.tokenAddress,
-        ) !== undefined,
-      );
-      if (account) setIsOwner(asset?.owner.address === account.toLowerCase());
-    };
-
     if (seaport && watchId) fetchAssets();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seaport, watchId]);
-
-  useEffect(() => {
-    if (!account || !library) callError('Can not get Account info');
-    // console.log({ account, chainId, library });
-    if (!active) activate(injectedConnector);
-    return () => {
-      if (active) deactivate();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   if (!detail) {
     return <div>Loading...</div>;
@@ -215,29 +186,37 @@ export function WatchDetail(props: Props) {
 
                 <Spacer height="0.6rem" />
 
-                {isOwner ? (
-                  <>
-                    <Row style={{ paddingTop: '1rem' }}>
-                      {price && price[6] && account && !isSelling ? (
-                        <CreateSellOrder
-                          account={account}
-                          watchId={+watchId}
-                          watchName={detail?.name || ''}
-                          startAmount={price[6]?._hex || ''}
-                        />
-                      ) : null}
-                    </Row>
-                    <Row style={{ paddingTop: '1rem' }}>
-                      {price && price[6] && !isSelling ? (
-                        <Transfer
-                          // account={account}
-                          watchId={+watchId}
-                          watchName={detail?.name || ''}
-                        />
-                      ) : null}
-                    </Row>
-                  </>
-                ) : null}
+                <Row style={{ paddingTop: '1rem' }}>
+                  {price && price[6] && account && !isSelling ? (
+                    <CreateSellOrder
+                      account={account}
+                      watchId={+watchId}
+                      watchName={detail?.name || ''}
+                      startAmount={price[6]?._hex || ''}
+                    />
+                  ) : null}
+                </Row>
+                <Row style={{ paddingTop: '1rem' }}>
+                  {price && price[6] && !isSelling ? (
+                    <Transfer
+                      // account={account}
+                      watchId={+watchId}
+                      watchName={detail?.name || ''}
+                    />
+                  ) : null}
+                </Row>
+                <Row>
+                  {price && price[6] && isSelling ? (
+                    <Buy
+                      callback={() => {
+                        getWatchFromChain(watchId);
+                      }}
+                      // account={account}
+                      watchId={+watchId}
+                      watchName={detail?.name || ''}
+                    />
+                  ) : null}
+                </Row>
 
                 {/* <StyledButton
               onClick={() =>
