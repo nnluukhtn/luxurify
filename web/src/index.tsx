@@ -37,6 +37,14 @@ import { seaportContext } from 'contexts/SeaportContext';
 const initialState = {};
 const store = configureAppStore(initialState, history);
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;
+let library: any = null;
+
+export const getLibrary = (provider?: any): Web3Provider => {
+  if (library) return library;
+  library = new Web3Provider(provider);
+  library.pollingInterval = 12000;
+  return library;
+};
 
 export const injectedConnector = new InjectedConnector({
   supportedChainIds: [
@@ -54,12 +62,6 @@ const seaport = new OpenSeaPort((window as any).web3.currentProvider, {
 });
 
 console.log({ seaport }, (window as any).web3.currentProvider);
-
-const getLibrary = (provider?: any): Web3Provider => {
-  const library = new Web3Provider(provider);
-  library.pollingInterval = 12000;
-  return library;
-};
 
 ReactDOM.render(
   <Provider store={store}>

@@ -10,6 +10,9 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Switch, Route, BrowserRouter, Redirect } from 'react-router-dom';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import { Web3Provider } from '@ethersproject/providers';
+import { useWeb3React } from '@web3-react/core';
+import { injectedConnector } from '../index';
 
 import { GlobalStyle } from 'styles/global-styles';
 
@@ -41,6 +44,7 @@ export function App() {
   // const navigate = useNavigation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const [isChecked, setChecked] = React.useState(false);
+  const { library, activate, active } = useWeb3React<Web3Provider>();
 
   React.useEffect(() => {
     const checkCookies = () => {
@@ -54,9 +58,17 @@ export function App() {
       setChecked(true);
     };
     checkCookies();
-  }, [dispatch]);
+  }, [activate, active, dispatch]);
 
-  if (isAuthenticated === undefined || !isChecked) {
+  React.useLayoutEffect(() => {
+    // Magic happening
+    if (!active) {
+      console.log('Runned');
+      activate(injectedConnector);
+    }
+  }, [activate, active]);
+
+  if (isAuthenticated === undefined || !isChecked || !library) {
     return <>...Loading...</>;
   }
 
