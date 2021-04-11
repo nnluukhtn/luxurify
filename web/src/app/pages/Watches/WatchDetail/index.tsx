@@ -205,13 +205,17 @@ export function WatchDetail(props: Props) {
                     <Label>Owned by you</Label>
                     <Row style={{ paddingTop: '1rem' }}>
                       {price && price[6] && account && !isSelling ? (
-                        <CreateSellOrder
-                          account={account}
-                          watchId={+watchId}
-                          watchName={detail?.name || ''}
-                          startAmount={price[6]?._hex || ''}
-                          onListed={onActionSucceed}
-                        />
+                        <>
+                          {console.log({ price })}
+                          <CreateSellOrder
+                            account={account}
+                            watchId={+watchId}
+                            isUSD={!!price[4]}
+                            watchName={detail?.name || ''}
+                            startAmount={price[6]?._hex || ''}
+                            onListed={onActionSucceed}
+                          />
+                        </>
                       ) : null}
                     </Row>
                     <Row style={{ paddingTop: '1rem' }}>
