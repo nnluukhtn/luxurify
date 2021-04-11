@@ -26,7 +26,15 @@ export function HomePage() {
             paddingBottom: '5rem',
           }}
         >
-          <Header style={{ margin: '0.5rem 1rem' }}>HomePage: Wallet</Header>
+          <Header
+            style={{
+              margin: '0.5rem 1rem',
+              fontFamily: 'Cormorant Garamond',
+              fontSize: 32,
+            }}
+          >
+            Wallet
+          </Header>
           {user?.isAdmin ? (
             <StyledButton
               type="link"

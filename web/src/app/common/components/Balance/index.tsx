@@ -16,7 +16,7 @@ const Balance = ({ children }: Props) => {
 export default Balance;
 
 const BalanceContainer = styled.div`
-  border: 0.13rem solid #0aa50a;
+  border: 0.13rem solid #e7df91;
   border-radius: 0.5rem;
   width: fit-content;
   height: fit-content;

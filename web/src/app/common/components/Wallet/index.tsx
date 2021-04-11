@@ -11,9 +11,9 @@ import ERC667ABI from '../../../../abi/ERC667.abi.json';
 import Balance from '../Balance';
 import styled from 'styled-components';
 import { Networks } from '../../../../constants';
-import { Button } from 'antd.macro';
+import { Button, Divider } from 'antd.macro';
 import { TOKENS_BY_NETWORK } from '../TokenBalance/constants';
-import Actions from '../Actions';
+// import Actions from '../Actions';
 import WatchList from '../WatchList';
 
 // import { EtherView } from '../EtherView';
@@ -39,6 +39,7 @@ const Wallet = () => {
   };
 
   useEffect(() => {
+    // console.log({ account, chainId, library });
     if (!active) activate(injectedConnector);
     return () => {
       if (active) deactivate();
@@ -47,72 +48,87 @@ const Wallet = () => {
   }, []);
 
   return (
-    <div style={{ margin: '16px 32px' }}>
-      {active ? (
-        <div style={{ marginBottom: '2rem' }}>
-          ✅
-          <ConnectedLabel>
-            Connected with Metamax
-            <Button type="primary" danger onClick={handleDeactivate}>
-              Disconnect
-            </Button>
-          </ConnectedLabel>
-        </div>
-      ) : (
-        <Button
-          type="primary"
-          onClick={handleActivate}
-          style={{ marginBottom: '2rem' }}
-        >
-          Connect with Metamax
-        </Button>
-      )}
+    <SWRConfig value={{ fetcher: fetcher(library, ERC667ABI) }}>
+      <WalletContainer>
+        {active ? (
+          <div style={{ marginBottom: '2rem' }}>
+            ✅
+            <ConnectedLabel>
+              Connected with Metamax
+              <Button type="primary" danger onClick={handleDeactivate}>
+                Disconnect
+              </Button>
+            </ConnectedLabel>
+          </div>
+        ) : (
+          <Button
+            type="primary"
+            onClick={handleActivate}
+            style={{ marginBottom: '2rem' }}
+          >
+            Connect with Metamax
+          </Button>
+        )}
 
-      <p>
-        <strong>ChainId: </strong>
-        {chainId
-          ? `${chainId}${` (${Object.keys(Networks).find(
-              name => Networks[name] === chainId,
-            )})`}`
-          : '-'}
-      </p>
-      <p>
-        <strong>Account: </strong> {account || '-'}
-      </p>
+        <p>
+          <strong>ChainId: </strong>
+          {chainId
+            ? `${chainId}${` (${Object.keys(Networks).find(
+                name => Networks[name] === chainId,
+              )})`}`
+            : '-'}
+        </p>
+        <p>
+          <strong>Account: </strong> {account || '-'}
+        </p>
 
-      <SWRConfig value={{ fetcher: fetcher(library, ERC667ABI) }}>
-        {/* <EtherView /> */}
         <div style={{ width: 'min-content', margin: '0 auto' }}>
           <Balance>
             <EthBalance />
             {chainId !== undefined && <TokenList chainId={chainId} />}
           </Balance>
         </div>
-        {chainId !== undefined &&
+        {/* {chainId !== undefined &&
           TOKENS_BY_NETWORK[chainId]?.map(token => (
             <Actions key={token.address} {...token} />
-          ))}
-        <WatchList {...TOKENS_BY_NETWORK[4][0]} />
-      </SWRConfig>
-    </div>
+          ))} */}
+      </WalletContainer>
+
+      {chainId === 4 && (
+        <>
+          <Divider />
+          <WatchList {...TOKENS_BY_NETWORK[4][0]} />
+        </>
+      )}
+    </SWRConfig>
   );
 };
 
 export default Wallet;
 
+const WalletContainer = styled.div`
+  width: 600px;
+  text-align: center;
+  margin: 16px 32px;
+`;
+
 const ConnectedLabel = styled.em`
+  text-align: center;
   display: inline-block;
   cursor: pointer;
   margin-left: 1rem;
+  position: relative;
   button {
+    position: absolute;
     opacity: 0;
     margin-left: 0.5rem;
-    transform: translateX(-0.5rem);
+    top: -6px;
+    left: 80%;
   }
   &:hover {
     button {
       opacity: 1;
-      transform: translateX(0.5rem);
+      left: 100%;
     }
   }
 `;

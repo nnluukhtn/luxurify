@@ -34,6 +34,7 @@ const ProgressModal = ({
       title={null}
       footer={null}
       closable={closable}
+      maskClosable={false}
       bodyStyle={{
         height: 300,
         display: 'flex',
@@ -43,11 +44,20 @@ const ProgressModal = ({
       }}
       onCancel={onClose}
     >
-      <Typography.Title level={4} style={{ fontSize: '1.3rem' }}>
-        {actionName}
+      <Typography.Title
+        level={4}
+        style={{ fontSize: '1.3rem', textAlign: 'center' }}
+      >
+        <p>{actionName}</p>
       </Typography.Title>
-      {getContent && <Typography.Text>{getContent()}</Typography.Text>}
-      <div style={{ position: 'relative', width: 200 }}>
+      {getContent && (
+        <Typography.Text
+          style={{ textAlign: 'center', width: '70%', margin: '0 auto' }}
+        >
+          {getContent()}
+        </Typography.Text>
+      )}
+      <div style={{ position: 'relative', width: 200, textAlign: 'center' }}>
         {loading ? (
           <PropagateLoader size={15} color="#ffb82f" css={overide} />
         ) : (

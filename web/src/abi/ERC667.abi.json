@@ -3,7 +3,17 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_proxyRegistryAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
         "name": "_VRFCoordinator",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_ethUsdPriceFeedAddress",
         "type": "address"
       },
       {
@@ -146,6 +156,30 @@
         "internalType": "string",
         "name": "_referenceNumber",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum Luxurify.PriceType",
+        "name": "_priceType",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum Luxurify.Currency",
+        "name": "_priceUnit",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_priceFixed",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_priceToBeSold",
+        "type": "uint256"
       }
     ],
     "name": "newWatchClaimed",
@@ -243,6 +277,21 @@
         "internalType": "string",
         "name": "referenceNumber",
         "type": "string"
+      },
+      {
+        "internalType": "enum Luxurify.PriceType",
+        "name": "priceType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "enum Luxurify.Currency",
+        "name": "priceUnit",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "priceFixed",
+        "type": "uint256"
       }
     ],
     "name": "claimNewWatch",
@@ -276,6 +325,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getEthUsdPrice",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -297,13 +359,62 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getWatchInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "enum Luxurify.PriceType",
+        "name": "",
+        "type": "uint8"
+      },
+      {
+        "internalType": "enum Luxurify.Currency",
+        "name": "",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
-        "name": "owner",
+        "name": "_owner",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "operator",
+        "name": "_operator",
         "type": "address"
       }
     ],
@@ -316,6 +427,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      }
+    ],
+    "name": "mintTo",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -348,7 +472,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "_tokenId",
         "type": "uint256"
       }
     ],
@@ -356,7 +480,7 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "_owner",
         "type": "address"
       }
     ],
@@ -599,17 +723,17 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "from",
+        "name": "_from",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "to",
+        "name": "_to",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "_tokenId",
         "type": "uint256"
       }
     ],
@@ -655,6 +779,26 @@
         "internalType": "string",
         "name": "referenceNumber",
         "type": "string"
+      },
+      {
+        "internalType": "enum Luxurify.PriceType",
+        "name": "priceType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "enum Luxurify.Currency",
+        "name": "priceUnit",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "priceFixed",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "priceToBeSold",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",

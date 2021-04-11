@@ -31,6 +31,8 @@ import { Web3ReactProvider } from '@web3-react/core';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { Web3Provider } from '@ethersproject/providers';
 import { Networks } from './constants';
+import { OpenSeaPort, Network } from 'opensea-js';
+import { seaportContext } from 'contexts/SeaportContext';
 
 const initialState = {};
 const store = configureAppStore(initialState, history);
@@ -47,6 +49,12 @@ export const injectedConnector = new InjectedConnector({
   ],
 });
 
+const seaport = new OpenSeaPort((window as any).web3.currentProvider, {
+  networkName: Network.Rinkeby,
+});
+
+console.log({ seaport }, (window as any).web3.currentProvider);
+
 const getLibrary = (provider?: any): Web3Provider => {
   const library = new Web3Provider(provider);
   library.pollingInterval = 12000;
@@ -57,9 +65,11 @@ ReactDOM.render(
   <Provider store={store}>
     <HelmetProvider>
       <Web3ReactProvider getLibrary={getLibrary}>
-        <React.StrictMode>
-          <App />
-        </React.StrictMode>
+        <seaportContext.Provider value={seaport}>
+          <React.StrictMode>
+            <App />
+          </React.StrictMode>
+        </seaportContext.Provider>
       </Web3ReactProvider>
     </HelmetProvider>
   </Provider>,

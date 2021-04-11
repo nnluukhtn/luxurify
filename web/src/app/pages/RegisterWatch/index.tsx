@@ -8,7 +8,7 @@ import { useWeb3React } from '@web3-react/core';
 import { PageContainer } from 'app/common/components';
 import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
 import { Container } from 'app/common/styles';
-import { Contract } from 'ethers';
+import { Contract, ethers } from 'ethers';
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { registerWatchAdapter } from './adapter';
@@ -24,6 +24,9 @@ import ERC667ABI from '../../../abi/ERC667.abi.json';
 import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import { useDispatch } from 'react-redux';
 import { useFnDebounce } from 'utils/hooks/DebounceHooks';
+import { useHistory } from 'react-router-dom';
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 interface Props {}
 
@@ -32,7 +35,7 @@ export function RegisterWatch(_props: Props) {
   const dispatch = useDispatch();
   const debounceFn = useFnDebounce();
   const { actions } = useRegisterWatchSlice();
-  // const history = useHistory();
+  const history = useHistory();
   const [callSuccess, callError] = useNotification();
   const [actionName, setActionName] = useState('');
   const [percent, setPercent] = useState(0);
@@ -41,11 +44,6 @@ export function RegisterWatch(_props: Props) {
   const [transactionHash, setTransactionHash] = useState<string | undefined>(
     undefined,
   );
-  // const { data: balance } = useSWR([
-  //   TOKENS_BY_NETWORK[chainId || 4]?.[0].address,
-  //   'balanceOf',
-  //   account,
-  // ]);
 
   const claimWatch = async (values: RegisterWatchParams) => {
     const contract = new Contract(
@@ -53,12 +51,12 @@ export function RegisterWatch(_props: Props) {
       ERC667ABI,
       library?.getSigner(),
     );
-    console.log('Signer', library, library?.getSigner());
-    setActionName('Claiming watch...');
+    setActionName(`Claiming watch...<wbr/>Please comfirm using Metamax.`);
     setShowProgress(true);
     setLoading(true);
     setTransactionHash('');
     setPercent(10);
+    // console.log('FUNCTIONS', contract.functions);
 
     let claimWatch: any;
     try {
@@ -66,6 +64,9 @@ export function RegisterWatch(_props: Props) {
         33,
         values.watchName,
         values.referenceNumber,
+        values.priceType === 'FIXED' ? 1 : 0,
+        values.priceUnit === 'ETH' ? 0 : 1,
+        ethers.utils.parseEther(values.priceFixed.toString())._hex,
       );
     } catch (err) {
       callError('Error: ' + err);
@@ -75,11 +76,9 @@ export function RegisterWatch(_props: Props) {
 
     setPercent(20);
     setActionName('Waiting for Confirmations...');
-    console.log('CLAIMING: ', claimWatch);
 
-    let confirmResp: any;
     try {
-      confirmResp = await claimWatch.wait(console.log);
+      await claimWatch.wait(console.log);
     } catch (err) {
       callError('Error: ' + err);
       setActionName('Error while waiting for confirmations');
@@ -88,13 +87,11 @@ export function RegisterWatch(_props: Props) {
 
     setPercent(30);
     setActionName('Claimed watch.');
-    console.log('CONFIRMED: ', confirmResp, confirmResp?.logs);
     setTransactionHash(claimWatch?.hash);
     debounceFn(submitWatch, 1500, values);
   };
 
   const submitWatch = (values: RegisterWatchParams) => {
-    console.log('start registering with: ', values);
     setPercent(50);
     setActionName('Registering your watch to our network...');
     const callback = (response: RegisterWatchResponse) => {
@@ -102,7 +99,6 @@ export function RegisterWatch(_props: Props) {
         setPercent(60);
         setActionName('Successfully registered watch.');
         callSuccess('Successfully registered a watch');
-        console.log('SUCCESS register: ', response);
         debounceFn(getToken, 1500, response.response.token_uri);
         // history.goBack();
       } else {
@@ -114,7 +110,6 @@ export function RegisterWatch(_props: Props) {
       }
     };
     const watchPayload: RegisterWatchPayload = registerWatchAdapter(values);
-    console.log('watchPayload', watchPayload);
     dispatch(actions.registerWatch({ params: watchPayload, callback }));
   };
 
@@ -126,12 +121,17 @@ export function RegisterWatch(_props: Props) {
     );
     setPercent(70);
     setActionName('Getting watch token...');
-    console.log('Getting watch token...', tokenUri);
+    setActionName(`Let's wait for 30s, go get some coffee...`);
+
+    await sleep(30000);
+    setActionName('Checking for an updated Balance...');
+
     const balance = await contract.balanceOf(account);
+
     const token = await contract.tokenOfOwnerByIndex(account, balance - 1);
+
     setPercent(80);
     setActionName('Successfully get token');
-    console.log('Get Token: ', token);
     setURI(token.toNumber(), tokenUri);
   };
 
@@ -142,15 +142,15 @@ export function RegisterWatch(_props: Props) {
       library?.getSigner(),
     );
     setPercent(90);
-    setActionName('Setting Token URI...');
-    console.log('Setting URI,', token, tokenUri);
+    setActionName('Setting Token URI..., Please comfirm using Metamax.');
+
     const resp = await newContract.setTokenURI(token, tokenUri);
-    setPercent(100);
-    setActionName('Successfully setting Token URI!');
-    console.log('setURI Resp: ', resp);
+    setPercent(95);
+    setActionName('Waiting for Confirmations...');
+
     const finalResp = await resp?.wait(console.log);
-    console.log('FINAL:', finalResp);
     setTransactionHash(finalResp?.transactionHash);
+    setPercent(100);
     setLoading(false);
     setActionName('Finished!');
   };
@@ -182,10 +182,14 @@ export function RegisterWatch(_props: Props) {
             transactionHash ? <p>hash: {transactionHash}</p> : null
           }
           closable={
+            true ||
             actionName.indexOf('Error') >= 0 ||
             actionName.indexOf('Finish') >= 0
           }
-          onClose={() => setShowProgress(false)}
+          onClose={() => {
+            if (actionName.indexOf('Finish') >= 0) history.push('/');
+            setShowProgress(false);
+          }}
         />
       </Container>
     </>

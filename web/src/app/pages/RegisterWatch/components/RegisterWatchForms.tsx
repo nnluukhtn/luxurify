@@ -57,8 +57,8 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
       caseMaterialName: '',
       braceletMaterialName: '',
       bucketMaterialName: '',
-      priceType: '',
-      priceUnit: '',
+      priceType: 'FIXED',
+      priceUnit: 'ETH',
       priceFixed: 0,
       image: [],
       innerImage: [],
@@ -397,9 +397,8 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
           error={formik.errors.priceUnit}
           type="select"
         >
-          <Select.Option value="BTC">BTC</Select.Option>
           <Select.Option value="ETH">ETH</Select.Option>
-          <Select.Option value="BNB">BNB</Select.Option>
+          <Select.Option value="USD">USD</Select.Option>
         </InputForm>
         <Spacer height="0.7rem" />
         <InputForm
@@ -475,7 +474,7 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
 export default RegisterWatchForms;
 
 export const RegisterWatchFormContainer = styled.div`
-  margin: 5rem auto;
+  margin: 3rem auto 5rem auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

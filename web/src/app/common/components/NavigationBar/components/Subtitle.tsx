@@ -12,7 +12,7 @@ const Subtitle = ({ user, isAuthenticated }: ComponentProps) => {
       {user.isAdmin ? 'Admin: ' : 'welcome'} {user.email}
     </>
   ) : (
-    <>sign in to explore</>
+    <>Decentralized luxury watch database</>
   );
 };
 

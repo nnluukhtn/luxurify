@@ -70,7 +70,7 @@ export function App() {
         <meta name="description" content="Luxurify Dapp" />
       </Helmet>
 
-      <NavigationBar />
+      <NavigationBar backIcon={false} />
 
       <Switch>
         {!isAuthenticated && <Route exact path="/sign-up" component={SignUp} />}
