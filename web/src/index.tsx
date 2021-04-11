@@ -33,6 +33,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Networks } from './constants';
 import { OpenSeaPort, Network } from 'opensea-js';
 import { seaportContext } from 'contexts/SeaportContext';
+import ErrorBoundary from 'error-boundary';
 
 const initialState = {};
 const store = configureAppStore(initialState, history);
@@ -64,17 +65,19 @@ const seaport = new OpenSeaPort((window as any).web3.currentProvider, {
 console.log({ seaport }, (window as any).web3.currentProvider);
 
 ReactDOM.render(
-  <Provider store={store}>
-    <HelmetProvider>
-      <Web3ReactProvider getLibrary={getLibrary}>
-        <seaportContext.Provider value={seaport}>
-          <React.StrictMode>
-            <App />
-          </React.StrictMode>
-        </seaportContext.Provider>
-      </Web3ReactProvider>
-    </HelmetProvider>
-  </Provider>,
+  <ErrorBoundary>
+    <Provider store={store}>
+      <HelmetProvider>
+        <Web3ReactProvider getLibrary={getLibrary}>
+          <seaportContext.Provider value={seaport}>
+            <React.StrictMode>
+              <App />
+            </React.StrictMode>
+          </seaportContext.Provider>
+        </Web3ReactProvider>
+      </HelmetProvider>
+    </Provider>
+  </ErrorBoundary>,
   MOUNT_NODE,
 );
 

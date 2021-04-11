@@ -6,7 +6,7 @@
 import { Col, Image, Row, Skeleton } from 'antd';
 import Colors from 'app/common/Colors';
 import { PageContainer } from 'app/common/components';
-import { Container, Header, Spacer } from 'app/common/styles';
+import { BackgroundContainer, Header, Spacer } from 'app/common/styles';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -22,7 +22,7 @@ import { useWeb3React } from '@web3-react/core';
 import CreateSellOrder from './components/CreateSellOrder';
 import { formatUnits } from '@ethersproject/units';
 import Transfer from './components/Transfer';
-import { getLibrary } from 'index';
+import { getLibrary, injectedConnector } from 'index';
 import { Helmet } from 'react-helmet-async';
 import WatchQR from './components/WatchQR';
 import { seaportContext } from 'contexts/SeaportContext';
@@ -34,7 +34,7 @@ interface Props {}
 
 export function WatchDetail(props: Props) {
   const library = getLibrary();
-  const { account } = useWeb3React<Web3Provider>();
+  const { account, activate, active } = useWeb3React<Web3Provider>();
   const seaport = React.useContext(seaportContext);
   const { watchId } = useParams<{ watchId: string }>();
   const [uri, setUri] = useState('');
@@ -44,6 +44,7 @@ export function WatchDetail(props: Props) {
   const [price, setPrice] = useState<any>({});
   const [isLoading, setLoading] = useState(false);
   const [isSelling, setIsSelling] = useState(false);
+  const [isChecked, setChecked] = useState(false);
   const [isOwner, setisOwner] = useState(false);
   const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
   const contract = new Contract(tokenAddress, ERC721ABI, library?.getSigner());
@@ -51,20 +52,26 @@ export function WatchDetail(props: Props) {
   // Event handlers
 
   const fetchAssets = async () => {
-    const asset: OpenSeaAsset | undefined = await seaport?.api.getAsset({
-      tokenAddress,
-      tokenId: watchId,
-    });
-    console.log({ asset });
-    const sellOrder = asset?.sellOrders?.find(
-      order => order.target === asset.tokenAddress,
-    );
-    setIsSelling(sellOrder !== undefined);
+    try {
+      const asset: OpenSeaAsset | undefined = await seaport?.api.getAsset({
+        tokenAddress,
+        tokenId: watchId,
+      });
+      console.log({ asset });
+      const sellOrder = asset?.sellOrders?.find(
+        order => order.target === asset.tokenAddress,
+      );
+      setIsSelling(sellOrder !== undefined);
+      setChecked(true);
+    } catch (err) {
+      callError(err);
+    }
     // if (sellOrder !== undefined)
     // console.log(formatUnits(sellOrder!.currentPrice!, 18));
   };
 
   const onActionSucceed = () => {
+    fetchAssets();
     history.push('/');
   };
 
@@ -106,12 +113,21 @@ export function WatchDetail(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  React.useLayoutEffect(() => {
+    // Magic happening
+    if (!active) {
+      activate(injectedConnector);
+    }
+  }, [activate, active]);
+
   useEffect(() => {
     if (watchId) {
       getWatchFromChain(watchId);
+      fetchAssets();
     }
     return () => {
       setisOwner(false);
+      setChecked(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchId]);
@@ -121,10 +137,6 @@ export function WatchDetail(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seaport, watchId]);
 
-  if (!detail) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <>
       <Helmet>
@@ -132,159 +144,175 @@ export function WatchDetail(props: Props) {
         <meta name="description" content="Luxurify - Watch Detail" />
       </Helmet>
 
-      <Container>
+      <BackgroundContainer>
         <PageContainer
           innerStyle={{
-            paddingBottom: '5rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '2.5rem 0 5rem 4rem',
+            marginTop: '1rem',
+            maxWidth: 1000,
+            borderRadius: 5,
+            backgroundColor: Colors.N0_WHITE,
           }}
         >
-          <DetailContainer>
-            <SmallHeader>Watch Info</SmallHeader>
-            {detail.name && <Header>{detail.name}</Header>}
-            <Row style={{ marginTop: '1rem' }}>
-              <Col span={12}>
-                <ImageContainer>
-                  {detail.image ? (
-                    <Image
-                      src={detail.image}
-                      preview
-                      style={{
-                        width: 400,
-                        height: 400,
-                        objectFit: 'contain',
-                        border: '1px solid lightgray',
-                        borderRadius: 5,
-                      }}
-                      placeholder={
-                        <Skeleton.Image style={{ height: 400, width: 400 }} />
-                      }
-                    />
-                  ) : (
-                    <Skeleton.Image
-                      style={{
-                        width: 400,
-                        height: 400,
-                      }}
-                    />
-                  )}
-                </ImageContainer>
+          {!detail ? (
+            <>Loading...</>
+          ) : (
+            <DetailContainer>
+              <SmallHeader>Watch Info</SmallHeader>
+              {detail.name && <Header>{detail.name}</Header>}
+              <Row style={{ marginTop: '1rem' }}>
+                <Col span={13}>
+                  <ImageContainer>
+                    {detail.image ? (
+                      <Image
+                        src={detail.image}
+                        preview
+                        style={{
+                          width: 400,
+                          height: 400,
+                          objectFit: 'contain',
+                          border: '1px solid lightgray',
+                          borderRadius: 5,
+                        }}
+                        placeholder={
+                          <Skeleton.Image style={{ height: 400, width: 400 }} />
+                        }
+                      />
+                    ) : (
+                      <Skeleton.Image
+                        style={{
+                          width: 400,
+                          height: 400,
+                        }}
+                      />
+                    )}
+                  </ImageContainer>
 
-                <Spacer height="1.6rem" />
+                  <Spacer height="1.6rem" />
 
-                <Row>
-                  <Col span={4}>
-                    <MediumLabel>Price: </MediumLabel>
-                  </Col>
-                  <Col>
-                    <Price>
-                      {isLoading ? (
-                        <LoadingOutlined />
-                      ) : price && price[7] ? (
-                        `${formatUnits(price[7], 18)} ETH`
-                      ) : (
-                        '-'
-                      )}
-                      {isSelling && (
-                        <Label
-                          style={{
-                            marginLeft: '1rem',
-                            color: Colors.G500_GREEN,
-                          }}
-                        >
-                          ON SALE
-                        </Label>
-                      )}
-                    </Price>
-                    <br />
-                  </Col>
-                </Row>
+                  <Row>
+                    <Col span={4}>
+                      <MediumLabel>Price: </MediumLabel>
+                    </Col>
+                    <Col>
+                      <Price>
+                        {isLoading ? (
+                          <LoadingOutlined />
+                        ) : price && price[7] ? (
+                          `${formatUnits(price[7], 18)} ETH`
+                        ) : (
+                          '-'
+                        )}
+                        {isSelling && (
+                          <Label
+                            style={{
+                              marginLeft: '1rem',
+                              color: Colors.G500_GREEN,
+                            }}
+                          >
+                            ON SALE
+                          </Label>
+                        )}
+                      </Price>
+                      <br />
+                    </Col>
+                  </Row>
 
-                <Spacer height="0.6rem" />
+                  <Spacer height="0.6rem" />
 
-                {isOwner ? (
-                  <>
-                    <Label>Owned by you</Label>
-                    <Row style={{ paddingTop: '1rem' }}>
-                      {price && price[7] && account && !isSelling ? (
-                        <>
-                          {console.log({ price })}
-                          {console.log({
-                            priceType: price[3],
-                            priceUnit: price[4],
-                            priceFixed: formatUnits(price[5], 18),
-                            priceDynamic: formatUnits(price[6], 18),
-                            priceTobesold: price[7],
-                          })}
-                          <CreateSellOrder
-                            account={account}
+                  {isChecked && isOwner ? (
+                    <>
+                      <Label>Owned by you</Label>
+                      <Row style={{ paddingTop: '1rem' }}>
+                        {price && price[7] && account && !isSelling ? (
+                          <>
+                            {console.log({ price })}
+                            {console.log({
+                              priceType: price[3],
+                              priceUnit: price[4],
+                              priceFixed: formatUnits(price[5], 18),
+                              priceDynamic: formatUnits(price[6], 18),
+                              priceTobesold: price[7],
+                            })}
+                            <CreateSellOrder
+                              account={account}
+                              watchId={+watchId}
+                              watchName={detail?.name || ''}
+                              startAmount={price[7]?._hex || ''}
+                              onListed={onActionSucceed}
+                            />
+                          </>
+                        ) : null}
+                      </Row>
+                      <Row style={{ paddingTop: '1rem' }}>
+                        {price && price[7] && !isSelling ? (
+                          <Transfer
+                            // account={account}
                             watchId={+watchId}
                             watchName={detail?.name || ''}
-                            startAmount={price[7]?._hex || ''}
-                            onListed={onActionSucceed}
+                            callback={() => {
+                              fetchDetail();
+                              getWatchFromChain(watchId);
+                              fetchAssets();
+                            }}
                           />
-                        </>
-                      ) : null}
-                    </Row>
-                    <Row style={{ paddingTop: '1rem' }}>
-                      {price && price[7] && !isSelling ? (
-                        <Transfer
-                          // account={account}
-                          watchId={+watchId}
-                          watchName={detail?.name || ''}
-                        />
-                      ) : null}
-                    </Row>
-                  </>
-                ) : (
-                  <>
-                    <Row style={{ paddingTop: '1rem' }}>
-                      {price && price[7] && isSelling ? (
-                        <Buy
-                          // account={account}
-                          callback={() => {
-                            fetchDetail();
-                            getWatchFromChain(watchId);
-                            fetchAssets();
-                          }}
-                          watchId={+watchId}
-                          watchName={detail?.name || ''}
-                        />
-                      ) : null}
-                    </Row>
-                  </>
-                )}
-              </Col>
+                        ) : null}
+                      </Row>
+                    </>
+                  ) : isChecked ? (
+                    <>
+                      <Row style={{ paddingTop: '1rem' }}>
+                        {price && price[7] && isSelling ? (
+                          <Buy
+                            // account={account}
+                            callback={() => {
+                              fetchDetail();
+                              getWatchFromChain(watchId);
+                              fetchAssets();
+                            }}
+                            watchId={+watchId}
+                            watchName={detail?.name || ''}
+                          />
+                        ) : null}
+                      </Row>
+                    </>
+                  ) : null}
+                </Col>
 
-              <Col span={12} style={{ paddingLeft: '0.5rem' }}>
-                <Row style={{ height: 415 }}>
-                  <ul>
-                    {detail && detail.attributes?.length
-                      ? detail.attributes.map((item, idx) => (
-                          <li
-                            key={`watchDetail_${idx}`}
-                            style={{ marginBottom: '0.4rem' }}
-                          >
-                            <Label>{item.trait_type}:</Label> {item.value}
-                          </li>
-                        ))
-                      : null}
-                  </ul>
-                </Row>
-                <Row style={{ paddingLeft: '2rem' }}>
-                  {detail && (
-                    <WatchQR
-                      watchName={detail?.name}
-                      id={watchId}
-                      uri={uri}
-                      image={detail?.image}
-                    />
-                  )}
-                </Row>
-              </Col>
-            </Row>
-          </DetailContainer>
+                <Col span={11} style={{ paddingLeft: '0.5rem' }}>
+                  <Row style={{ height: 415 }}>
+                    <ul>
+                      {detail && detail.attributes?.length
+                        ? detail.attributes.map((item, idx) => (
+                            <li
+                              key={`watchDetail_${idx}`}
+                              style={{ marginBottom: '0.4rem' }}
+                            >
+                              <Label>{item.trait_type}:</Label> {item.value}
+                            </li>
+                          ))
+                        : null}
+                    </ul>
+                  </Row>
+                  <Row style={{ paddingLeft: '2rem' }}>
+                    {detail && (
+                      <WatchQR
+                        watchName={detail?.name}
+                        id={watchId}
+                        uri={uri}
+                        image={detail?.image}
+                      />
+                    )}
+                  </Row>
+                </Col>
+              </Row>
+            </DetailContainer>
+          )}
         </PageContainer>
-      </Container>
+      </BackgroundContainer>
     </>
   );
 }
@@ -320,8 +348,8 @@ const Price = styled.span`
 `;
 
 export const DetailContainer = styled.div`
-  margin: 2rem auto;
-  width: 800px;
+  /* margin: 2rem auto; */
+  width: 90%;
   height: 100%;
   overflow: hidden;
 `;

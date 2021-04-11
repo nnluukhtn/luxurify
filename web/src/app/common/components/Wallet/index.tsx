@@ -12,11 +12,8 @@ import styled from 'styled-components';
 import { Networks } from '../../../../constants';
 import { Button, Divider } from 'antd.macro';
 import { TOKENS_BY_NETWORK } from '../TokenBalance/constants';
-// import Actions from '../Actions';
 import WatchList from '../WatchList';
 import OrderList from '../OrderList';
-
-// import { EtherView } from '../EtherView';
 
 const Wallet = () => {
   const {
@@ -88,10 +85,6 @@ const Wallet = () => {
             {chainId !== undefined && <TokenList chainId={chainId} />}
           </Balance>
         </div>
-        {/* {chainId !== undefined &&
-          TOKENS_BY_NETWORK[chainId]?.map(token => (
-            <Actions key={token.address} {...token} />
-          ))} */}
       </WalletContainer>
 
       {chainId === 4 && (

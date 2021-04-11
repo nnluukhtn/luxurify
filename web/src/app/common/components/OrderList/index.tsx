@@ -11,32 +11,42 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { seaportContext } from 'contexts/SeaportContext';
 import { TOKENS_BY_NETWORK } from '../TokenBalance/constants';
+import useNotification from 'utils/hooks/NotificationHook/useNotification';
 
 const WatchList = ({ address }) => {
   const history = useHistory();
   const seaport = useContext(seaportContext);
+  const [, callError] = useNotification();
   const { account } = useWeb3React<Web3Provider>();
   const [watches, setWatches] = useState<any>([]);
   const { data: balance } = useSWR([address, 'balanceOf', account]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
+
   const getWatchList = async () => {
     setIsLoading(true);
+    try {
+      const { orders } = (await seaport?.api.getOrders({
+        asset_contract_address: tokenAddress,
+        side: OrderSide.Sell,
+      })) || { orders: [], count: 0 };
+      console.log({ orders });
+      const watchList = orders.map(order => ({
+        tokenURI: order.asset?.tokenAddress,
+        id: order.asset?.tokenId,
+        referenceNumber: order.asset?.tokenId,
+        name:
+          order.asset?.name ||
+          order.asset?.description ||
+          'Watch ID: ' + order.asset?.tokenId,
+      }));
 
-    const { orders } = (await seaport?.api.getOrders({
-      asset_contract_address: TOKENS_BY_NETWORK[4][0].address,
-      side: OrderSide.Sell,
-    })) || { orders: [], count: 0 };
-    console.log({ orders });
-    const watchList = orders.map(order => ({
-      tokenURI: order.asset?.tokenAddress,
-      id: order.asset?.tokenId,
-      referenceNumber: order.asset?.tokenId,
-      name: order.asset?.name || order.asset?.description,
-    }));
-
-    setWatches(watchList);
-    setIsLoading(false);
+      setWatches(watchList);
+      setIsLoading(false);
+    } catch (err) {
+      callError(err);
+    }
   };
 
   useEffect(() => {

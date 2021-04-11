@@ -44,7 +44,7 @@ export function App() {
   // const navigate = useNavigation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const [isChecked, setChecked] = React.useState(false);
-  const { library, activate, active } = useWeb3React<Web3Provider>();
+  const { activate, active } = useWeb3React<Web3Provider>();
 
   React.useEffect(() => {
     const checkCookies = () => {
@@ -58,6 +58,7 @@ export function App() {
       setChecked(true);
     };
     checkCookies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activate, active, dispatch]);
 
   React.useLayoutEffect(() => {
@@ -67,7 +68,7 @@ export function App() {
     }
   }, [activate, active]);
 
-  if (isAuthenticated === undefined || !isChecked || !library) {
+  if (isAuthenticated === undefined || !isChecked) {
     return <>...Loading...</>;
   }
 

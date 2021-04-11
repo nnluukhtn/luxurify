@@ -44,7 +44,7 @@ const Transfer = ({ callback, watchId, watchName }: Props) => {
         await magicAwaking(15000);
         callSuccess(`Successfully buying this item.`);
       } catch (err) {
-        callError('Error' + err.messgage);
+        callError(err);
       }
       setShowModal(false);
       setCalling(false);
@@ -109,8 +109,8 @@ const TextBold = styled.span`
   font-weight: 600;
 `;
 
-const Header = styled.div`
-  font-weight: 500;
-  font-size: 1.1rem;
-  text-align: center;
-`;
+// const Header = styled.div`
+//   font-weight: 500;
+//   font-size: 1.1rem;
+//   text-align: center;
+// `;

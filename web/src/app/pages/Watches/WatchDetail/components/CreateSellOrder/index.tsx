@@ -96,7 +96,14 @@ const CreateSellOrder = ({
       console.log({ asset });
     };
 
-    if (seaport && watchId) fetchAssets();
+    if (seaport && watchId) {
+      try {
+        fetchAssets();
+      } catch (err) {
+        callError(err);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seaport, watchId]);
 
   useEffect(() => {

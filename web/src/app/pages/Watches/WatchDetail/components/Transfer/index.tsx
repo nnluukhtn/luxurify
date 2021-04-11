@@ -16,9 +16,10 @@ import { SwapOutlined } from '@ant-design/icons';
 interface Props {
   watchId: number;
   watchName: string;
+  callback: () => void;
 }
 
-const Transfer = ({ watchId, watchName }: Props) => {
+const Transfer = ({ watchId, watchName, callback }: Props) => {
   const {
     account,
     // library,
@@ -27,6 +28,7 @@ const Transfer = ({ watchId, watchName }: Props) => {
   const [callSuccess, callError] = useNotification();
   const [showModal, setShowModal] = useState(false);
   const [targetAddress, setAddress] = useState('');
+  const [isLoading, setLoading] = useState(false);
   const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
   // console.log('transfer', { account, targetAddress });
 
@@ -35,6 +37,7 @@ const Transfer = ({ watchId, watchName }: Props) => {
     if (account && targetAddress) {
       console.log(`transfering to ${targetAddress}...`);
       try {
+        setLoading(true);
         console.log({ watchId, tokenAddress, account });
         const listing = await seaport?.transfer({
           asset: {
@@ -47,9 +50,11 @@ const Transfer = ({ watchId, watchName }: Props) => {
         });
         console.log({ listing });
         callSuccess(`Successfully transfer this item to ${targetAddress}.`);
+        callback();
       } catch (err) {
         callError(err);
       }
+      setLoading(false);
     } else {
       callError('Error: Can not get your account');
     }
@@ -109,6 +114,7 @@ const Transfer = ({ watchId, watchName }: Props) => {
         title={<Header>Transfer Item</Header>}
         onCancel={() => setShowModal(false)}
         onOk={transfer}
+        confirmLoading={isLoading}
         bodyStyle={{
           textAlign: 'center',
           display: 'flex',
