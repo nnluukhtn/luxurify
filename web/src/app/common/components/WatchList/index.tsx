@@ -53,6 +53,8 @@ const WatchList = ({ address }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [balance, account, address]);
 
+  console.log({ watches });
+
   useEffect(() => {
     // const getToken = async () => {
     //   const result = await contract.tokenOfOwnerByIndex(account, 7);

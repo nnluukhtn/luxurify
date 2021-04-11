@@ -87,10 +87,10 @@ export function WatchDetail(props: Props) {
 
   const fetchDetail = async () => {
     const url = await contract.functions.getTokenURI(watchId);
-    const smth = await contract.functions.getEthUsdPrice();
-    console.log({ smth });
-    setUri(url);
-    const response = await fetch(url);
+    // const smth = await contract.functions.getEthUsdPrice();
+    // console.log({ smth });
+    setUri(url[0]);
+    const response = await fetch(url[0]);
     console.log(response.body);
     const json = await response.json();
     setDetail(json);

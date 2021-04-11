@@ -44,8 +44,6 @@ const WatchList = ({ address }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [balance, account, address, seaport?.api]);
 
-  console.log({ watches });
-
   return (
     <WatchListContainer>
       <Header style={{ textAlign: 'center', fontSize: '1.5rem' }}>

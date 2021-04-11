@@ -9,7 +9,7 @@ import { PageContainer } from 'app/common/components';
 import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
 import { BackgroundContainer } from 'app/common/styles';
 import { Contract, ethers } from 'ethers';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { registerWatchAdapter } from './adapter';
 import ProgressModal from './components/ProgressModal';
@@ -25,7 +25,6 @@ import useNotification from 'utils/hooks/NotificationHook/useNotification';
 import { useDispatch } from 'react-redux';
 import { useFnDebounce } from 'utils/hooks/DebounceHooks';
 import { useHistory } from 'react-router-dom';
-import { injectedConnector } from 'index';
 import Colors from 'app/common/Colors';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -204,15 +203,6 @@ export function RegisterWatch(_props: Props) {
       return action.indexOf('Error') >= 0 || action.indexOf('Finish') >= 0;
     } else return false;
   };
-
-  useEffect(() => {
-    // console.log({ account, chainId, library });
-    if (!active) activate(injectedConnector);
-    return () => {
-      if (active) deactivate();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>

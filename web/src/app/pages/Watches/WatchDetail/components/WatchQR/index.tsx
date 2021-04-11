@@ -5,9 +5,13 @@ import { PrinterOutlined, QrcodeOutlined } from '@ant-design/icons';
 import QRCode from 'qrcode.react';
 import { Collapse } from 'antd';
 import styled from 'styled-components';
+import { useWeb3React } from '@web3-react/core';
+import { Web3Provider } from '@ethersproject/providers';
 
 const WatchQR = ({ watchName, id, uri, image }) => {
   const qrRef = React.useRef<any | null>(null);
+  const { account } = useWeb3React<Web3Provider>();
+
   return (
     <>
       <StyledCollapse
@@ -28,7 +32,7 @@ const WatchQR = ({ watchName, id, uri, image }) => {
                 className="watch_QRCode"
                 renderAs="canvas"
                 id={id}
-                value={JSON.stringify({ token: id, uri })}
+                value={JSON.stringify({ token: id, owner_account: account })}
                 size={220}
                 level={'L'}
                 includeMargin={true}

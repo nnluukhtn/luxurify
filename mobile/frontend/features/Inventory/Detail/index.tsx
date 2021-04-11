@@ -94,7 +94,7 @@ const Detail = ({}) => {
           <Image source={{ uri: data.image }} />
           <GoldBar>
             <Title style={{ color: "white", marginRight: 5 }}>{data.name || "-"}</Title>
-            {data.isOwner && (
+            {data.isOwner && params.owner_account && (
               <FontAwesome name="check-circle" size={24} color="white" />
             )}
 

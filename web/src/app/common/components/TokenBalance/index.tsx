@@ -10,6 +10,15 @@ const TokenBalance = ({ symbol, address, decimals }) => {
   const { data: balance, mutate } = useSWR([address, 'balanceOf', account]);
 
   useEffect(() => {
+    (async () => {
+      const contract = new Contract(address, ERC721ABI, library?.getSigner());
+
+      const resp = await contract.functions.getEthUsdPrice();
+      console.log({ resp });
+    })();
+  }, []);
+
+  useEffect(() => {
     // listen for changes on an Ethereum address
     console.log(`listening for Transfer...`);
     const contract = new Contract(address, ERC721ABI, library?.getSigner());

@@ -9,7 +9,7 @@ export const TOKENS_BY_NETWORK: {
 } = {
   [Networks.Rinkeby]: [
     {
-      address: '0x0c2F21D5615Ec6002F9582e8705401DeF226604D',
+      address: '0x374A0d8F2828674463456477dF78831BEc4A5C8A',
       symbol: 'LXY',
       name: 'Luxirify',
       decimals: 0,
