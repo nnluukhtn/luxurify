@@ -14,6 +14,7 @@ import { Button, Divider } from 'antd.macro';
 import { TOKENS_BY_NETWORK } from '../TokenBalance/constants';
 // import Actions from '../Actions';
 import WatchList from '../WatchList';
+import OrderList from '../OrderList';
 
 // import { EtherView } from '../EtherView';
 
@@ -97,6 +98,13 @@ const Wallet = () => {
         <>
           <Divider />
           <WatchList {...TOKENS_BY_NETWORK[4][0]} />
+        </>
+      )}
+
+      {chainId === 4 && (
+        <>
+          <Divider />
+          <OrderList {...TOKENS_BY_NETWORK[4][0]} />
         </>
       )}
     </SWRConfig>
