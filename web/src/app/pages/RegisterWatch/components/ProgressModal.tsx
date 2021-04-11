@@ -8,7 +8,7 @@ const overide = `
 `;
 
 interface Props {
-  actionName: () => JSX.Element | null;
+  actionName: JSX.Element | string | null;
   percent: number;
   loading: boolean;
   visible: boolean;
@@ -45,7 +45,11 @@ const ProgressModal = ({
     >
       <Typography.Title
         level={4}
-        style={{ fontSize: '1.3rem', textAlign: 'center' }}
+        style={{
+          fontSize: '1.3rem',
+          textAlign: 'center',
+          fontFamily: 'Cormorant Garamond',
+        }}
       >
         {actionName}
       </Typography.Title>

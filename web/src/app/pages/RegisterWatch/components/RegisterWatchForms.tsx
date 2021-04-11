@@ -85,7 +85,7 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
       bucketMaterialName: Yup.string().required('Required'),
       priceType: Yup.string().required('Required'),
       priceUnit: Yup.string().required('Required'),
-      priceFixed: Yup.number().required('Required').min(0.1, 'Required'),
+      priceFixed: Yup.number().required('Required').min(0, 'Required'),
       image: Yup.array().length(1, 'Required'),
       innerImage: Yup.array().length(1, 'Required'),
     }),

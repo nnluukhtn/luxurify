@@ -9,7 +9,7 @@ import { PageContainer } from 'app/common/components';
 import { Container, Header, Spacer } from 'app/common/styles';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { WatchDetailData } from './slice/types';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -37,7 +37,8 @@ export function WatchDetail(props: Props) {
   >();
   const seaport = React.useContext(seaportContext);
   const { watchId } = useParams<{ watchId: string }>();
-  const { search } = useLocation();
+  const { search, pathname } = useLocation();
+  const history = useHistory();
   const [, callError] = useNotification();
   const uri = new URLSearchParams(search).get('uri');
   const [detail, setDetail] = useState<WatchDetailData | null>(null);
@@ -58,6 +59,9 @@ export function WatchDetail(props: Props) {
   //   const transfer = await contract?.ownerOf(3);
   //   console.log({ transfer });
   // };
+  const onActionSucceed = () => {
+    history.push(pathname);
+  };
 
   useEffect(() => {
     const fetchDetail = async (apiURL: string) => {
@@ -217,6 +221,7 @@ export function WatchDetail(props: Props) {
 
                 {isOwner ? (
                   <>
+                    <Label>Owned by you</Label>
                     <Row style={{ paddingTop: '1rem' }}>
                       {price && price[6] && account && !isSelling ? (
                         <CreateSellOrder
@@ -224,6 +229,7 @@ export function WatchDetail(props: Props) {
                           watchId={+watchId}
                           watchName={detail?.name || ''}
                           startAmount={price[6]?._hex || ''}
+                          onListed={onActionSucceed}
                         />
                       ) : null}
                     </Row>
