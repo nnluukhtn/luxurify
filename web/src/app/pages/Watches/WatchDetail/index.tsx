@@ -72,7 +72,7 @@ export function WatchDetail(props: Props) {
       try {
         watchInfo = await contract.getWatchInfo(+watchId);
         const ownerAddress = await contract.functions.ownerOf(+watchId);
-        setisOwner(ownerAddress === account);
+        setisOwner(ownerAddress?.[0] === account);
       } catch (err) {
         callError('Error' + err);
       }
@@ -104,6 +104,9 @@ export function WatchDetail(props: Props) {
     if (watchId) {
       getWatchFromChain(watchId);
     }
+    return () => {
+      setisOwner(false);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchId]);
 

@@ -12,6 +12,7 @@ import { FormOutlined } from '@ant-design/icons';
 import { PropagateLoader } from 'react-spinners';
 import { Switch } from 'antd';
 import InputForm from 'app/common/components/InputForm';
+import { isInteger } from 'lodash';
 
 const overide = `
   display: block;
@@ -37,16 +38,16 @@ const CreateSellOrder = ({
   const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
   const [isListing, setListing] = useState(false);
   const [isPrivate, setPrivate] = useState(false);
-  const [targetAddress, setTargetAddress] = useState('');
+  const [buyerAddress, setBuyerAddress] = useState('');
 
   const listingItem = async () => {
-    console.log('run list', account);
+    console.log('run list', account, buyerAddress);
     if (account) {
       console.log('listing...');
       try {
         console.log({ watchId, tokenAddress, account, startAmount });
         setListing(true);
-        const listing = await seaport?.createSellOrder({
+        let params: any = {
           asset: {
             tokenId: watchId.toString(),
             tokenAddress,
@@ -54,57 +55,35 @@ const CreateSellOrder = ({
           accountAddress: account,
           startAmount: formatUnits(BigNumber.from(startAmount), 18) as any,
           quantity: 1,
-          expirationTime: 0,
-        });
+        };
+        if (isPrivate && buyerAddress) {
+          params = {
+            ...params,
+            buyerAddress,
+            startAmount: BigNumber.from(startAmount),
+          };
+        } else {
+          params = {
+            ...params,
+            expirationTime: 0,
+          };
+        }
+        const listing = await seaport?.createSellOrder(params);
         console.log({ listing });
         if (listing?.asset) {
           callSuccess(
-            `Successfully listed this item for sale at ${formatUnits(
-              BigNumber.from(startAmount),
-              18,
-            )}.`,
+            `Successfully ${
+              isPrivate
+                ? 'create a private auction at'
+                : 'listed this item for sale at'
+            } ${formatUnits(BigNumber.from(startAmount), 18)}.`,
           );
           setListing(false);
           setShowModal(false);
           onListed();
         }
       } catch (err) {
-        callError('Error' + err);
-      }
-    }
-  };
-
-  const privateAuction = async () => {
-    console.log('run list', account);
-    if (account) {
-      console.log('listing...');
-      try {
-        console.log({ watchId, tokenAddress, account, startAmount });
-        setListing(true);
-        const listing = await seaport?.createSellOrder({
-          asset: {
-            tokenId: watchId.toString(),
-            tokenAddress,
-          },
-          accountAddress: account,
-          startAmount: formatUnits(BigNumber.from(startAmount), 18) as any,
-          quantity: 1,
-          expirationTime: 0,
-        });
-        console.log({ listing });
-        if (listing?.asset) {
-          callSuccess(
-            `Successfully listed this item for sale at ${formatUnits(
-              BigNumber.from(startAmount),
-              18,
-            )}.`,
-          );
-          setListing(false);
-          setShowModal(false);
-          onListed();
-        }
-      } catch (err) {
-        callError('Error' + err);
+        callError(err);
       }
     }
   };
@@ -121,6 +100,14 @@ const CreateSellOrder = ({
     if (seaport && watchId) fetchAssets();
   }, [seaport, watchId]);
 
+  useEffect(() => {
+    if (!showModal) {
+      setListing(false);
+      if (isPrivate) setPrivate(false);
+      setBuyerAddress('');
+    }
+  }, [showModal]);
+
   return (
     <div>
       <StyledButton type="primary" onClick={() => setShowModal(true)}>
@@ -131,31 +118,41 @@ const CreateSellOrder = ({
         visible={showModal}
         title={<Header>Create sell order</Header>}
         onCancel={() => setShowModal(false)}
-        onOk={isPrivate ? privateAuction : listingItem}
+        onOk={listingItem}
         bodyStyle={{ textAlign: 'center' }}
         closable={false}
         destroyOnClose
       >
-        {isListing ? (
-          <>Creating sell order for</>
-        ) : (
-          <>Are you sure to create a sell order for this item:</>
-        )}
+        <div>
+          {isListing ? (
+            <>Creating sell order for</>
+          ) : (
+            <>Are you sure to create a sell order for this item:</>
+          )}
+          <br />
+          <TextBold>{watchName}</TextBold>
+          <br />
+          with the fixed price of{' '}
+          <TextBold>
+            {formatUnits(BigNumber.from(startAmount), 18)} ETH
+          </TextBold>
+        </div>
+        <Spacer height="1rem" />
+        Is this a private auction:
         <br />
-        <TextBold>{watchName}</TextBold>
-        <br />
-        with the fixed price of{' '}
-        <TextBold>{formatUnits(BigNumber.from(startAmount), 18)} ETH</TextBold>
-        <br />
-        <Switch onChange={() => setPrivate(true)} />
-        {isPrivate ? (
-          <InputForm
-            label="to Address:"
-            placeholder="Please enter"
-            value={targetAddress}
-            onChange={e => setTargetAddress(e.target.value)}
-          />
-        ) : null}
+        <Spacer height="0.6rem" />
+        <Switch onChange={() => setPrivate(prev => !prev)} />
+        <Spacer height="1rem" />
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          {isPrivate ? (
+            <InputForm
+              label="Target address:"
+              placeholder="Please enter"
+              value={buyerAddress}
+              onChange={e => setBuyerAddress(e.target.value)}
+            />
+          ) : null}
+        </div>
         {isListing && (
           <>
             <Spacer height="2rem" />
