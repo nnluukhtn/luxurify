@@ -47,9 +47,9 @@ The Luxurify ecosystem is a platform featuring luxury watch registration, verifi
 
 - We use Ruby on Rails to develop the backend APIs and integrate with WatchSignals APIs. Many thanks to WatchSignals team for providing support and helping us with generating API KEY when fetching data.
 
-### WatchSignal Adapter
+### WatchSignals Adapter
 
-- We also integrate with real data from WatchSignal to get watch data by reference number. Endpoint is at https://luxurify.herokuapp.com/watch_signals/watch/reference_number/:reference_number
+- We also integrate with real data from WatchSignals to get watch data by reference number. Endpoint is at https://luxurify.herokuapp.com/watch_signals/watch/reference_number/:reference_number
 
 ### OpenSea Integration
 
