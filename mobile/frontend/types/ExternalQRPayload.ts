@@ -1,6 +1,6 @@
 interface ExternalQRPayload {
+  owner_account: string;
   token: string;
-  uri: string;
 }
 
 export default ExternalQRPayload;

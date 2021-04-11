@@ -28,12 +28,12 @@ const Scanner = () => {
     if (params?.callback) return params.callback(payload);
     else {
       const data = (JSON.parse(payload.data) as unknown) as ExternalQRPayload;
-      if (!data?.token) {
-        return alert(data);
+      if (data?.token === undefined) {
+        return alert(JSON.stringify(data));
       }
       navigation.navigate("Inventory", {
         screen: "Inventory.Detail",
-        params: { id: data.token },
+        params: { id: data.token, owner_account: data.owner_account },
       });
     }
   };

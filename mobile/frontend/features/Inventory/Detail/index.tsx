@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import QRCode from "react-native-qrcode-svg";
 import { Modal } from "react-native-paper";
 import { ActivityIndicator } from "react-native";
 import styled from "styled-components/native";
-import { Watch, WatchMeta } from "../../../types";
+import { WatchData } from "../../../types";
 import { useContract } from "../../../atoms/contract";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import { InventoryModal } from "./constants";
@@ -14,6 +14,7 @@ import { SeaportContext } from "../../../SeaportContext";
 
 interface Params {
   id?: string;
+  owner_account?: string;
 }
 
 const Detail = ({}) => {
@@ -25,7 +26,7 @@ const Detail = ({}) => {
   const seaport = useContext(SeaportContext);
 
   // States
-  const [data, setData] = useState<(Watch & Partial<WatchMeta>) | null>(null);
+  const [data, setData] = useState<WatchData | null>(null);
   const [activeModal, setActiveModa] = useState(InventoryModal.NONE);
   const [isLoading, setLoading] = useState(true);
 
@@ -48,6 +49,7 @@ const Detail = ({}) => {
       const watchData = await getComposedData({
         seaport,
         account: connector.accounts[0],
+        toCheckAccount: params.owner_account || connector.accounts[0],
         token: params.id,
         contract,
       });
@@ -91,7 +93,11 @@ const Detail = ({}) => {
 
           <Image source={{ uri: data.image }} />
           <GoldBar>
-            <Title style={{ color: "white" }}>{data.name || "-"}</Title>
+            <Title style={{ color: "white", marginRight: 5 }}>{data.name || "-"}</Title>
+            {data.isOwner && (
+              <FontAwesome name="check-circle" size={24} color="white" />
+            )}
+
           </GoldBar>
           <PriceBar
             style={{ borderBottomWidth: 1, borderBottomColor: "lightgrey" }}
@@ -191,7 +197,15 @@ const Detail = ({}) => {
             padding: 20,
           }}
         >
-          <Code size={300} value="smth" />
+          <Code
+            size={300}
+            value={JSON.stringify({
+              token: data.token,
+              owner_account: data.isOwner
+                ? connector.accounts[0]
+                : params.owner_account,
+            })}
+          />
         </Modal>
       </View>
     </>
