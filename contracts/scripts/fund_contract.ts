@@ -17,9 +17,8 @@ async function main() {
 
   // We get the contract to deploy
   const Luxurify = await hre.ethers.getContractFactory("Luxurify");
-  // Network: Kovan
+  // Network: Rinkeby
   const luxurify = await Luxurify.deploy(
-    "0xf57b2c51ded3a29e6891aba85459d600256cf317", // _proxyRegistryAddress
     "0xb3dCcb4Cf7a26f6cf6B120Cf5A73875B7BBc655B", // _VRFCoordinator
     "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e", // _ethUsdPriceFeedAddress
     "0x01BE23585060835E02B77ef475b0Cc51aA1e0709", // _LinkToken

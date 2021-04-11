@@ -2,15 +2,13 @@
 pragma solidity ^0.6.6;
 
 import "hardhat/console.sol";
-import "./ERC721Tradable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
-import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract Luxurify is ERC721Tradable, VRFConsumerBase {
+contract Luxurify is ERC721, VRFConsumerBase {
   using SafeMath for uint256;
   using Strings for string;
 
@@ -59,7 +57,6 @@ contract Luxurify is ERC721Tradable, VRFConsumerBase {
   );
 
   constructor(
-    address _proxyRegistryAddress,
     address _VRFCoordinator,
     address _ethUsdPriceFeedAddress,
     address _LinkToken,
@@ -67,7 +64,7 @@ contract Luxurify is ERC721Tradable, VRFConsumerBase {
   )
     public
     VRFConsumerBase(_VRFCoordinator, _LinkToken)
-    ERC721Tradable("Luxurify", "LXY", _proxyRegistryAddress)
+    ERC721("Luxurify", "LXY")
   {
     VRFCoordinator = _VRFCoordinator;
     LinkToken = _LinkToken;
@@ -194,51 +191,5 @@ contract Luxurify is ERC721Tradable, VRFConsumerBase {
       "ERC721: transfer caller is not owner nor approved"
     );
     _setTokenURI(tokenId, _tokenURI);
-  }
-
-  /**
-    * Hack to get things to work automatically on OpenSea.
-    * Use transferFrom so the frontend doesn't have to worry about different method names.
-    */
-  function transferFrom(
-    address _from,
-    address _to,
-    uint256 _tokenId
-  ) public override {
-    _mint(_to, _tokenId);
-  }
-
-  /**
-    * Hack to get things to work automatically on OpenSea.
-    * Use isApprovedForAll so the frontend doesn't have to worry about different method names.
-    */
-  function isApprovedForAll(address _owner, address _operator)
-    public
-    view
-    virtual
-    override
-    returns (bool)
-  {
-    if (owner() == _owner && _owner == _operator) {
-      return true;
-    }
-
-    ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
-    if (
-      owner() == _owner &&
-      address(proxyRegistry.proxies(_owner)) == _operator
-    ) {
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-    * Hack to get things to work automatically on OpenSea.
-    * Use isApprovedForAll so the frontend doesn't have to worry about different method names.
-    */
-  function ownerOf(uint256 _tokenId) public view override returns (address _owner) {
-    return owner();
   }
 }
