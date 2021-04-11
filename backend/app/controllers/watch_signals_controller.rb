@@ -1,5 +1,5 @@
 class WatchSignalsController < ApplicationController
-  before_action :authenticate_user!
+  # before_action :authenticate_user!
 
   def brands
     resp = watch_signals_connection.get('brand/all')
