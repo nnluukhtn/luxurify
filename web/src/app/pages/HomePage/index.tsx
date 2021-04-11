@@ -1,11 +1,12 @@
 import * as React from 'react';
 import Wallet from 'app/common/components/Wallet';
 import { Helmet } from 'react-helmet-async';
-import { Container, Header, StyledButton } from 'app/common/styles';
+import { BackgroundContainer, Header, StyledButton } from 'app/common/styles';
 import { useHistory } from 'react-router-dom';
 import { selectUser } from 'utils/SessionActions/SessionSelector';
 import { useSelector } from 'react-redux';
 import { PageContainer } from 'app/common/components';
+import Colors from 'app/common/Colors';
 
 export function HomePage() {
   const history = useHistory();
@@ -17,13 +18,17 @@ export function HomePage() {
         <meta name="description" content="Luxurify - Homepage" />
       </Helmet>
 
-      <Container>
+      <BackgroundContainer>
         <PageContainer
           innerStyle={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            paddingTop: '3rem',
             paddingBottom: '5rem',
+            backgroundColor: Colors.N0_WHITE,
+            marginTop: '3rem',
+            borderRadius: 5,
           }}
         >
           <Header
@@ -47,7 +52,7 @@ export function HomePage() {
           ) : null}
           <Wallet />
         </PageContainer>
-      </Container>
+      </BackgroundContainer>
     </>
   );
 }

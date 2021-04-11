@@ -7,7 +7,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import { PageContainer } from 'app/common/components';
 import { TOKENS_BY_NETWORK } from 'app/common/components/TokenBalance/constants';
-import { Container } from 'app/common/styles';
+import { BackgroundContainer } from 'app/common/styles';
 import { Contract, ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -26,6 +26,7 @@ import { useDispatch } from 'react-redux';
 import { useFnDebounce } from 'utils/hooks/DebounceHooks';
 import { useHistory } from 'react-router-dom';
 import { injectedConnector } from 'index';
+import Colors from 'app/common/Colors';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -206,13 +207,17 @@ export function RegisterWatch(_props: Props) {
         <meta name="description" content="Luxurify - Register Watch" />
       </Helmet>
 
-      <Container>
+      <BackgroundContainer>
         <PageContainer
           fluid
           innerStyle={{
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'center',
+            backgroundColor: Colors.N0_WHITE,
+            maxWidth: 500,
+            marginTop: '3rem',
+            borderRadius: 5,
           }}
         >
           <RegisterWatchForms onSubmit={claimWatch} />
@@ -238,7 +243,7 @@ export function RegisterWatch(_props: Props) {
             setShowProgress(false);
           }}
         />
-      </Container>
+      </BackgroundContainer>
     </>
   );
 }

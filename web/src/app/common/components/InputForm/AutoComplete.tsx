@@ -1,4 +1,5 @@
 import { AutoComplete } from 'antd';
+import Colors from 'app/common/Colors';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
@@ -57,6 +58,9 @@ export default AutoCompleteInput;
 export const StyledAutoComplete = styled(AutoComplete)`
   width: 100%;
   .ant-select-selector {
+    font-family: inherit;
+    font-weight: 400;
     border-radius: 5px !important;
+    height: 36px !important;
   }
 `;

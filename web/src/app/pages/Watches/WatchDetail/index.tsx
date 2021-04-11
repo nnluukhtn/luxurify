@@ -37,7 +37,7 @@ export function WatchDetail(props: Props) {
   >();
   const seaport = React.useContext(seaportContext);
   const { watchId } = useParams<{ watchId: string }>();
-  const { search, pathname } = useLocation();
+  const { search } = useLocation();
   const history = useHistory();
   const [, callError] = useNotification();
   const uri = new URLSearchParams(search).get('uri');
@@ -60,7 +60,7 @@ export function WatchDetail(props: Props) {
   //   console.log({ transfer });
   // };
   const onActionSucceed = () => {
-    history.push(pathname);
+    history.push('/');
   };
 
   useEffect(() => {
@@ -244,14 +244,6 @@ export function WatchDetail(props: Props) {
                     </Row>
                   </>
                 ) : null}
-
-                {/* <StyledButton
-              onClick={() =>
-                transfer('0xf57b2c51ded3a29e6891aba85459d600256cf317')
-              }
-            >
-              Transfer
-            </StyledButton> */}
               </Col>
 
               <Col span={12} style={{ paddingLeft: '0.5rem' }}>

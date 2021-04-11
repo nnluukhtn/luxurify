@@ -47,7 +47,7 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
       model: '',
       powerReserve: '',
       caseDiameter: 0,
-      waterResistanceAtm: '',
+      waterResistanceAtm: 0,
       movementName: '',
       braceletColorName: '',
       dialColorName: '',
@@ -73,7 +73,7 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
       model: Yup.string().required('Required'),
       powerReserve: Yup.number().required('Required').min(0.1, 'Required'),
       caseDiameter: Yup.number().required('Required').min(0.1, 'Required'),
-      waterResistanceAtm: Yup.string().required('Required'),
+      waterResistanceAtm: Yup.number().required('Required'),
       movementName: Yup.string().required('Required'),
       braceletColorName: Yup.string().required('Required'),
       dialColorName: Yup.string().required('Required'),
@@ -287,6 +287,7 @@ const RegisterWatchForms = ({ onSubmit }: Props) => {
           onChange={formik.handleChange}
           value={formik.values.waterResistanceAtm}
           error={formik.errors.waterResistanceAtm}
+          type="number"
         />
         <Spacer height="0.7rem" />
         <InputForm

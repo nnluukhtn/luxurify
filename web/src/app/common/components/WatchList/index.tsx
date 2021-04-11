@@ -10,6 +10,7 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import useSWR from 'swr';
 import ERC667ABI from 'app/abi/ERC667.abi.json';
+import useNotification from 'utils/hooks/NotificationHook/useNotification';
 
 const getEmptyObjectList = (length: number) => {
   return Array(length).fill({});
@@ -18,6 +19,7 @@ const getEmptyObjectList = (length: number) => {
 const WatchList = ({ address }) => {
   const { account, library } = useWeb3React<Web3Provider>();
   const history = useHistory();
+  const [, callError] = useNotification();
   const [watches, setWatches] = useState<any>(getEmptyObjectList(14));
   const { data: balance } = useSWR([address, 'balanceOf', account]);
   const contract = new Contract(address, ERC667ABI, library?.getSigner());
@@ -43,7 +45,11 @@ const WatchList = ({ address }) => {
       setWatches(watchList);
       setIsLoading(false);
     };
-    getWatchList();
+    try {
+      getWatchList();
+    } catch (err) {
+      callError(err.message);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [balance, account, address]);
 

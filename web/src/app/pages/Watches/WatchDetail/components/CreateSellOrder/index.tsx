@@ -10,6 +10,8 @@ import { formatUnits } from '@ethersproject/units';
 import styled from 'styled-components';
 import { FormOutlined } from '@ant-design/icons';
 import { PropagateLoader } from 'react-spinners';
+import { Switch } from 'antd';
+import InputForm from 'app/common/components/InputForm';
 
 const overide = `
   display: block;
@@ -34,8 +36,45 @@ const CreateSellOrder = ({
   const seaport = useContext(seaportContext);
   const tokenAddress = TOKENS_BY_NETWORK[4][0].address;
   const [isListing, setListing] = useState(false);
+  const [isPrivate, setPrivate] = useState(false);
+  const [targetAddress, setTargetAddress] = useState('');
 
   const listingItem = async () => {
+    console.log('run list', account);
+    if (account) {
+      console.log('listing...');
+      try {
+        console.log({ watchId, tokenAddress, account, startAmount });
+        setListing(true);
+        const listing = await seaport?.createSellOrder({
+          asset: {
+            tokenId: watchId.toString(),
+            tokenAddress,
+          },
+          accountAddress: account,
+          startAmount: formatUnits(BigNumber.from(startAmount), 18) as any,
+          quantity: 1,
+          expirationTime: 0,
+        });
+        console.log({ listing });
+        if (listing?.asset) {
+          callSuccess(
+            `Successfully listed this item for sale at ${formatUnits(
+              BigNumber.from(startAmount),
+              18,
+            )}.`,
+          );
+          setListing(false);
+          setShowModal(false);
+          onListed();
+        }
+      } catch (err) {
+        callError('Error' + err);
+      }
+    }
+  };
+
+  const privateAuction = async () => {
     console.log('run list', account);
     if (account) {
       console.log('listing...');
@@ -92,7 +131,7 @@ const CreateSellOrder = ({
         visible={showModal}
         title={<Header>Create sell order</Header>}
         onCancel={() => setShowModal(false)}
-        onOk={listingItem}
+        onOk={isPrivate ? privateAuction : listingItem}
         bodyStyle={{ textAlign: 'center' }}
         closable={false}
         destroyOnClose
@@ -108,6 +147,15 @@ const CreateSellOrder = ({
         with the fixed price of{' '}
         <TextBold>{formatUnits(BigNumber.from(startAmount), 18)} ETH</TextBold>
         <br />
+        <Switch onChange={() => setPrivate(true)} />
+        {isPrivate ? (
+          <InputForm
+            label="to Address:"
+            placeholder="Please enter"
+            value={targetAddress}
+            onChange={e => setTargetAddress(e.target.value)}
+          />
+        ) : null}
         {isListing && (
           <>
             <Spacer height="2rem" />
