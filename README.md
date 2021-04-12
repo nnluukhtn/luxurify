@@ -5,7 +5,7 @@
 
 ## Video Demo
 
-- https://youtu.be/YVOM-uXeu7o
+- https://youtu.be/SMfm2SZ-3rY
 
 ## Luxurify Ecosystem
 
